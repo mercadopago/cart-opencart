@@ -17,6 +17,7 @@
 	![Mercadopago Accounr](https://raw.github.com/mercadopago/cart-opencart/master/README.img/MPAccount.png)
 
 3. Set your Country where your Mercadopago account was created and save config.
+	
 	***Note:*** *If you change the Country where your account was created you need save config to refresh the excluded payment methods.*
 
 4. Set your ***CLIENT_ID*** and ***CLIENT_SECRET***. 
