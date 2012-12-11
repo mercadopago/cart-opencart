@@ -93,13 +93,14 @@ class ControllerPaymentMercadopago2 extends Controller {
                 $client_id     = $this->config->get('mercadopago2_client_id');
 		$client_secret = $this->config->get('mercadopago2_client_secret');
                 $url           = $this->config->get('mercadopago2_url');
+                $installments  = (int) $this->config->get('mercadopago2_installments');
                 // urls
                 
                 // array to create preference key
                           
                $carrinho = array(
                "external_reference" => $order_info['order_id'] ,// seu codigo de referencia, i.e. Numero do pedido da sua loja 
-               "currency" => $currency ,// string Argentina: ARS (peso argentino) ó USD (Dólar estadounidense); Brasil: BRL (Real).
+               "currency" => $currency ,// string Argentina: ARS (peso argentino) ï¿½ USD (Dï¿½lar estadounidense); Brasil: BRL (Real).
                "title" => $firstproduct['name'],  //string
                "description" => $firstproduct['quantity'] . ' x ' . $firstproduct['name'], // string
                "quantity" =>  1,// int 
@@ -109,7 +110,8 @@ class ControllerPaymentMercadopago2 extends Controller {
                "payment_lastname" =>  $order_info['payment_lastname'],// string
                "email" =>    $order_info['email'],// string
                "pending" =>   $url   . '/index.php?route=payment/mercadopago2/callback', // string
-               "approved" =>  $url   . '/index.php?route=payment/mercadopago2/callback'  // string
+               "approved" =>  $url   . '/index.php?route=payment/mercadopago2/callback',  // string
+               "installments" => (int)$installments
                );
 
                // methods para excluir
@@ -319,7 +321,7 @@ class mercadopago {
             $time = $data[0];
              
             
-            // verifica se já existe accesstoken valido, caso exista, retorna o accesstoken
+            // verifica se jï¿½ existe accesstoken valido, caso exista, retorna o accesstoken
             if(isset($this->accesstoken) && isset($this->date)){          
                 $timedifference = $time - $this->date;
                 if($timedifference < $this->expired){
@@ -342,7 +344,7 @@ class mercadopago {
                 if($dados['access_token']){
                 $this->accesstoken = $dados['access_token'];
                 }
-                 // guarta o hoarario, prazo de expiraç?o e returna o access token
+                 // guarta o hoarario, prazo de expiraï¿½?o e returna o access token
                 $this->date = $time;
                 $this->expired = $dados['expires_in'];
                 return $dados['access_token'];
@@ -402,7 +404,8 @@ Class Shop extends MercadoPago {
                    "success" => $data['approved']
                    ),           
                    "payment_methods" => array(
-                   "excluded_payment_methods" => $excludemethods
+                   "excluded_payment_methods" => $excludemethods,
+                   "installments" => (int) $data['installments']    
                    )
                 );
             }else{
@@ -425,7 +428,10 @@ Class Shop extends MercadoPago {
                    "back_urls" => array(
                    "pending" => $data['pending'],
                    "success" => $data['approved']
-                   ),  
+                   ),
+                   "payment_methods" => array(
+                   "installments" => (int)$data['installments']      
+                   )
                 );
                 
             }
