@@ -90,6 +90,7 @@ class ControllerPaymentMercadopago2 extends Controller {
                 $client_id     = $this->config->get('mercadopago2_client_id');
 		$client_secret = $this->config->get('mercadopago2_client_secret');
                 $url           = $this->config->get('mercadopago2_url');
+                $installments  = $this->config->get('mercadopago2_installments');
                 // urls
                 
                 // array to create preference key
@@ -106,7 +107,8 @@ class ControllerPaymentMercadopago2 extends Controller {
                "payment_lastname" =>  $order_info['payment_lastname'],// string
                "email" =>    $order_info['email'],// string
                "pending" =>   $url   . '/index.php?route=payment/mercadopago2/callback', // string
-               "approved" =>  $url   . '/index.php?route=payment/mercadopago2/callback'  // string
+               "approved" =>  $url   . '/index.php?route=payment/mercadopago2/callback' ,  // string
+               "installments" => (int)$installments
                );
 
                // methods para excluir
@@ -399,7 +401,8 @@ Class Shop extends MercadoPago {
                    "success" => $data['approved']
                    ),           
                    "payment_methods" => array(
-                   "excluded_payment_methods" => $excludemethods
+                   "excluded_payment_methods" => $excludemethods,
+                   "installments" => $data['installments']    
                    )
                 );
             }else{
@@ -422,7 +425,10 @@ Class Shop extends MercadoPago {
                    "back_urls" => array(
                    "pending" => $data['pending'],
                    "success" => $data['approved']
-                   ),  
+                   ),
+                   "payment_methods" => array(
+                   "installments" => (int)$data['installments']      
+                   )
                 );
                 
             }

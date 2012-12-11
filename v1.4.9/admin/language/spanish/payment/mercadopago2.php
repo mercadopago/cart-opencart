@@ -5,6 +5,7 @@ $_['heading_title']						= 'MercadoPago Version 2.0';
 // Text
 $_['text_ipn']						        = 'Configure your <b>Instant Payment Motification</b> to receive your automatic order status changes at: 
                                                                   <a href="https://www.mercadopago.com/mla/herramientas/notificaciones" target="_blank">Arg</a> or
+                                                                  <a href="https://www.mercadopago.com/mlm/herramientas/notificaciones" target="_blank">Mex</a> or
                                                                   <a href="https://www.mercadopago.com/mlb/ferramentas/notificacoes" target="_blank">Bra</a><br />
                                                                   Set your url follwing this exemple: http//www.your_store_address_root.com/index.php?route=payment/mercadopago2/retorno/&';
 $_['text_payment']						= 'Pago';
@@ -17,9 +18,9 @@ $_['text_chile']						= 'Chile';
 
 // Entry
 $_['entry_payments_not_accept']                                 = 'El pago que usted no desea aceptar<br /><br /><span class="help"> <b>atención</b> Caso altere o campo <b>País</b>, guardar esta página antes de seleccionar los medios de pago que no es aceptado</span>';
-$_['entry_client_id']						= 'Cliente ID :  <span class="help">To get this fild, follow:<a href="https://www.mercadopago.com/mla/herramientas/aplicaciones" target="_blank">Arg</a> or
+$_['entry_client_id']						= 'Cliente ID :  <span class="help">To get this fild, follow:<a href="https://www.mercadopago.com/mla/herramientas/aplicaciones" target="_blank">Arg</a> or <a href="https://www.mercadopago.com/mlm/herramientas/aplicaciones" target="_blank">Mex</a> or
                                                                      <a href="https://www.mercadopago.com/mlb/ferramentas/aplicacoes" target="_blank">Bra</a></span>';
-$_['entry_client_secret']					= 'Client Secret : <span class="help">To get this fild, follow:<a href="https://www.mercadopago.com/mla/herramientas/aplicaciones" target="_blank">Arg</a> or
+$_['entry_client_secret']					= 'Client Secret : <span class="help">To get this fild, follow:<a href="https://www.mercadopago.com/mla/herramientas/aplicaciones" target="_blank">Arg</a> or <a href="https://www.mercadopago.com/mlm/herramientas/aplicaciones" target="_blank">Mex</a> or
                                                                    <a href="https://www.mercadopago.com/mlb/ferramentas/aplicacoes" target="_blank">Bra</a></span>';
 $_['entry_installments']                                        = 'El número máximo de acciones aceptadas';
 $_['entry_status']						= 'Estado:';
@@ -50,6 +51,8 @@ $_['error_client_id']						= 'ID de Cliente es obligatoria';
 $_['error_client_secret']					= 'El Cliente Secreto se Requiere';
 
 // installments
+
+$_['maximum']                                                   = 'Máxima';
 $_['18']                                                        = '18';
 $_['15']                                                        = '15';   
 $_['12']                                                        = '12';
