@@ -41,6 +41,7 @@ $_['error_client_id']						= 'O Client Id é de preenchimento obrigatório';
 $_['error_client_secret']					= 'O Client Secret é de preenchimento obrigatório';
 
 // installments
+$_['maximum']                                                   = 'Máxima';
 $_['18']                                                        = '18';
 $_['15']                                                        = '15';   
 $_['12']                                                        = '12';

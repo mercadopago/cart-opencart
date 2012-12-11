@@ -271,6 +271,10 @@ class ControllerPaymentMercadopago2 extends Controller {
                 $installments = array();
                 
                 $installments[] = array(
+                    'value' => 'maximum',
+                    'id' => '24');
+                
+                $installments[] = array(
                     'value' => '18',
                     'id' => '18');
                 $installments[] = array(

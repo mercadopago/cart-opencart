@@ -3,6 +3,7 @@ class ControllerPaymentMercadopago2 extends Controller {
 	private $error = array();
 
 	public function index() {
+            
 		$this->load->language('payment/mercadopago2');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -237,14 +238,12 @@ class ControllerPaymentMercadopago2 extends Controller {
             
                 $url = 'https://api.mercadolibre.com/sites/';
                 $countries = $this->callJson($url);
-		
    		return $countries;
 	}
         
         private function getMethods($country_id) {
             
             $url = "https://api.mercadolibre.com/sites/" . $country_id .  "/payment_methods";
-   
             $methods = $this->callJson($url);
             return $methods;
           }
@@ -269,6 +268,10 @@ class ControllerPaymentMercadopago2 extends Controller {
         private function getInstallments (){	
             
                 $installments = array();
+                
+                $installments[] = array(
+                    'value' => 'maximum',
+                    'id' => '24');      
                 
                 $installments[] = array(
                     'value' => '18',

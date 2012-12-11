@@ -5,6 +5,7 @@
       if($debug == 1){
       echo '<strong>MercadoPago fails to connecet, and debug mode is on !!.<br /> Check the erros below and for security reasons turn it off after solve the problem:</strong><br />' ; 
       echo '<pre>'; print_r($error); echo '</pre><br />';
+
       } else {
       echo '<strong>Sorry...MercadoPago fail to connect.<br /> If you are the store owner, turn on debug mode to get more details about the reason</strong><br />' ; 
       }
