@@ -24,7 +24,10 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$this->language->load('payment/mercadopago2');
 
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-
+                
+                $this->model_checkout_order->confirm($this->session->data['order_id'], $this->config->get('mercadopago2_order_status_id'));
+                
+                
 		//Cambio el código ISO-3 de la moneda por el que se les ocurrio poner a los de mercadopago2!!!
 		                            
                switch($order_info['currency_code']) {
@@ -133,12 +136,6 @@ class ControllerPaymentMercadopago2 extends Controller {
    
 
 	public function callback() {
-		
-            
-              $this->load->model('checkout/order');
-		
-              $this->model_checkout_order->confirm($this->session->data['order_id'], $this->config->get('mercadopago2_order_status_id'));
-		
 	      $this->redirect(HTTP_SERVER . 'index.php?route=checkout/success');
 	}
         
