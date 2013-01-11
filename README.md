@@ -1,6 +1,6 @@
 # OpenCart - Mercadopago Module (v1.4.9 - 1.5.x)
 ---
-*Available for Argentina, Brazil and Mexico*
+*Available for Argentina, Brazil, Venezuela and Mexico*
 
 
 ## Installation:
@@ -29,6 +29,8 @@
 	* Argentina: [https://www.mercadopago.com/mla/herramientas/aplicaciones](https://www.mercadopago.com/mla/herramientas/aplicaciones)
 	* Brasil: [https://www.mercadopago.com/mlb/ferramentas/aplicacoes](https://www.mercadopago.com/mlb/ferramentas/aplicacoes)
 	* Mexico: [https://www.mercadopago.com/mlm/herramientas/aplicaciones](https://www.mercadopago.com/mlm/herramientas/aplicaciones)
+	* Venezuela: [https://www.mercadopago.com/mlv/herramientas/aplicaciones](https://www.mercadopago.com/mlv/herramientas/aplicaciones)
+
 ***IMPORTANT:*** *This module will only work with the following currencies:*
 
 * Brasil:
@@ -37,6 +39,8 @@
 	* ARS (Peso)
 * Mexico:
 	* MXN (Peso)
+* Venezuela:
+	* VEB (Peso)
 
 ---
 ## Sync your backoffice with Mercadopago (IPN) 
@@ -45,4 +49,5 @@
 	* Argentina: [https://www.mercadopago.com/mla/herramientas/notificaciones](https://www.mercadopago.com/mla/herramientas/notificaciones)
 	* Brasil: [https://www.mercadopago.com/mlb/ferramentas/notificacoes](https://www.mercadopago.com/mlb/ferramentas/notificacoes)
 	* Mexico: [https://www.mercadopago.com/mlm/herramientas/notificaciones](https://www.mercadopago.com/mlm/herramientas/notificaciones)
+        * Venezuela: [https://www.mercadopago.com/mlv/herramientas/notificaciones](https://www.mercadopago.com/mlv/herramientas/notificaciones)
 2. Enter the URL as follow: ***[yourstoreaddress.com]***/index.php?route=payment/mercadopago2/retorno/
