@@ -1,6 +1,6 @@
 # OpenCart - Mercadopago Module (v1.4.9 - 1.5.x)
 ---
-*Available for Argentina, Brazil and Mexico*
+*Available for Argentina, Brazil, Venezuela and Mexico*
 
 
 ## Installation:
@@ -29,7 +29,8 @@
 	* Argentina: [https://www.mercadopago.com/mla/herramientas/aplicaciones](https://www.mercadopago.com/mla/herramientas/aplicaciones)
 	* Brasil: [https://www.mercadopago.com/mlb/ferramentas/aplicacoes](https://www.mercadopago.com/mlb/ferramentas/aplicacoes)
 	* Mexico: [https://www.mercadopago.com/mlm/herramientas/aplicaciones](https://www.mercadopago.com/mlm/herramientas/aplicaciones)
-        * Venezuela: [https://www.mercadopago.com/mlv/herramientas/aplicaciones](https://www.mercadopago.com/mlv/herramientas/aplicaciones)
+	* Venezuela: [https://www.mercadopago.com/mlv/herramientas/aplicaciones](https://www.mercadopago.com/mlv/herramientas/aplicaciones)
+
 ***IMPORTANT:*** *This module will only work with the following currencies:*
 
 * Brasil:
