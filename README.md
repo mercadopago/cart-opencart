@@ -1,6 +1,6 @@
 # OpenCart - Mercadopago Module (v1.4.9 - 1.5.x)
 ---
-*Available for Argentina, Brazil, Venezuela and Mexico*
+*Available for Argentina, Brazil, México and Venezuela*
 
 
 ## Installation:
