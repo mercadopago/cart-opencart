@@ -36,11 +36,11 @@
 * Brasil:
 	* BRL (Real)
 * Argentina:
-	* ARS (Peso)
+	* ARS (Peso Argentino)
 * Mexico:
-	* MXN (Peso)
+	* MXN (Peso Mexicano)
 * Venezuela:
-	* VEB (Peso)
+	* VEF (Bolivar fuerte)
 
 ---
 ## Sync your backoffice with Mercadopago (IPN) 
