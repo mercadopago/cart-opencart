@@ -37,6 +37,9 @@ class ControllerPaymentMercadopago2 extends Controller {
                         case"ARG":
 				$currency = 'ARG';
 				break;    
+                        case"VEF":
+				$currency = 'VEF';
+				break;  
                         case"BRA":
 				$currency = 'BRL';
 				break;     
@@ -59,7 +62,7 @@ class ControllerPaymentMercadopago2 extends Controller {
                 
                  
             
-		$currencies = array('ARS','BRL','MEX','CHI');
+		$currencies = array('ARS','BRL','MEX','CHI','VEF');
 		if (!in_array($currency, $currencies)) {
 			$currency = '';
 			$this->data['error'] = $this->language->get('currency_no_support');
