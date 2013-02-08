@@ -23,8 +23,8 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		
         $this->model_checkout_order->confirm($this->session->data['order_id'], $this->config->get('mercadopago2_order_status_id'));
+                  
 
-		                            
                switch($order_info['currency']) {
 			case"ARS":
 				$currency = 'ARS';
@@ -32,6 +32,9 @@ class ControllerPaymentMercadopago2 extends Controller {
                         case"ARG":
 				$currency = 'ARG';
 				break;    
+                        case"VEF":
+				$currency = 'VEF';
+				break;     
                         case"BRA":
 				$currency = 'BRL';
 				break;     
@@ -46,7 +49,7 @@ class ControllerPaymentMercadopago2 extends Controller {
 				break;
 			case"CLP":
 				$currency = 'CHI';
-				break;
+				break;         
 			default:
 				$currency = 'USD';
 				break;
@@ -54,7 +57,7 @@ class ControllerPaymentMercadopago2 extends Controller {
                 
                  
             
-		$currencies = array('ARS','BRL','MEX','CHI');
+		$currencies = array('ARS','BRL','MEX','CHI','VEF');
 		if (!in_array($currency, $currencies)) {
 			$currency = '';
 			$this->data['error'] = $this->language->get('currency_no_support');
@@ -111,7 +114,7 @@ class ControllerPaymentMercadopago2 extends Controller {
                "approved" =>  $url   . '/index.php?route=payment/mercadopago2/callback' ,  // string
                "installments" => (int)$installments
                );
-
+           
                // methods para excluir
                $exclude = $this->config->get('mercadopago2_methods');  // string
                 
