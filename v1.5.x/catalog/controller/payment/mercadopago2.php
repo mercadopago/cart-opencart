@@ -35,7 +35,7 @@ class ControllerPaymentMercadopago2 extends Controller {
 				$currency = 'ARS';
 				break;
                         case"ARG":
-				$currency = 'ARG';
+				$currency = 'ARS';
 				break;    
                         case"VEF":
 				$currency = 'VEF';
@@ -441,7 +441,7 @@ Class Shop extends MercadoPago {
             $this->getAccessToken(); 
             if(isset($this->accesstoken)){
             $url = 'https://api.mercadolibre.com/checkout/preferences?access_token=' . $this->accesstoken;
-            $header = array('Content-Type:application/json', 'User-Agent:MercadoPago OpenCart-1.5.x Cart v1.0.0', 'Accept: application/json');
+            $header = array('Content-Type:application/json', 'User-Agent:MercadoPago OpenCart-1.5.x Cart v1.0.1', 'Accept: application/json');
             $dados = $this->DoPost($opt,$url,$header,'201','json','post');
             if(isset($dados['init_point'])){
             $link = $dados['init_point'];
