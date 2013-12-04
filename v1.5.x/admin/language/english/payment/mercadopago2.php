@@ -35,6 +35,10 @@ $_['entry_sort_order']						= 'Sort order:';
 $_['entry_url']                                                 = 'Store Url:<br /><span class="help">Insert your store root url installation<br /> (Always write the url with <b>http://</b> or <b>https://</b> )<br/><i>IE. http://www.mystore.com/store/</i><br /></span>';
 $_['entry_debug']                                               = 'Debug mode: <br /><span class="help">Turn on to show the erro log on checkout</span>';
 
+$_['entry_sandbox']                                             = 'Sandbox mode: <br /><span class="help">Sandbox is used for testing the Checkout and IPN. Without the need for a valid credit card to approve to purchase test.</span>';
+$_['entry_type_checkout']                                       = 'Type Checkout: <br /><span class="help"></span>';
+$_['entry_category']                                            = 'Category: <br /><span class="help">Select the category that best fits your shop</span>';
+
 $_['entry_order_status']					= 'Order status:<br /><span class="help">Select the default order status of your orders</span>';
 $_['entry_order_status_completed']			        = 'Order Completed:<br /><span class="help">Select the status order case your order is <b>Approved</b></span>';
 $_['entry_order_status_pending']			        = 'Order Pending:<br /><span class="help">Select the status order when the buyer did not finish the payment yet</span>';

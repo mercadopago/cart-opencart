@@ -40,7 +40,24 @@
             <?php } ?></td>
         </tr>
         
-          <tr>
+
+       <tr>
+          <td><span class="required">*</span> <?php echo $entry_category; ?></td>
+          <td>
+            <select name="mercadopago2_category_id">
+              <?php foreach ($category_list as $category) { ?>
+                <?php if ($category['id'] == $mercadopago2_category_id) { ?>
+                  <option value="<?php echo $category['id']; ?>" selected="selected" id="<?php echo $category['description']; ?>"><?php echo $category['description']; ?></option>
+                <?php } else { ?>
+                  <option value="<?php echo $category['id']; ?>" id="<?php echo $category['description']; ?>"><?php echo $category['description']; ?></option>
+                <?php } ?>
+              <?php } ?>
+            </select>
+          </td>
+        </tr>
+       
+        
+        <tr>
           <td><span class="required">*</span> <?php echo $entry_url; ?></td>
           <td><input type="text" name="mercadopago2_url" value="<?php echo $mercadopago2_url; ?>" />
             <?php if (isset($error_mercadopago2_url)) { ?>
@@ -49,7 +66,7 @@
         </tr>
         
         
-          <tr>
+        <tr>
           <td><span class="required">*</span> <?php echo $entry_debug; ?></td>
           <td><select name="mercadopago2_debug">
               <?php if ($mercadopago2_debug) { ?>
@@ -62,6 +79,37 @@
             </select></td>
         </tr>
         
+        
+        <tr>
+          <td><span class="required">*</span> <?php echo $entry_sandbox; ?></td>
+          <td>
+            <select name="mercadopago2_sandbox">
+              <?php if ($mercadopago2_sandbox) { ?>
+                <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+                <option value="0"><?php echo $text_disabled; ?></option>
+              <?php } else { ?>
+                <option value="1"><?php echo $text_enabled; ?></option>
+                <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+              <?php } ?>
+            </select>
+          </td>
+        </tr>
+        
+        
+        <tr>
+          <td><span class="required">*</span> <?php echo $entry_type_checkout; ?></td>
+          <td>
+            <select name="mercadopago2_type_checkout">
+              <?php foreach ($type_checkout as $type) { ?>
+                <?php if ($type == $mercadopago2_type_checkout) { ?>
+                  <option value="<?php echo $type; ?>" selected="selected" id="<?php echo $type; ?>"><?php echo $type; ?></option>
+                <?php } else { ?>
+                  <option value="<?php echo $type; ?>" id="<?php echo $type; ?>"><?php echo $type; ?></option>
+                <?php } ?>
+              <?php } ?>
+            </select>
+          </td>
+        </tr>
         
         
         <tr>
