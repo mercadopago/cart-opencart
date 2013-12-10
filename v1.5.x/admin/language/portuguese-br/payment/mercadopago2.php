@@ -26,6 +26,10 @@ $_['entry_sort_order']						= 'Ordem:';
 $_['entry_url']                                                 = 'Url de pagamento aprovado:<br /><span class="help">Insira o domininio completo de instalacao da sua loja (utilize sempre o endereco com http:// <i>Ex. http://www.minhaloja.com/loja/</i><br /></span>';
 $_['entry_debug']                                               = 'Debug mode: <br /><span class="help">Habilite essa opcao para que seja exibido erros gerados no checkout</span>';
 
+$_['entry_sandbox']                                             = 'Sandbox mode: <br /><span class="help">Sandbox é utilizado para realizar testes no Checkout e na IPN, sem a necessidade de um cartão de crédito válido para aprovar a compra teste.</span>';
+$_['entry_type_checkout']                                        = 'Type Checkout: <br /><span class="help"></span>';
+$_['entry_category']                                            = 'Category: <br /><span class="help">Seleccione la categoría que mejor se adapte a los productos que se venden en su tienda</span>';
+
 $_['entry_order_status']					= 'Situação padrão da venda:<br /><span class="help">Selecione a situação padrão da venda.</span>';
 $_['entry_order_status_completed']                              = 'Situação quando pagamento aprovado:<br /><span class="help">Selecione a situação quando a venda foi <b>Completada</b> e o pagamento foi <b>Confirmado</b></span>';
 $_['entry_order_status_pending']                                = 'Situação quando o pagamento ainda está pendente:<br /><span class="help">Selecione a situação quando o pagamento ainda <b>não foi identificado</b> pelo MercadoPago</span>';

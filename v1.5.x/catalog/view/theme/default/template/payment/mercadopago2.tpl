@@ -1,24 +1,48 @@
-
 <?php  if (isset($error)) { ?>
-<div class="warning"><?php
-      
-      if($debug == 1){
-      echo '<strong>MercadoPago fails to connecet, and debug mode is on !!.<br /> Check the erros below and for security reasons turn it off after solve the problem:</strong><br />' ; 
-      echo '<pre>'; print_r($error); echo '</pre><br />';
+    <div class="warning">
+    <?php
+        if($debug == 1){
+            echo '<strong>MercadoPago fails to connecet, and debug mode is on !!.<br /> Check the erros below and for security reasons turn it off after solve the problem:</strong><br />' ; 
+            echo '<pre>'; print_r($error); echo '</pre><br />';    
+        } else {
+            echo '<strong>Sorry...MercadoPago fail to connect.<br /> If you are the store owner, turn on debug mode to get more details about the reason</strong><br />' ; 
+        }
+    ?>
+    
+    </div>
+<?php  } else { ?>
 
-      } else {
-      echo '<strong>Sorry...MercadoPago fail to connect.<br /> If you are the store owner, turn on debug mode to get more details about the reason</strong><br />' ; 
-      }
-      ?>
+    <?php
+    switch($type_checkout):
+        case "Iframe":
+                ?>
+		    <iframe src="<?php echo $link ?>" name="MP-Checkout" width="740" height="600" frameborder="0"></iframe>
+		    <script type="text/javascript">
+			(function(){function $MPBR_load(){window.$MPBR_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;
+			s.src = ("https:"==document.location.protocol?"https://www.mercadopago.com/org-img/jsapi/mptools/buttons/":"http://mp-tools.mlstatic.com/buttons/")+"render.js";
+			var x = document.getElementsByTagName("script")[0];x.parentNode.insertBefore(s, x);window.$MPBR_loaded = true;})();}
+			window.$MPBR_loaded !== true ? (window.attachEvent ? window.attachEvent("onload", $MPBR_load) : window.addEventListener("load", $MPBR_load, false)) : null;})();
+		    </script>
+		<?php
+                
+            break;
 
-</div>
-<?php  } else {
-
-  // fecha verficação de status da autenticação
-?>
-         
-<div class="right">
-<a href="<?php echo $link; ?>" name="MP-payButton" class="blue-l-rn-ar" style="float:right;">Pagar</a>
-<script type="text/javascript" src="https://www.mercadopago.com/org-img/jsapi/mptools/buttons/render.js" />
-</div>
+        case "Lightbox":
+        default:
+            ?>
+                <div class="right">
+                    <a href="<?php echo $link ?>" name="MP-Checkout" class="blue-L-Rn" mp-mode="modal" onreturn="execute_my_onreturn">Pagar</a>
+		    <script type="text/javascript">
+			(function(){function $MPBR_load(){window.$MPBR_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;
+			s.src = ("https:"==document.location.protocol?"https://www.mercadopago.com/org-img/jsapi/mptools/buttons/":"http://mp-tools.mlstatic.com/buttons/")+"render.js";
+			var x = document.getElementsByTagName("script")[0];x.parentNode.insertBefore(s, x);window.$MPBR_loaded = true;})();}
+			window.$MPBR_loaded !== true ? (window.attachEvent ? window.attachEvent("onload", $MPBR_load) : window.addEventListener("load", $MPBR_load, false)) : null;})();
+		    </script>
+                </div>
+                
+            <?php
+            break;
+    endswitch;
+    ?>
+    
 <?php  ;} ?>

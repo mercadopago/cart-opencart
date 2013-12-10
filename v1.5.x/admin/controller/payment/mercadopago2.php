@@ -48,6 +48,11 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$this->data['entry_ipn_status'] = $this->language->get('entry_ipn_status');
                 $this->data['entry_url'] = $this->language->get('entry_url');
                 $this->data['entry_debug'] = $this->language->get('entry_debug');
+		
+		$this->data['entry_sandbox'] = $this->language->get('entry_sandbox');
+		$this->data['entry_type_checkout'] = $this->language->get('entry_type_checkout');
+		$this->data['entry_category'] = $this->language->get('entry_category');
+		
                 $this->data['entry_ipn'] = $this->language->get('text_ipn');
 		$this->data['entry_order_status_completed'] = $this->language->get('entry_order_status_completed');
 		$this->data['entry_order_status_pending'] = $this->language->get('entry_order_status_pending');
@@ -83,15 +88,15 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$this->document->breadcrumbs = array();
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=common/home&token=' . $this->session->data['token'],
-       		'text'      => $this->language->get('text_home'),
-      		'separator' => FALSE
+			'href'      => HTTPS_SERVER . 'index.php?route=common/home&token=' . $this->session->data['token'],
+			'text'      => $this->language->get('text_home'),
+			'separator' => FALSE
    		);
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token'],
-       		'text'      => $this->language->get('text_payment'),
-      		'separator' => ' :: '
+			'href'      => HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token'],
+			'text'      => $this->language->get('text_payment'),
+			'separator' => ' :: '
    		);
 
    		$this->document->breadcrumbs[] = array(
@@ -121,7 +126,16 @@ class ControllerPaymentMercadopago2 extends Controller {
 		} else {
 			$this->data['mercadopago2_status'] = $this->config->get('mercadopago2_status');
 		}
-                
+
+		
+		$this->data['category_list'] = $this->getCategoryList();
+		if (isset($this->request->post['mercadopago2_category_id'])) {
+			$this->data['mercadopago2_category_id'] = $this->request->post['mercadopago2_category_id'];
+		} else {
+			$this->data['mercadopago2_category_id'] = $this->config->get('mercadopago2_category_id');
+		}
+		
+		
                 if (isset($this->request->post['mercadopago2_url'])) {
 			$this->data['mercadopago2_url'] = $this->request->post['mercadopago2_url'];
 		} else {
@@ -135,17 +149,27 @@ class ControllerPaymentMercadopago2 extends Controller {
 		}
                 
                 
-                
-                
+		if (isset($this->request->post['mercadopago2_sandbox'])) {
+			$this->data['mercadopago2_sandbox'] = $this->request->post['mercadopago2_sandbox'];
+		} else {
+			$this->data['mercadopago2_sandbox'] = $this->config->get('mercadopago2_sandbox');
+		}
+		
+		
+		$this->data['type_checkout'] = $this->getTypeCheckout();
+		if (isset($this->request->post['mercadopago2_type_checkout'])) {
+			$this->data['mercadopago2_type_checkout'] = $this->request->post['mercadopago2_type_checkout'];
+		} else {
+			$this->data['mercadopago2_type_checkout'] = $this->config->get('mercadopago2_type_checkout');
+		}
                 
 
 		$this->data['countries'] = $this->getCountries();
                 $this->data['installments'] = $this->getInstallments();
-              ;
 
-               if ($this->config->get('mercadopago2_country')){
-		   $this->data['methods'] = $this->getMethods($this->config->get('mercadopago2_country'));    
-               }
+		if ($this->config->get('mercadopago2_country')){
+		    $this->data['methods'] = $this->getMethods($this->config->get('mercadopago2_country'));    
+		}
               
 		if (isset($this->request->post['mercadopago2_methods'])) {
 			$this->data['mercadopago2_methods'] = $this->request->post['mercadopago2_methods'];
@@ -257,7 +281,7 @@ class ControllerPaymentMercadopago2 extends Controller {
             curl_setopt($ch, CURLOPT_URL, $url); //oauth API
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
             if (isset($posts)){
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
             }
             $jsonresult = curl_exec($ch);//execute the conection
             curl_close($ch);
@@ -265,7 +289,19 @@ class ControllerPaymentMercadopago2 extends Controller {
             return  $result;          
        }
 	
-        
+        private function getCategoryList(){
+		$url = "https://api.mercadolibre.com/item_categories";
+		$category = $this->callJson($url);
+		return $category;
+	}
+	
+	private function getTypeCheckout(){
+		
+		//Redirect not working because ajax request not redirect this page..
+		$type_checkout = array("Lightbox", "Iframe");
+		
+		return $type_checkout;
+	}
         private function getInstallments (){	
             
                 $installments = array();

@@ -36,6 +36,9 @@ $_['entry_url']                                                 = 'Store Url:<br
 
 $_['entry_debug']                                               = 'Debug mode: <br /><span class="help">Turn on to show the erro log on checkout</span>';
 
+$_['entry_sandbox']                                             = 'Sandbox mode: <br /><span class="help">Sandbox es utiliza para probar Checkout y IPN. Sin la necesidad de una tarjeta de crédito válida para aprobar la operacion.</span>';
+$_['entry_type_checkout']                                       = 'Type Checkout: <br /><span class="help"></span>';
+$_['entry_category']                                            = 'Category: <br /><span class="help">Habilite essa opcao para que seja exibido erros gerados no checkout</span>';
 
 
 
