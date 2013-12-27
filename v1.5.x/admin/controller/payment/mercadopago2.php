@@ -280,6 +280,8 @@ class ControllerPaymentMercadopago2 extends Controller {
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded'));//sets the header
             curl_setopt($ch, CURLOPT_URL, $url); //oauth API
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+	    curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__) . "/cacert.pem");
+		curl_setopt($ch, CURLOPT_SSLVERSION, 3);
             if (isset($posts)){
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
             }
