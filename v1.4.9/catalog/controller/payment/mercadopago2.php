@@ -241,8 +241,6 @@ class mercadopago {
                     $options = array(
                                CURLOPT_RETURNTRANSFER => '1',
                                CURLOPT_HTTPHEADER => $heads,
-                               CURLOPT_SSL_VERIFYPEER => 'false',
-                               CURLOPT_SSLVERSION => 3,
                                CURLOPT_URL => $url,
                                CURLOPT_POSTFIELDS => $posts ,
                                CURLOPT_CUSTOMREQUEST => "GET"
@@ -252,8 +250,6 @@ class mercadopago {
                       $options = array(
                                 CURLOPT_RETURNTRANSFER => 1,
                                 CURLOPT_HTTPHEADER => $heads,
-                                CURLOPT_SSL_VERIFYPEER => 'false',
-                                CURLOPT_SSLVERSION => 3,
                                 CURLOPT_URL => $url,
                                 CURLOPT_POSTFIELDS => $posts,    
                                 CURLOPT_CUSTOMREQUEST => "PUT",
@@ -264,8 +260,6 @@ class mercadopago {
                          $options = array(
                                 CURLOPT_RETURNTRANSFER => '1',
                                 CURLOPT_HTTPHEADER => $heads,
-                                CURLOPT_SSL_VERIFYPEER => 'false',
-                                CURLOPT_SSLVERSION => 3,
                                 CURLOPT_URL => $url,
                                 CURLOPT_POSTFIELDS => $posts,    
                                 CURLOPT_CUSTOMREQUEST => "POST",
@@ -275,8 +269,6 @@ class mercadopago {
                         $options = array(
                                 CURLOPT_RETURNTRANSFER => '1',
                                 CURLOPT_HTTPHEADER => $heads,
-                                CURLOPT_SSL_VERIFYPEER => 'false',
-                                CURLOPT_SSLVERSION => 3,
                                 CURLOPT_URL => $url,
                                 CURLOPT_POSTFIELDS => $posts,    
                                 CURLOPT_CUSTOMREQUEST => "DELETE",
@@ -287,8 +279,6 @@ class mercadopago {
                             $options = array(
                                CURLOPT_RETURNTRANSFER => '1',
                                CURLOPT_HTTPHEADER => $heads,
-                               CURLOPT_SSL_VERIFYPEER => 'false',
-                               CURLOPT_SSLVERSION => 3,
                                CURLOPT_URL => $url,
                                CURLOPT_POSTFIELDS => $posts ,
                                CURLOPT_CUSTOMREQUEST => "GET"
