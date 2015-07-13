@@ -14,6 +14,13 @@
 
     <?php
     switch($type_checkout):
+        case "Redirect": ?>
+            <script type="text/javascript">
+                window.location = '<?php echo $link;?>';
+            </script>
+            <div class="right">Redirigiendo a MercadoPago, por favor, espere...</div>
+            <?php
+            break;
         case "Iframe":
                 ?>
 		    <iframe src="<?php echo $link ?>" name="MP-Checkout" width="740" height="600" frameborder="0"></iframe>

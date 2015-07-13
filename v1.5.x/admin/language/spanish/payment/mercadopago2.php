@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Heading
 $_['heading_title']						= 'MercadoPago Version 2.0';
 

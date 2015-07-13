@@ -296,8 +296,7 @@ class ControllerPaymentMercadopago2 extends Controller {
 	
 	private function getTypeCheckout(){
 		
-		//Redirect not working because ajax request not redirect this page..
-		$type_checkout = array("Lightbox", "Iframe");
+		$type_checkout = array("Redirect","Lightbox", "Iframe");
 		
 		return $type_checkout;
 	}
