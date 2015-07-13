@@ -7,20 +7,32 @@
  * @author hcasatti
  *
  */
-$GLOBALS["LIB_LOCATION"] = dirname(__FILE__);
 
 class MP {
 
-    const version = "0.2.1";
+    const version = "0.3.3";
 
     private $client_id;
     private $client_secret;
+    private $ll_access_token;
     private $access_data;
     private $sandbox = FALSE;
 
-    function __construct($client_id, $client_secret) {
-        $this->client_id = $client_id;
-        $this->client_secret = $client_secret;
+    function __construct() {
+        $i = func_num_args(); 
+
+        if ($i > 2 || $i < 1) {
+            throw new Exception("Invalid arguments. Use CLIENT_ID and CLIENT SECRET, or ACCESS_TOKEN");
+        }
+
+        if ($i == 1) {
+            $this->ll_access_token = func_get_arg(0);
+        }
+
+        if ($i == 2) {
+            $this->client_id = func_get_arg(0);
+            $this->client_secret = func_get_arg(1);
+        }
     }
 
     public function sandbox_mode($enable = NULL) {
@@ -35,13 +47,21 @@ class MP {
      * Get Access Token for API use
      */
     public function get_access_token() {
+        if (isset ($this->ll_access_token) && !is_null($this->ll_access_token)) {
+            return $this->ll_access_token;
+        }
+
         $app_client_values = $this->build_query(array(
             'client_id' => $this->client_id,
             'client_secret' => $this->client_secret,
             'grant_type' => 'client_credentials'
-                ));
+        ));
 
         $access_data = MPRestClient::post("/oauth/token", $app_client_values, "application/x-www-form-urlencoded");
+
+        if ($access_data["status"] != 200) {
+            throw new Exception ($access_data['response']['message'], $access_data['status']);
+        }
 
         $this->access_data = $access_data['response'];
 
@@ -57,6 +77,7 @@ class MP {
         $access_token = $this->get_access_token();
 
         $uri_prefix = $this->sandbox ? "/sandbox" : "";
+            
         $payment_info = MPRestClient::get($uri_prefix."/collections/notifications/" . $id . "?access_token=" . $access_token);
         return $payment_info;
     }
@@ -206,17 +227,106 @@ class MP {
         return $preapproval_payment_result;
     }
 
-	/**
+    /**
      * Update a preapproval payment
      * @param string $preapproval_payment, $id
      * @return array(json)
-     */	
-	
-	public function update_preapproval_payment($id, $preapproval_payment) {
+     */ 
+    
+    public function update_preapproval_payment($id, $preapproval_payment) {
         $access_token = $this->get_access_token();
 
         $preapproval_payment_result = MPRestClient::put("/preapproval/" . $id . "?access_token=" . $access_token, $preapproval_payment);
         return $preapproval_payment_result;
+    }
+
+    /* Generic resource call methods */
+
+    /**
+    * Generic resource get
+    * @param uri
+    * @param params
+    * @param authenticate = true
+    */
+    public function get($uri, $params = null, $authenticate = true) {
+        $params = is_array ($params) ? $params : array();
+
+        if ($authenticate !== false) {
+            $access_token = $this->get_access_token();
+
+            $params["access_token"] = $access_token;
+        }
+
+        if (count($params) > 0) {
+            $uri .= (strpos($uri, "?") === false) ? "?" : "&";
+            $uri .= $this->build_query($params);            
+        }
+
+        $result = MPRestClient::get($uri);
+        return $result;
+    }
+
+    /**
+    * Generic resource post
+    * @param uri
+    * @param data
+    * @param params
+    */
+    public function post($uri, $data, $params = null) {
+        $params = is_array ($params) ? $params : array();
+
+        $access_token = $this->get_access_token();
+        $params["access_token"] = $access_token;
+
+        if (count($params) > 0) {
+            $uri .= (strpos($uri, "?") === false) ? "?" : "&";
+            $uri .= $this->build_query($params);            
+        }
+
+        $result = MPRestClient::post($uri, $data);
+        return $result;
+    }
+
+    /**
+    * Generic resource put
+    * @param uri
+    * @param data
+    * @param params
+    */
+    public function put($uri, $data, $params = null) {
+        $params = is_array ($params) ? $params : array();
+
+        $access_token = $this->get_access_token();
+        $params["access_token"] = $access_token;
+
+        if (count($params) > 0) {
+            $uri .= (strpos($uri, "?") === false) ? "?" : "&";
+            $uri .= $this->build_query($params);            
+        }
+
+        $result = MPRestClient::put($uri, $data);
+        return $result;
+    }
+
+    /**
+    * Generic resource delete
+    * @param uri
+    * @param data
+    * @param params
+    */
+    public function delete($uri, $params = null) {
+        $params = is_array ($params) ? $params : array();
+
+        $access_token = $this->get_access_token();
+        $params["access_token"] = $access_token;
+
+        if (count($params) > 0) {
+            $uri .= (strpos($uri, "?") === false) ? "?" : "&";
+            $uri .= $this->build_query($params);
+        }
+
+        $result = MPRestClient::delete($uri);
+        return $result;
     }
 
     /* **************************************************************************************** */
@@ -240,9 +350,13 @@ class MP {
  */
 class MPRestClient {
 
-    const API_BASE_URL = "https://api.mercadolibre.com";
+    const API_BASE_URL = "https://api.mercadopago.com";
 
     private static function get_connect($uri, $method, $content_type) {
+        if (!extension_loaded ("curl")) {
+            throw new Exception("cURL extension not found. You need to enable cURL in your php.ini or another configuration you have.");
+        }
+
         $connect = curl_init(self::API_BASE_URL . $uri);
 
         curl_setopt($connect, CURLOPT_USERAGENT, "MercadoPago PHP SDK v" . MP::version);
@@ -281,13 +395,28 @@ class MPRestClient {
         $api_result = curl_exec($connect);
         $api_http_code = curl_getinfo($connect, CURLINFO_HTTP_CODE);
 
+        if ($api_result === FALSE) {
+            throw new Exception (curl_error ($connect));
+        }
+
         $response = array(
             "status" => $api_http_code,
             "response" => json_decode($api_result, true)
         );
 
         if ($response['status'] >= 400) {
-            throw new Exception ($response['response']['message'], $response['status']);
+            $message = $response['response']['message'];
+            if (isset ($response['response']['cause'])) {
+                if (isset ($response['response']['cause']['code']) && isset ($response['response']['cause']['description'])) {
+                    $message .= " - ".$response['response']['cause']['code'].': '.$response['response']['cause']['description'];
+                } else if (is_array ($response['response']['cause'])) {
+                    foreach ($response['response']['cause'] as $cause) {
+                        $message .= " - ".$cause['code'].': '.$cause['description'];
+                    }
+                }
+            }
+
+            throw new Exception ($message, $response['status']);
         }
 
         curl_close($connect);
@@ -307,6 +436,7 @@ class MPRestClient {
         return self::exec("PUT", $uri, $data, $content_type);
     }
 
+    public static function delete($uri, $content_type = "application/json") {
+        return self::exec("DELETE", $uri, $null, $content_type);
+    }
 }
-
-?>
