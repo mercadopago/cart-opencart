@@ -1,6 +1,6 @@
-# OpenCart - Mercadopago Module (v1.4.9 - 1.5.x)
+# OpenCart - MercadoPago Module (v1.4.9, 1.5.x, 2.x)
 ---
-*Available for Argentina, Brazil, México and Venezuela*
+*Available for Argentina, Brazil, Chile, Colombia, Mexico and Venezuela*
 
 
 ## Installation:
@@ -8,6 +8,7 @@
 1. Download Mercadopago module:
     * OpenCart 1.4.9
     * OpenCart 1.5.x
+    * OpenCart 2.x
 
 2. Copy the folders **admin**, **catalog** and **image** to your OpenCart ROOT installation. Make sure to keep the OpenCart folders structure intact.
 
@@ -27,16 +28,22 @@
 
 	Get your **CLIENT_ID** and **CLIENT_SECRET** in the following address:
 	* Argentina: [https://www.mercadopago.com/mla/herramientas/aplicaciones](https://www.mercadopago.com/mla/herramientas/aplicaciones)
-	* Brasil: [https://www.mercadopago.com/mlb/ferramentas/aplicacoes](https://www.mercadopago.com/mlb/ferramentas/aplicacoes)
+	* Brazil: [https://www.mercadopago.com/mlb/ferramentas/aplicacoes](https://www.mercadopago.com/mlb/ferramentas/aplicacoes)
+	* Chile: [https://www.mercadopago.com/mlc/herramientas/aplicaciones](https://www.mercadopago.com/mlc/herramientas/aplicaciones)
+	* Colombia: [https://www.mercadopago.com/mco/herramientas/aplicaciones](https://www.mercadopago.com/mco/herramientas/aplicaciones)
 	* Mexico: [https://www.mercadopago.com/mlm/herramientas/aplicaciones](https://www.mercadopago.com/mlm/herramientas/aplicaciones)
 	* Venezuela: [https://www.mercadopago.com/mlv/herramientas/aplicaciones](https://www.mercadopago.com/mlv/herramientas/aplicaciones)
 
 ***IMPORTANT:*** *This module will only work with the following currencies:*
 
-* Brasil:
-	* BRL (Real)
 * Argentina:
 	* ARS (Peso Argentino)
+* Brazil:
+	* BRL (Real)
+* Chile:
+	* CLP (Peso Chileno)
+* Colombia:
+	* COP (Peso Colombiano)
 * Mexico:
 	* MXN (Peso Mexicano)
 * Venezuela:
@@ -47,7 +54,10 @@
 
 1. Go to **Mercadopago IPN configuration**:
 	* Argentina: [https://www.mercadopago.com/mla/herramientas/notificaciones](https://www.mercadopago.com/mla/herramientas/notificaciones)
-	* Brasil: [https://www.mercadopago.com/mlb/ferramentas/notificacoes](https://www.mercadopago.com/mlb/ferramentas/notificacoes)
+	* Brazil: [https://www.mercadopago.com/mlb/ferramentas/notificacoes](https://www.mercadopago.com/mlb/ferramentas/notificacoes)
+	* Chile: [https://www.mercadopago.com/mlc/herramientas/notificaciones](https://www.mercadopago.com/mlc/herramientas/notificaciones)
+	* Colombia: [https://www.mercadopago.com/mco/herramientas/notificaciones](https://www.mercadopago.com/mco/herramientas/notificaciones)
 	* Mexico: [https://www.mercadopago.com/mlm/herramientas/notificaciones](https://www.mercadopago.com/mlm/herramientas/notificaciones)
         * Venezuela: [https://www.mercadopago.com/mlv/herramientas/notificaciones](https://www.mercadopago.com/mlv/herramientas/notificaciones)
+
 2. Enter the URL as follow: ***[yourstoreaddress.com]***/index.php?route=payment/mercadopago2/retorno/
