@@ -5,22 +5,22 @@
 
 ## Installation:
 
-1. Download Mercadopago module:
+1. Download MercadoPago module:
     * OpenCart 1.4.9
     * OpenCart 1.5.x
     * OpenCart 2.x
 
 2. Copy the folders **admin**, **catalog** and **image** to your OpenCart ROOT installation. Make sure to keep the OpenCart folders structure intact.
 
-## Setup Mercadopago
+## Setup MercadoPago
 
-1. On your store administration, go to **extensions > payments > Mercado Pago 2.0** and click **Install**.
+1. On your store administration, go to **extensions > payments > MercadoPago 2.0** and click **Install**.
 
-2. Again in **extensions > payments > Mercado Pago 2.0**, click **Edit** to Setup your Mercadopago account:
+2. Again in **extensions > payments > MercadoPago 2.0**, click **Edit** to Setup your MercadoPago account:
 
-	![Mercadopago Accounr](https://raw.github.com/mercadopago/cart-opencart/master/README.img/MPAccount.png)
+	![MercadoPago Account](https://raw.github.com/mercadopago/cart-opencart/master/README.img/MPAccount.png)
 
-3. Set your Country where your Mercadopago account was created and save config.
+3. Set your Country where your MercadoPago account was created and save config.
 	
 	***Note:*** *If you change the Country where your account was created you need save config to refresh the excluded payment methods.*
 
@@ -50,9 +50,9 @@
 	* VEF (Bolivar fuerte)
 
 ---
-## Sync your backoffice with Mercadopago (IPN) 
+## Sync your backoffice with MercadoPago (IPN) 
 
-1. Go to **Mercadopago IPN configuration**:
+1. Go to **MercadoPago IPN configuration**:
 	* Argentina: [https://www.mercadopago.com/mla/herramientas/notificaciones](https://www.mercadopago.com/mla/herramientas/notificaciones)
 	* Brazil: [https://www.mercadopago.com/mlb/ferramentas/notificacoes](https://www.mercadopago.com/mlb/ferramentas/notificacoes)
 	* Chile: [https://www.mercadopago.com/mlc/herramientas/notificaciones](https://www.mercadopago.com/mlc/herramientas/notificaciones)
