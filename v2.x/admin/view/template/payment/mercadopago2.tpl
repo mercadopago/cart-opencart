@@ -29,7 +29,6 @@
     </div>
     <div class="panel-body">
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
-
        <div class="form-group">
         <label class="col-sm-2 control-label" for="input-status"><?php echo $entry_status; ?></label>
         <div class="col-sm-10">
@@ -44,7 +43,20 @@
           </select>
         </div>
       </div>
-
+      <div class="form-group required">
+        <label class="col-sm-2 control-label" for="entry_type_checkout"><?php echo $entry_type_checkout; ?></label>
+        <div class="col-sm-10">
+         <select class="form-control" name="mercadopago2_type_checkout" id="mercadopago2_type_checkout">
+          <?php foreach ($type_checkout as $type) : ?>
+          <?php if ($type == $mercadopago2_type_checkout) : ?>
+          <option value="<?php echo $type; ?>" selected="selected" id="<?php echo $type; ?>"><?php echo $type; ?></option>
+          <?php  else : ?>
+          <option value="<?php echo $type; ?>" id="<?php echo $type; ?>"><?php echo $type; ?></option>
+          <?php endif; ?>
+          <?php endforeach; ?>
+        </select>
+      </div>
+    </div>
       <div class="form-group required">
        <label class="col-sm-2 control-label" for="mercadopago2_client_id">
         <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_client_id_tooltip; ?> '><?php echo $entry_client_id; ?></span></label>
@@ -146,22 +158,6 @@
     </div>
   </div>  
 
-  <div class="form-group required">
-    <label class="col-sm-2 control-label" for="entry_type_checkout"><?php echo $entry_type_checkout; ?></label>
-    <div class="col-sm-10">
-     <select class="form-control" name="mercadopago2_type_checkout" id="mercadopago2_type_checkout">
-      <?php foreach ($type_checkout as $type) : ?>
-      <?php if ($type == $mercadopago2_type_checkout) : ?>
-      <option value="<?php echo $type; ?>" selected="selected" id="<?php echo $type; ?>"><?php echo $type; ?></option>
-      <?php  else : ?>
-      <option value="<?php echo $type; ?>" id="<?php echo $type; ?>"><?php echo $type; ?></option>
-      <?php endif; ?>
-      <?php endforeach; ?>
-    </select>
-  </div>
-</div>
-
-
 <div class="form-group required">
   <label class="col-sm-2 control-label" for="mercadopago2_order_status_id"><span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_order_status_tooltip; ?> '><?php echo $entry_order_status; ?> </span></label>
   <div class="col-sm-10">
@@ -206,7 +202,7 @@
 </select>
 </div>
 </div>
-<?php if(isset($methods) && count($methods) > 0) : ?>
+<?php if(isset($mercadopago2_methods) && count($mercadopago2_methods) > 0) : ?>
 <div class="form-group">
 <label class="col-sm-2 control-label" for="mercadopago2_methods">
   <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_payments_not_accept_tooltip; ?> '>
@@ -218,7 +214,7 @@
     <?php foreach ($methods as $method) : ?>
           <div style="<?php echo $payment_style; ?>" id="<?php echo $method['name'];?>">
             <?php if($method['id'] != 'account_money') : ?>
-                <?php if($mercadopago2_methods != null && in_array($method['id'], $mercadopago2_methods)) : ?>
+                <?php if($methods != null && in_array($method['id'], $methods)) : ?>
               <img src="<?php echo $method['secure_thumbnail'];?>"><br /><input name="mercadopago2_methods[]" type="checkbox" checked="yes" value="<?php echo $method['id'];?>" style="margin-left:25%;">
             </div>
             <?php   else : ?>
