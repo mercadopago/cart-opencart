@@ -1,6 +1,6 @@
 <?php 
 // Heading
-$_['heading_title']                     = 'MercadoPago 2.0';
+$_['heading_title']                     = 'MercadoPago';
 
 // Text
 $_['text_payment']                      = 'Pagamento';
@@ -61,9 +61,13 @@ $_['entry_order_status_refunded']           = 'Estornada:';
 $_['entry_order_status_refunded_tooltip']   = '<span class="help">Selecione o status padrão para suas vendas cujo pagamento foi <b>estornado</b></span>';
 $_['entry_order_status_in_mediation']       = 'Mediação:';
 $_['entry_order_status_in_mediation_tooltip'] = '<span class="help">Select Selecione o status padrão para suas vendas cujo pagamento está <b> em mediação</b></span>';
+$_['entry_public_key']      = 'Public key:';
+$_['entry_public_key_tooltip'] = '<span class="help">Public key para utilizar o checkout transparente. Para obtê-la, clique <a target="_blank" href="https://www.mercadopago.com/mlb/account/credentials">aqui</a></span>';
+$_['entry_access_token']      = 'Access Token:';
+$_['entry_access_token_tooltip'] = '<span class="help">Access Token para utilizar o checkout transparente. Para obtê-lo, clique <a target="_blank" href="https://www.mercadopago.com/mlb/account/credentials">aqui</a></span>';
 
 // Error
-$_['error_permission']                      = 'Desculpe, você não possui permissão para modificar o módulo MercadoPago 2.0';
+$_['error_permission']                      = 'Desculpe, você não possui permissão para modificar o módulo MercadoPago';
 $_['error_client_id']                       = 'Desculpe, o <b>Client Id</b> é obrigatório.';
 $_['error_client_secret']                   = 'Desculpe, o <b>Client Secret</b> é obrigatório.';
 

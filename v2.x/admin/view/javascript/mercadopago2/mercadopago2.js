@@ -49,15 +49,36 @@
 
                 if (selected_payments.length == 0) 
                 {
-                    
                     var div_error_methods = document.getElementById('div_error_methods');
                     $('#div_payments').find('input[type=checkbox]')[0].focus();
                     div_error_methods.innerHTML = '<b>Please, select at least one payment method</b>';
                     return;
                 };
 
-                $('#form').submit();
+                $('#form_mp').submit();
             };
         })();
 
+    })();
+    (function(){
+        var combo_checkout = document.getElementById('mercadopago2_type_checkout');
+        combo_checkout.onchange = function(){
+            console.log('ativou o evento!');
+                if(combo_checkout.value == 'Transparente')
+                {
+                    $('#div_public_key').show();
+                    $('#div_access_token').show();
+                    $('#div_client_id').hide();
+                    $('#div_client_secret').hide();
+                    
+                }
+                else
+                {
+                    $('#div_public_key').hide();
+                    $('#div_access_token').hide();
+                    $('#div_client_id').show();
+                    $('#div_client_secret').show();
+                }
+        };
+        combo_checkout.onchange();
     })();

@@ -1,4 +1,4 @@
-# OpenCart - Mercadopago Module (v1.4.9 - 1.5.x)
+# OpenCart - Mercadopago Module (v1.4.9 - 1.5.x - 2.x)
 ---
 *Available for Argentina, Brazil, México and Venezuela*
 
@@ -8,6 +8,7 @@
 1. Download Mercadopago module:
     * OpenCart 1.4.9
     * OpenCart 1.5.x
+    * OpenCart 2.x
 
 2. Copy the folders **admin**, **catalog** and **image** to your OpenCart ROOT installation. Make sure to keep the OpenCart folders structure intact.
 
@@ -17,7 +18,7 @@
 
 2. Again in **extensions > payments > Mercado Pago 2.0**, click **Edit** to Setup your Mercadopago account:
 
-	![Mercadopago Accounr](https://raw.github.com/mercadopago/cart-opencart/master/README.img/MPAccount.png)
+	![Mercadopago Account](https://raw.github.com/mercadopago/cart-opencart/master/README.img/MPAccount.png)
 
 3. Set your Country where your Mercadopago account was created and save config.
 	
@@ -43,7 +44,7 @@
 	* VEF (Bolivar fuerte)
 
 ---
-## Sync your backoffice with Mercadopago (IPN) 
+## Sync your backoffice with Mercadopago (IPN) - not necessary in v2.x
 
 1. Go to **Mercadopago IPN configuration**:
 	* Argentina: [https://www.mercadopago.com/mla/herramientas/notificaciones](https://www.mercadopago.com/mla/herramientas/notificaciones)
