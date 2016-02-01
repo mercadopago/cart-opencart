@@ -52,7 +52,41 @@
                     
                 <?php
                 break;
-        endswitch;
+        case "Transparente": ?>
+        <input type="hidden" id="public_key" value="<?php echo $public_key?>">
+        <script type="text/javascript" src="//fgnass.github.io/spin.js/spin.min.js"></script>
+        <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+        <div id="spinner"> 
+        <div id="formulario"></div>
+            <script src="./catalog/view/javascript/mercadopago2/react.js"></script>
+            <script src="./catalog/view/javascript/mercadopago2/react-dom.js"></script>
+            <script defer src="./catalog/view/javascript/mercadopago2/mercadopago2_checkout_transparente.js"></script>
+            <script defer src="./catalog/view/javascript/mercadopago2/mask.js"></script>
+            <script defer src="./catalog/view/javascript/mercadopago2/jquery.bpopup.min.js"></script>
+            <script type="text/javascript" defer>
+            (function(){
+                $('#expiration_date').mask('99/9999');
+            })();
+            </script>
+        </div>
+
+        <div id="modal_popup" class="modal fade" role="dialog" style="display: none;">
+          <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Pagamento</h4>
+              </div>
+              <div class="modal-body">
+                <p id="return_message"></p>
+              </div>
+              
+            </div>
+
+          </div>
+        </div>
+        <?php break; endswitch;
         ?>
         
     <?php  ;} ?>
