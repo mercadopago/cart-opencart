@@ -1,7 +1,7 @@
 #coding: utf-8
 from splinter import Browser
 
-browser = Browser('chrome')
+browser = Browser()
 utils = {}
 prefix = 'mercadopago2_';
 payment_methods =['visa', 'master']
@@ -11,10 +11,10 @@ ddl_fields = {'status': 'Enabled', 'category_id': 'Computers & Tablets', 'debug'
               'order_status_id_canceled': 'Canceled', 'order_status_id_in_process': 'Processing', 
               'order_status_id_rejected': 'Denied', 'order_status_id_refunded': 'Refunded', 
               'order_status_id_in_mediation': 'Processing', 'country': 'Brasil', 'installments': 'maximum'}
-public_key = 'TEST-5d721b08-82f3-46e0-835a-b4aa68cabbdc'
-access_token = 'TEST-7105443776147217-010714-f04869b29811b63378cc44e9028cc38d__LC_LA__-202432160'
-client_id = '4423738825988138'
-client_secret = 'ShFbRmci0Sh2sgxCwfciTx2Z0woqbMtK'
+public_key = 'your_public_key'
+access_token = 'your_access_token'
+client_id = 'your_client_id'
+client_secret = 'your_client_secret'
 text_fields = {'public_key': public_key,
                'access_token': access_token,
                'client_id': client_id , 'client_secret': client_secret,
