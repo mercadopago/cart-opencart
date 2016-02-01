@@ -75,9 +75,7 @@ class MP {
      */
     public function get_payment($id) {
         $access_token = $this->get_access_token();
-
         $uri_prefix = $this->sandbox ? "/sandbox" : "";
-            error_log('URL CHAMADA: ' . $uri_prefix."/collections/notifications/" . $id . "?access_token=" . $access_token);
         $payment_info = MPRestClient::get($uri_prefix."/collections/notifications/" . $id . "?access_token=" . $access_token);
         return $payment_info;
     }
@@ -173,8 +171,8 @@ class MP {
      */
     public function create_preference($preference) {
         $access_token = $this->get_access_token();
-
-        $preference_result = MPRestClient::post("/checkout/preferences?access_token=" . $access_token, $preference);
+        $header = "application/json;X-Tracking-Id: platform: openplatform,so:1.0,type:OpenCart2Standard";
+        $preference_result = MPRestClient::post("/checkout/preferences?access_token=" . $access_token, $preference, $header);
         return $preference_result;
     }
 
@@ -213,6 +211,20 @@ class MP {
 
         $preapproval_payment_result = MPRestClient::post("/preapproval?access_token=" . $access_token, $preapproval_payment);
         return $preapproval_payment_result;
+    }    
+    /**
+     * Create a payment
+     * @param array $payment
+     * @return array(json)
+     */
+    public function create_payment($payment) {
+        $access_token = $this->get_access_token();
+        //$params = is_array ($params) ? $params : array();
+        //$params["access_token"] = $access_token;
+        $header = "application/json;X-Tracking-Id: platform: openplatform,so:1.0,type:OpenCart2v1";
+        $result = MPRestClient::post('/v1/payments?access_token=' . $access_token, $payment, $header);
+        //$payment_result = MPRestClient::post("/preapproval?access_token=" . $access_token, $preapproval_payment);
+        return $result;
     }
 
     /**
@@ -282,8 +294,7 @@ class MP {
             $uri .= (strpos($uri, "?") === false) ? "?" : "&";
             $uri .= $this->build_query($params);            
         }
-
-        $result = MPRestClient::post($uri, $data);
+        $result = MPRestClient::post($uri, $data);
         return $result;
     }
 
@@ -329,6 +340,22 @@ class MP {
         return $result;
     }
 
+    /**
+    * Get Access Token for API use
+    */
+    public function getAccessToken()
+    {
+        $app_client_values = $this->build_query(array(
+        'client_id' => $this->client_id,
+        'client_secret' => $this->client_secret,
+        'grant_type' => 'client_credentials'
+    ));
+
+        $access_data = MPRestClient::post('/oauth/token', $app_client_values, 'application/x-www-form-urlencoded');
+        return $this->access_data['response']['access_token'];
+    }
+
+
     /* **************************************************************************************** */
 
     private function build_query($params) {
@@ -368,7 +395,7 @@ class MPRestClient {
     }
 
     private static function set_data(&$connect, $data, $content_type) {
-        if ($content_type == "application/json") {
+        if (strpos($content_type, 'application/json') !== false) {
             if (gettype($data) == "string") {
                 json_decode($data, true);
             } else {
@@ -382,7 +409,6 @@ class MPRestClient {
                 }
             }
         }
-
         curl_setopt($connect, CURLOPT_POSTFIELDS, $data);
     }
 
@@ -403,12 +429,11 @@ class MPRestClient {
             "status" => $api_http_code,
             "response" => json_decode($api_result, true)
         );
-        error_log('------------------------------------começo da resposta do servidor------------------------------------');
-        error_log($api_result);
-        error_log('------------------------------------fim da resposta do servidor------------------------------------');
+        //error_log('------------------------------------começo da resposta do servidor------------------------------------');
+        //error_log($api_result);
+        //error_log('------------------------------------fim da resposta do servidor------------------------------------');
         if ($response['status'] >= 400) {
             $message = $response['response']['message'];
-            error_log('msg de erro'. $message);
             if (isset ($response['response']['cause'])) {
                 if (isset ($response['response']['cause']['code']) && isset ($response['response']['cause']['description'])) {
                     $message .= " - ".$response['response']['cause']['code'].': '.$response['response']['cause']['description'];
@@ -418,7 +443,7 @@ class MPRestClient {
                     }
                 }
             }
-
+            
             throw new Exception ($message, $response['status']);
         }
 

@@ -3,7 +3,7 @@
 <div class="page-header">
   <div class="container-fluid">
     <div class="pull-right">
-      <a onclick="$('#form').submit();" id="btn_save" class="btn btn-primary"><?php echo $button_save; ?><i class="fa fa-save"></i></a>
+      <a id="btn_save" class="btn btn-primary"><?php echo $button_save; ?><i class="fa fa-save"></i></a>
       <a onclick="location = '<?php echo $cancel; ?>';" class="btn btn-default"><?php echo $button_cancel; ?><i class="fa fa-reply"></i></a>
     </div>
     <h1><?php echo $heading_title; ?></h1>
@@ -24,11 +24,8 @@
     <div class="panel-heading">
       <h3 class="panel-title"><i class="fa fa-pencil"></i>Edit MercadoPago</h3>
     </div>
-    <div class="panel-heading">
-      <h1 class="panel-title"><?php echo $entry_ipn;?></h1>
-    </div>
     <div class="panel-body">
-      <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
+      <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form_mp" class="form-horizontal">
        <div class="form-group">
         <label class="col-sm-2 control-label" for="input-status"><?php echo $entry_status; ?></label>
         <div class="col-sm-10">
@@ -57,7 +54,7 @@
         </select>
       </div>
     </div>
-      <div class="form-group required">
+      <div class="form-group required" id="div_client_id">
        <label class="col-sm-2 control-label" for="mercadopago2_client_id">
         <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_client_id_tooltip; ?> '><?php echo $entry_client_id; ?></span></label>
        <div class="col-sm-10">
@@ -68,7 +65,7 @@
        </div>
 
      </div>
-     <div class="form-group required">
+     <div class="form-group required" id="div_client_secret">
       <label class="col-sm-2 control-label" for="mercadopago2_client_secret">
       <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_client_secret_tooltip; ?> '><?php echo $entry_client_secret; ?></span></label>
       <div class="col-sm-10">
@@ -78,6 +75,27 @@
         <?php endif; ?>
       </div>
     </div>
+     <div class="form-group required" id="div_public_key">
+       <label class="col-sm-2 control-label" for="mercadopago2_public_key">
+        <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_public_key_tooltip; ?> '><?php echo $entry_public_key; ?></span></label>
+       <div class="col-sm-10">
+         <input type="text" class="form-control" id="mercadopago2_public_key" name="mercadopago2_public_key" value="<?php echo $mercadopago2_public_key; ?>" />
+         <?php if (isset($error_public_key)) : ?>
+         <div class="text-danger"><?php echo $error_public_key; ?></div>
+         <?php endif; ?>
+       </div>
+      </div>     
+      <div class="form-group required" id="div_access_token">
+       <label class="col-sm-2 control-label" for="mercadopago2_access_token">
+        <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_access_token_tooltip; ?> '><?php echo $entry_access_token; ?></span></label>
+       <div class="col-sm-10">
+         <input type="text" class="form-control" id="mercadopago2_access_token" name="mercadopago2_access_token" value="<?php echo $mercadopago2_access_token; ?>" />
+         <?php if (isset($error_access_token)) : ?>
+         <div class="text-danger"><?php echo $error_access_token; ?></div>
+         <?php endif; ?>
+       </div>
+      </div>
+
     <div class="form-group required">
       <label class="col-sm-2 control-label" for="mercadopago2_category_id"> <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_category_tooltip; ?>'>
             <?php echo $entry_category; ?></label>
@@ -136,8 +154,8 @@
           <option value="all" selected="selected"><?php echo $text_enabled; ?></option>
           <option value="approved"><?php echo $text_disabled; ?></option>
           <?php  else : ?>
-          <option value="1"><?php echo $text_enabled; ?></option>
-          <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+          <option value="all"><?php echo $text_enabled; ?></option>
+          <option value="approved" selected="selected"><?php echo $text_disabled; ?></option>
           <?php endif; ?>
         </select>
       </div>
@@ -157,6 +175,9 @@
       </select>
     </div>
   </div>  
+
+
+
 
 <div class="form-group required">
   <label class="col-sm-2 control-label" for="mercadopago2_order_status_id"><span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_order_status_tooltip; ?> '><?php echo $entry_order_status; ?> </span></label>
@@ -202,7 +223,7 @@
 </select>
 </div>
 </div>
-<?php if(isset($mercadopago2_methods) && count($mercadopago2_methods) > 0) : ?>
+<?php if(isset($methods) && count($methods) > 0) : ?>
 <div class="form-group">
 <label class="col-sm-2 control-label" for="mercadopago2_methods">
   <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_payments_not_accept_tooltip; ?> '>
@@ -214,7 +235,7 @@
     <?php foreach ($methods as $method) : ?>
           <div style="<?php echo $payment_style; ?>" id="<?php echo $method['name'];?>">
             <?php if($method['id'] != 'account_money') : ?>
-                <?php if($methods != null && in_array($method['id'], $methods)) : ?>
+                <?php if($methods != null && in_array($method['id'], $mercadopago2_methods)) : ?>
               <img src="<?php echo $method['secure_thumbnail'];?>"><br /><input name="mercadopago2_methods[]" type="checkbox" checked="yes" value="<?php echo $method['id'];?>" style="margin-left:25%;">
             </div>
             <?php   else : ?>
@@ -227,14 +248,6 @@
   </div>
 </div>
 </div>
-
-<!--
-<div class="form-group">
-<label  class="col-sm-2 control-label" for="mercadopago2_sort_order"><?php echo $entry_sort_order; ?></label>
-<div class=col-sm-10>
-  <input class="form-control" type="text" name="mercadopago2_sort_order" id="mercadopago2_sort_order" value="<?php echo $mercadopago2_sort_order; ?>" size="1" />
-</div>
-</div>-->
 <?php endif; ?>
 <div class="form-group"></div>
 <div class="form-group">

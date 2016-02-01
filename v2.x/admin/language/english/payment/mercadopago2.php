@@ -1,6 +1,6 @@
 <?php 
 // Heading
-$_['heading_title']						= 'MercadoPago 2.0';
+$_['heading_title']						= 'MercadoPago';
 
 // Text
 $_['text_payment']						= 'Payment';
@@ -58,11 +58,14 @@ $_['entry_order_status_rejected']			= 'Reject:';
 $_['entry_order_status_rejected_tooltip']   = '<span class="help">Select the status order case the payment was <b>reject</b></span>';
 $_['entry_order_status_refunded']			= 'Refunded:';
 $_['entry_order_status_refunded_tooltip']	= '<span class="help">Select the status order case the payment was <b>Refunded</b></span>';
-$_['entry_order_status_in_mediation']	    = 'Mediation:';
+$_['entry_order_status_in_mediation']       = 'Mediation:';
 $_['entry_order_status_in_mediation_tooltip'] = '<span class="help">Select the status order case the payment is in <b>Mediation</b></span>';
-
+$_['entry_public_key']	    = 'Public key:';
+$_['entry_public_key_tooltip'] = '<span class="help">Public key to use transparent checkout. To obtain it, click <a target="_blank" href="https://www.mercadopago.com/mlb/account/credentials">here</a></span>';
+$_['entry_access_token']      = 'Access Token:';
+$_['entry_access_token_tooltip'] = '<span class="help">Access Token to use transparent checkout. To obtain it, click <a target="_blank" href="https://www.mercadopago.com/mlb/account/credentials">here</a></span>';
 // Error
-$_['error_permission']						= 'Sorry, you don\'t have permission to to modify MercadoPago 2.0';
+$_['error_permission']						= 'Sorry, you don\'t have permission to to modify MercadoPago';
 $_['error_client_id']						= 'Sorry, your <b>Client Id</b> is mandatory.';
 $_['error_client_secret']					= 'Sorry <b>Client Secret</b> is mandatory.';
 
