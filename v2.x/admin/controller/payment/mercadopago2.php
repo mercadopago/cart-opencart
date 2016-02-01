@@ -271,9 +271,7 @@ include_once '../catalog/controller/payment/mercadopago.php';
             if (!$this->user->hasPermission('modify', 'payment/mercadopago2')) {
             	$this->error['warning'] = $this->language->get('error_permission');
     		}
-            if ($this->request->post['mercadopago2_ch']) {
-                # code...
-            }
+            
     		if (!$this->request->post['mercadopago2_client_id']) {
             	$this->error['error_client_id'] = $this->language->get('error_client_id');
     		}
