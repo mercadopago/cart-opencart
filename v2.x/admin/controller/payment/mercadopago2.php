@@ -8,7 +8,7 @@ include_once '../catalog/controller/payment/mercadopago.php';
     	public function index() {
             $prefix = 'mercadopago2_';
             $fields = array('public_key', 'access_token', 'client_id', 'client_secret', 'status', 'category_id', 'url', 'debug', 'sandbox', 'type_checkout',// 'methods',
-                    'country', 'installments', 'order_status_id', 'sort_order', 'order_status_id_completed', 'order_status_id_pending', 'order_status_id_canceled',
+                    'country', 'installments', 'order_status_id', 'order_status_id_completed', 'order_status_id_pending', 'order_status_id_canceled',
                     'order_status_id_in_process', 'order_status_id_rejected', 'order_status_id_refunded', 'order_status_id_in_mediation'); 
 
     		$this->load->language('payment/mercadopago2');
@@ -56,7 +56,6 @@ include_once '../catalog/controller/payment/mercadopago.php';
             $data['entry_payments_not_accept'] = $this->language->get('entry_payments_not_accept');
             $data['entry_status'] = $this->language->get('entry_status');
     		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
-    		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
     		$data['entry_country'] = $this->language->get('entry_country');
     		$data['entry_sonda_key'] = $this->language->get('entry_sonda_key');
     		$data['entry_order_status'] = $this->language->get('entry_order_status');
@@ -132,7 +131,7 @@ include_once '../catalog/controller/payment/mercadopago.php';
                 {
                     $fieldname = $prefix . $field;
                     $value = $this->config->get($fieldname);
-                    $data[$fieldname] =  $value;
+                    $data[$fieldname] =  $value;// != null? $value: "";
                 }
             }
            $country_id = $this->config->get('mercadopago2_country') == null? 
@@ -223,8 +222,8 @@ include_once '../catalog/controller/payment/mercadopago.php';
     	
     	private function getTypeCheckout(){
     		
-            //$type_checkout = array("Redirect","Lightbox", "Iframe", "Transparente");
-    		$type_checkout = array("Redirect","Lightbox", "Iframe");
+            $type_checkout = array("Redirect","Lightbox", "Iframe", "Transparente");
+    		//$type_checkout = array("Redirect","Lightbox", "Iframe");
     		
     		return $type_checkout;
     	}

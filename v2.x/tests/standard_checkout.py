@@ -23,9 +23,9 @@ def fill_guest_checkout_data():
 def fill_authenticated_customer_data():
     time.sleep(1)
     email_field = browser.find_by_id('input-email').first
-    email_field.value = 'youremail@gmail.com'
+    email_field.value = 'brunobemfica@gmail.com'
     password_field = browser.find_by_id('input-password').first
-    password_field.value = 'yourpassword'
+    password_field.value = 'admin'
     browser.find_by_id('button-login').click()
     time.sleep(2)
     browser.find_by_id('button-payment-address').click()
