@@ -30,17 +30,17 @@ window types (i.e. redirect, iframe, modal, blank and popup). Customization is n
   <thead>
   <tbody>
     <tr>
-      <td><a href="/v1.4.9/">v1.4.9</a></td>
+      <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v1.4.9">v1.4.9</a></td>
       <td>Deprecated (Old Version)</td>
       <td>OpenCart v1.4.9</td>
     </tr>
     <tr>
-      <td><a href="/v1.5.x/">v1.5.x</a></td>
+      <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v1.5.x">v1.5.x</a></td>
       <td>Deprecated (Old Version)</td>
       <td>OpenCart v1.5.x</td>
     </tr>
     <tr>
-      <td><a href="/v2.x/">v2.x</a></td>
+      <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v2.x">v2.x</a></td>
       <td>Stable (Current Version)</td>
       <td>OpenCart v2.x</td>
      </tr>
