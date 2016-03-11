@@ -26,10 +26,6 @@ class ModelPaymentMercadopago2 extends Model {
             'terms' => '',
 			'sort_order' => $this->config->get('mercadopago2_sort_order')
       		);
-
-
-
-
     	}
    
     	return $method_data;
