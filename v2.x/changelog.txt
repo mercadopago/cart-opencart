@@ -8,7 +8,7 @@
 
 \f0\fs24 \cf0 CHANGELOG:\
 V1.0.3 (11/03/2016)\
--  Splitted in 2 modu\
+-  Splitted v2.x in two different modules (standard and custom)\
 \
 V1.0.2 (11/03/2016)\
 - Added custom checkout (only cards)\
