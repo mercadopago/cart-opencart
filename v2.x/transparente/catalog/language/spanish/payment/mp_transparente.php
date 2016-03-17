@@ -1,9 +1,9 @@
 <?php
 // Text
-$url = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-$admin = strpos($url, 'admin') !== FALSE? '':'./admin/';
-$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mercadopago2.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;"> ';
-$_['currency_no_support'] = 'La moneda seleccionado no es aceptado por MercadoPago';
+$url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$admin = strpos($url, 'admin') !== FALSE ? '' : './admin/';
+$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_transparente.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;"> ';
+$_['currency_no_support'] = 'La moneda seleccionada no es aceptada por MercadoPago';
 
 $_['ccnum_placeholder'] = 'Numero de la tarjeta de credito';
 $_['name_placeholder'] = 'Nombre (como escrito en la tarjeta)';
@@ -12,15 +12,15 @@ $_['docnumber_placeholder'] = 'Numero de documento';
 $_['expiration_month_placeholder'] = 'Mes de expiración';
 $_['expiration_year_placeholder'] = 'Año de expiración';
 $_['error_invalid_payment_type'] = 'Medio de pago no aceptado.';
-$_['installments_placeholder'] = 'Parcelas' ;
-$_['issuer_placeholder'] = 'Banco' ;
-$_['cardType_placeholder'] = 'Tipo de Pago' ;
+$_['installments_placeholder'] = 'Parcelas';
+$_['issuer_placeholder'] = 'Banco';
+$_['cardType_placeholder'] = 'Tipo de Pago';
 $_['payment_processing'] = "Procesando el pago";
 $_['payment_title'] = "Pago";
 $_['payment_button'] = "Pagar";
 
 $_['S200'] = 'Pago aprobado!';
-$_['S201'] = $_['S200'] ;
+$_['S201'] = $_['S200'];
 $_['S2000'] = 'Pago no encontrado';
 $_['S4'] = 'Caller no tiene autorización para acceder a esta función.';
 $_['S2041'] = 'Sólo los administradores pueden ejecutar la acción solicitada.';

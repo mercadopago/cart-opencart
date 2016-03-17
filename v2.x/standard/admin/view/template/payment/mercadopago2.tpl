@@ -89,27 +89,6 @@
         <?php endif; ?>
       </div>
     </div>
-     <div class="form-group required" id="div_public_key">
-       <label class="col-sm-2 control-label" for="mercadopago2_public_key">
-        <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_public_key_tooltip; ?> '><?php echo $entry_public_key; ?></span></label>
-       <div class="col-sm-10">
-         <input type="text" class="form-control" id="mercadopago2_public_key" name="mercadopago2_public_key" value="<?php echo $mercadopago2_public_key; ?>" />
-         <?php if (isset($error_public_key)) : ?>
-         <div class="text-danger"><?php echo $error_public_key; ?></div>
-         <?php endif; ?>
-       </div>
-      </div>     
-      <div class="form-group required" id="div_access_token">
-       <label class="col-sm-2 control-label" for="mercadopago2_access_token">
-        <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_access_token_tooltip; ?> '><?php echo $entry_access_token; ?></span></label>
-       <div class="col-sm-10">
-         <input type="text" class="form-control" id="mercadopago2_access_token" name="mercadopago2_access_token" value="<?php echo $mercadopago2_access_token; ?>" />
-         <?php if (isset($error_access_token)) : ?>
-         <div class="text-danger"><?php echo $error_access_token; ?></div>
-         <?php endif; ?>
-       </div>
-      </div>
-
     <div class="form-group required">
       <label class="col-sm-2 control-label" for="mercadopago2_category_id"> <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_category_tooltip; ?>'>
             <?php echo $entry_category; ?></label>
@@ -125,27 +104,6 @@
         </select>
       </div>
     </div>
-
-    <div class="form-group required">
-     <label class="col-sm-2 control-label" for="mercadopago2_url">
-      <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_url_tooltip; ?> '>
-      <?php echo $entry_url; ?></span></label>
-      <div class="col-sm-10" id="div_store_url">
-        <input class="form-control" type="text" name="mercadopago2_url" value="<?php echo $mercadopago2_url; ?>" />
-        <?php if (isset($error_mercadopago2_url)) : ?>
-        <div class="text-danger" id="div_error_url">
-            <?php echo $error_mercadopago2_url; ?></div>
-          <?php endif; ?>
-      </div>
-    </div>
-    <div class="form-group" id="div_notifications" style="visibility:hidden;">
-      <label class="col-sm-2 control-label" for="mercadopago2_notification_url">
-      <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_notification_url_tooltip; ?>'><?php echo $entry_notification_url; ?></span></label>
-      <div class="col-sm-10">
-        <input type="text" class="form-control" id="mercadopago2_notification_url" name="mercadopago2_notification_url"/>
-      </div>
-    </div>
-
     <div class="form-group required">
       <label class="col-sm-2 control-label" for="mercadopago2_debug"><span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_debug_tooltip; ?> '> <?php echo $entry_debug; ?></span></label>
       <div class="col-sm-10">

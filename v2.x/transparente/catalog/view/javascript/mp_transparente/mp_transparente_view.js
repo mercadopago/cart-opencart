@@ -51,8 +51,7 @@ document.getElementById('cc_num').addEventListener('change', function () {
 
       if(cc_num.length >5)
       {
-         var public_key = document.getElementById("public_key").value;
-        console.log('public key: ' + public_key);
+        var public_key = document.getElementById("public_key").value;
         Mercadopago.setPublishableKey(public_key);
 
         Mercadopago.getPaymentMethod({
@@ -61,19 +60,14 @@ document.getElementById('cc_num').addEventListener('change', function () {
             document.querySelector('input[data-checkout="cardNumber"]').style.background = "url(" + response[0].secure_thumbnail + ") 98% 50% no-repeat"
             var paymentType = document.getElementById('paymentType')
             paymentType.value = response[0].id;//.replace('deb', '').replace('cred', '');
-            console.log('response');
-            console.log(response);
             if (response[0].additional_info_needed.indexOf('issuer_id') > -1)
             {
-                console.log('rolou 1');
                 getCardIssuers();
                 document.getElementById('divIssuer').style = 'display: block;';
                 if(document.getElementById('country').value == "MLM")
                 {
-                    console.log('rolou 2');
                     if(paymentType.value.indexOf('visa') > -1 || paymentType.value.indexOf('master') > -1)
                     {
-                        console.log('rolou 3');
                         document.getElementById('divPaymentType').style = 'display: block;';    
                     }
                     
@@ -81,7 +75,6 @@ document.getElementById('cc_num').addEventListener('change', function () {
             }
             else
             {
-                console.log('num rolou');
                  document.getElementById('divIssuer').style = 'display: none;';
                  document.getElementById('divPaymentType').style = 'display: none;';
             }
@@ -107,19 +100,14 @@ document.getElementById('button_pay').addEventListener('click', function () {
             form.docType = document.getElementById('doc_type').value;
             form.docNumber = document.getElementById('doc_number').value;
         }
-                    console.log('form');
-                    console.log(form);
         var url_site = window.location.href.split('index.php')[0];
         var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
-        url_backend += 'index.php?route=payment/mercadopago2/payment/';         
+        url_backend += 'index.php?route=payment/mp_transparente/payment/';         
         
         var p_return = document.getElementById('return_message');
         p_return.innerHTML = "";
        Mercadopago.createToken(form, function (status, response) {
-           console.log('response');
-           console.log(response);
            var valid_status = [200, 201];
-            console.log('entrou no createToken');
             if(response.error || valid_status.indexOf(status) < 0)
             {
                 spinner.stop();
@@ -145,8 +133,6 @@ document.getElementById('button_pay').addEventListener('click', function () {
                 {
                     payment.issuer_id = issuer;
                 }
-                console.log('payment');
-                console.log(payment);
                 setTimeout(function(){
                     spinner.stop();
                     document.getElementById('formulario').style = '';
@@ -180,7 +166,7 @@ document.getElementById('button_pay').addEventListener('click', function () {
             if (url_site.value != "")
             {
                 var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';
-                url_backend += 'index.php?route=payment/mercadopago2/getPaymentDataByLanguage/';
+                url_backend += 'index.php?route=payment/mp_transparente/getPaymentDataByLanguage/';
                 console.log('url_backend ' + url_backend);
                 $.get(url_backend , function(data) {
                     var dt = JSON.parse(data);
@@ -205,7 +191,7 @@ document.getElementById('button_pay').addEventListener('click', function () {
         var p_return = document.getElementById('return_message');
         var url_site = window.location.href.split('index.php')[0];
         var url_message = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
-        url_message += 'index.php?route=payment/mercadopago2/getPaymentStatus&status=' 
+        url_message += 'index.php?route=payment/mp_transparente/getPaymentStatus&status=' 
         + response_payment.status + '&request_type=' + response_payment.request_type;    
         $.get(url_message, function success(rtn) 
         {
@@ -213,7 +199,7 @@ document.getElementById('button_pay').addEventListener('click', function () {
             var payment_return = JSON.parse(rtn);
             p_return.innerHTML = payment_return["message"];
             $('#modal_popup').bPopup();
-            console.log('response_payment');
+            
         });
                       
  }
@@ -296,8 +282,6 @@ function getInstallments()
 }
 
 document.getElementById('cardType').addEventListener('change', function(){
-    console.log('entrou no listener do cardType');
-    
     var paymentType = document.getElementById('paymentType');
     var bg = document.querySelector('input[data-checkout="cardNumber"]');
     
@@ -315,7 +299,6 @@ document.getElementById('cardType').addEventListener('change', function(){
                     paymentType.value = paymentType.value.replace('deb','')
                     bg.style.background =   bg.style.background.replace('debvisa.gif', 'visa.gif').replace('debmaster.gif', 'master.gif');    
                 }
-                
     }   
 
 });

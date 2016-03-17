@@ -2,17 +2,19 @@
 
 require_once '../catalog/controller/payment/mercadopago.php';
 
-class ControllerPaymentMercadopago2 extends Controller {
+class ControllerPaymentMPTransparente extends Controller {
 	private $_error = array();
+	private $payment_types = array('debvisa', 'debmaster', 'credit_card', 'debit_card');
 	public function index() {
-		$prefix = 'mercadopago2_';
-		$fields = array('client_id', 'client_secret', 'status', 'category_id',
+		$prefix = 'mp_transparente_';
+		$fields = array('public_key', 'access_token', 'status', 'category_id',
 			'debug', 'sandbox', 'country', 'installments', 'order_status_id',
-			'order_status_id_completed', 'order_status_id_pending', 'order_status_id_canceled',
-			'order_status_id_in_process', 'order_status_id_rejected', 'order_status_id_refunded',
+			'order_status_id_completed', 'order_status_id_pending',
+			'order_status_id_canceled', 'order_status_id_in_process',
+			'order_status_id_rejected', 'order_status_id_refunded',
 			'order_status_id_in_mediation', 'order_status_chargeback');
 
-		$this->load->language('payment/mercadopago2');
+		$this->load->language('payment/mp_transparente');
 		$this->document->setTitle($this->language->get('heading_title'));
 		$this->load->model('setting/setting');
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -24,12 +26,8 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$data['text_mercadopago'] = $this->language->get('text_mercadopago');
 
 		//Tooltips
-		$data['entry_autoreturn_tooltip'] = $this->language->get('entry_autoreturn_tooltip');
 		$data['entry_public_key_tooltip'] = $this->language->get('entry_public_key_tooltip');
 		$data['entry_access_token_tooltip'] = $this->language->get('entry_access_token_tooltip');
-		$data['entry_client_id_tooltip'] = $this->language->get('entry_client_id_tooltip');
-		$data['entry_client_secret_tooltip'] = $this->language->get('entry_client_secret_tooltip');
-		$data['entry_url_tooltip'] = $this->language->get('entry_url_tooltip');
 		$data['entry_payments_not_accept_tooltip'] = $this->language->get('entry_payments_not_accept_tooltip');
 		$data['entry_debug_tooltip'] = $this->language->get('entry_debug_tooltip');
 		$data['entry_sandbox_tooltip'] = $this->language->get('entry_sandbox_tooltip');
@@ -43,15 +41,10 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$data['entry_order_status_refunded_tooltip'] = $this->language->get('entry_order_status_refunded_tooltip');
 		$data['entry_order_status_in_mediation_tooltip'] = $this->language->get('entry_order_status_in_mediation_tooltip');
 		$data['entry_order_status_chargeback_tooltip'] = $this->language->get('entry_order_status_chargeback_tooltip');
-		$data['entry_notification_url_tooltip'] = $this->language->get('entry_notification_url_tooltip');
 
 		//end tooltips
 		$data['entry_public_key'] = $this->language->get('entry_public_key');
 		$data['entry_access_token'] = $this->language->get('entry_access_token');
-		$data['entry_notification_url'] = $this->language->get('entry_notification_url');
-		$data['entry_autoreturn'] = $this->language->get('entry_autoreturn');
-		$data['entry_client_id'] = $this->language->get('entry_client_id');
-		$data['entry_client_secret'] = $this->language->get('entry_client_secret');
 		$data['entry_installments'] = $this->language->get('entry_installments');
 		$data['entry_payments_not_accept'] = $this->language->get('entry_payments_not_accept');
 		$data['entry_status'] = $this->language->get('entry_status');
@@ -60,14 +53,11 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$data['entry_sonda_key'] = $this->language->get('entry_sonda_key');
 		$data['entry_order_status'] = $this->language->get('entry_order_status');
 		$data['entry_ipn_status'] = $this->language->get('entry_ipn_status');
-		$data['entry_url'] = $this->language->get('entry_url');
 		$data['entry_debug'] = $this->language->get('entry_debug');
 
 		$data['entry_sandbox'] = $this->language->get('entry_sandbox');
-		$data['entry_type_checkout'] = $this->language->get('entry_type_checkout');
 		$data['entry_category'] = $this->language->get('entry_category');
 
-		$data['entry_ipn'] = $this->language->get('text_ipn');
 		$data['entry_order_status_general'] = $this->language->get('entry_order_status_general');
 		$data['entry_order_status_completed'] = $this->language->get('entry_order_status_completed');
 		$data['entry_order_status_pending'] = $this->language->get('entry_order_status_pending');
@@ -80,10 +70,6 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
 		$data['tab_general'] = $this->language->get('tab_general');
-
-		$data['mercadopago2_enable_return'] = isset($this->request->post['mercadopago2_enable_return']) ?
-		$this->request->post['mercadopago2_enable_return'] :
-		$this->config->get('mercadopago2_enable_return');
 
 		$data['error_warning'] = isset($this->_error['warning']) ? $this->_error['warning'] : '';
 		$data['error_acc_id'] = isset($this->_error['acc_id']) ? $this->_error['acc_id'] : '';
@@ -102,12 +88,12 @@ class ControllerPaymentMercadopago2 extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('payment/mercadopago2', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('payment/mp_transparente', 'token=' . $this->session->data['token'], 'SSL'),
 		);
-		$data['action'] = HTTPS_SERVER . 'index.php?route=payment/mercadopago2&token=' . $this->session->data['token'];
+
+		$data['action'] = HTTPS_SERVER . 'index.php?route=payment/mp_transparente&token=' . $this->session->data['token'];
 		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token'];
 		$data['category_list'] = $this->getCategoryList();
-		$data['type_checkout'] = $this->getTypeCheckout();
 		$data['countries'] = $this->getCountries();
 		$data['installments'] = $this->getInstallments();
 		$data['header'] = $this->load->controller('common/header');
@@ -121,7 +107,6 @@ class ControllerPaymentMercadopago2 extends Controller {
 				$fieldname = $prefix . $field;
 				$this->request->post[$fieldname] = str_replace(" ", "", $this->request->post[$fieldname]);
 				$data[$fieldname] = $this->request->post[$fieldname];
-				error_log($field . ': ' . $data[$fieldname]);
 			}
 
 		} else {
@@ -132,14 +117,16 @@ class ControllerPaymentMercadopago2 extends Controller {
 			}
 		}
 
-		$country_id = $this->config->get('mercadopago2_country') == null ?
-		'MLA' : $this->config->get('mercadopago2_country');
+		$country_id = $this->config->get('mp_transparente_country') == null ?
+		'MLA' : $this->config->get('mp_transparente_country');
 
 		$methods_api = $this->getMethods($country_id);
 		$data['methods'] = array();
-		$data['mercadopago2_methods'] = preg_split("/[\s,]+/", $this->config->get('mercadopago2_methods'));
+		$data['mp_transparente_methods'] = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
 		foreach ($methods_api as $method) {
-			$data['methods'][] = $method;
+			if (in_array($method['payment_type_id'], $this->payment_types)) {
+				$data['methods'][] = $method;
+			}
 		}
 
 		$data['payment_style'] = isset($data['methods']) && count($data['methods']) > 12 ?
@@ -148,21 +135,21 @@ class ControllerPaymentMercadopago2 extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
 			$this->load->model('setting/setting');
 
-			if (isset($this->request->post['mercadopago2_methods'])) {
-				$names = $this->request->post['mercadopago2_methods'];
-				$this->request->post['mercadopago2_methods'] = '';
+			if (isset($this->request->post['mp_transparente_methods'])) {
+				$names = $this->request->post['mp_transparente_methods'];
+				$this->request->post['mp_transparente_methods'] = '';
 				foreach ($names as $name) {
-					$this->request->post['mercadopago2_methods'] .= $name . ',';
+					$this->request->post['mp_transparente_methods'] .= $name . ',';
 				}
 			}
-			$this->model_setting_setting->editSetting('mercadopago2', $this->request->post);
+			$this->model_setting_setting->editSetting('mp_transparente', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 			$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
 
 		}
 
-		$this->response->setOutput($this->load->view('payment/mercadopago2.tpl', $data));
+		$this->response->setOutput($this->load->view('payment/mp_transparente.tpl', $data));
 
 	}
 
@@ -171,18 +158,20 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$payment_methods = $this->getMethods($country_id);
 
 		foreach ($payment_methods as $method) {
-			$data['methods'][] = $method;
+			if (in_array($method['payment_type_id'], $this->payment_types)) {
+				$data['methods'][] = $method;
+			}
 		}
 
-		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('mercadopago2_methods'));
+		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
 		foreach ($methods_excludes as $exclude) {
-			$data['mercadopago2_methods'][] = $exclude;
+			$data['mp_transparente_methods'][] = $exclude;
 
 		}
 
 		if (isset($data['methods'])) {
 			$data['payment_style'] = count($data['methods']) > 12 ? "float:left; margin-left:7%" : "float:left; margin-left:5%";
-			$this->response->setOutput($this->load->view('payment/mercadopago2_payment_methods_partial.tpl', $data));
+			$this->response->setOutput($this->load->view('payment/mp_transparente_payment_methods_partial.tpl', $data));
 		}
 	}
 
@@ -216,14 +205,6 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$url = "https://api.mercadolibre.com/item_categories";
 		$category = $this->callJson($url);
 		return $category;
-	}
-
-	private function getTypeCheckout() {
-
-		//$type_checkout = array("Redirect","Lightbox", "Iframe", "Transparente");
-		$type_checkout = array("Redirect", "Lightbox", "Iframe");
-
-		return $type_checkout;
 	}
 
 	private function getInstallments() {
@@ -287,17 +268,9 @@ class ControllerPaymentMercadopago2 extends Controller {
 	}
 
 	private function validate() {
-		if (!$this->user->hasPermission('modify', 'payment/mercadopago2')) {
+		if (!$this->user->hasPermission('modify', 'payment/mp_transparente')) {
 			$this->_error['warning'] = $this->language->get('error_permission');
 		}
-		if (!$this->request->post['mercadopago2_client_id']) {
-			$this->_error['error_client_id'] = $this->language->get('error_client_id');
-		}
-
-		if (!$this->request->post['mercadopago2_client_secret']) {
-			$this->_error['error_client_secret'] = $this->language->get('error_client_secret');
-		}
-
 		return count($this->_error) < 1;
 
 	}
