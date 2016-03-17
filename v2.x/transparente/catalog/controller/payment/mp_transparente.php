@@ -156,7 +156,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/mp_transparente.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/mp_transparente.tpl', $data);
 		} else {
-			return $this->load->view('default/template/payment/mp_transparente.tpl', $data);
+			return $this->load->view('payment/mp_transparente.tpl', $data);
 		}
 	}
 
