@@ -1,9 +1,9 @@
 <?php
 // Text
 //$_['Stext_title'] = '<img src="./view/image/payment/mercadopago2.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;">'
-$url = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-$admin = strpos($url, 'admin') !== FALSE? '':'./admin/';
-$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mercadopago2.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;"> ';
+$url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$admin = strpos($url, 'admin') !== FALSE ? '' : './admin/';
+$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mercadopago2.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;"> - Standard Checkout';
 $_['currency_no_support'] = 'The currency selected is not supported by MercadoPago';
 $_['ccnum_placeholder'] = 'Credit Card Number';
 $_['expiration_date_placeholder'] = 'Expiration Date';
@@ -13,7 +13,7 @@ $_['docnumber_placeholder'] = 'Document Number';
 $_['expiration_month_placeholder'] = 'Expiration Month';
 $_['expiration_year_placeholder'] = 'Expiration Year';
 $_['error_invalid_payment_type'] = 'Payment type not accepted';
-$_['installments_placeholder'] = 'Installments' ;
+$_['installments_placeholder'] = 'Installments';
 $_['issuer_placeholder'] = 'Issuer';
 $_['cardType_placeholder'] = 'Payment Type';
 $_['payment_processing'] = "Processing payment";
@@ -191,4 +191,3 @@ $_['S151'] = "You can not make payments.";
 $_['S160'] = "We could not process your payment.";
 $_['S204'] = "Payment method is not available at this time. Choose another card or another payment method.";
 $_['S801'] = "Try again in a few minutes.";
-
