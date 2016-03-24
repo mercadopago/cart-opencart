@@ -1,3 +1,5 @@
+        <div id="mp_custom"></div>
+
         <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
         <input type="hidden" id="public_key" value="<?php echo $public_key;?>">
         <input type="hidden" id="country" value="<?php echo $action;?>">
@@ -78,24 +80,6 @@
         </div>
             <script defer type="text/javascript" src="//fgnass.github.io/spin.js/spin.min.js"></script>
             <script defer src="./catalog/view/javascript/mp_transparente/mask.js"></script>
-            <script defer src="./catalog/view/javascript/mp_transparente/jquery.bpopup.min.js"></script>
             <script defer type="text/javascript" src="./admin/view/javascript/mp_transparente/spinner.min.js"></script>
             <script defer src="./catalog/view/javascript/mp_transparente/mp_transparente_view.js"></script>
-        </div>
-
-        <div id="modal_popup" class="modal fade" role="dialog" style="display: none;">
-          <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-              <div class="modal-header">
-              
-                <button type="button" class="close" data-dismiss="modal" onclick="$('#modal_popup').bPopup().close();">&times;</button>
-                <h4 class="modal-title" id="paymentTitle">Pagamento</h4>
-              </div>
-              <div class="modal-body">
-                <p id="return_message"></p>
-              </div>
-            </div>
-
-          </div>
         </div>

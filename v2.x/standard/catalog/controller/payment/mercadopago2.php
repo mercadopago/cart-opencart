@@ -75,7 +75,8 @@ class ControllerPaymentMercadopago2 extends Controller {
 
 		$client_id = $this->config->get('mercadopago2_client_id');
 		$client_secret = $this->config->get('mercadopago2_client_secret');
-		$url = $this->config->get('mercadopago2_url');
+		error_log(json_encode($order_info));
+		$url = $order_info['store_url'];
 		$installments = (int) $this->config->get('mercadopago2_installments');
 
 		$shipments = array(
@@ -161,9 +162,9 @@ class ControllerPaymentMercadopago2 extends Controller {
 
 		//set back url
 		$back_urls = array(
-			"pending" => $url . '/index.php?route=payment/mercadopago2/callback',
-			"success" => $url . '/index.php?route=payment/mercadopago2/callback',
-			"failure" => $url . '/index.php?route=payment/mercadopago2/callback',
+			"pending" => $url . 'index.php?route=payment/mercadopago2/callback',
+			"success" => $url . 'index.php?route=payment/mercadopago2/callback',
+			"failure" => $url . 'index.php?route=payment/mercadopago2/callback',
 		);
 
 		$pref = array();

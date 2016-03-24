@@ -153,15 +153,14 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment_methods = array("installments" => $installments);
 		}
 
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/mp_transparente.tpl')) {
-			return $this->load->view($this->config->get('config_template') . '/mp_transparente.tpl', $data);
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/mp_transparente.tpl')) {
+			return $this->load->view($this->config->get('config_template') . '/template/payment/mp_transparente.tpl', $data);
 		} else {
 			return $this->load->view('payment/mp_transparente.tpl', $data);
 		}
 	}
 
 	public function getPaymentDataByLanguage() {
-		//TODO: Pegar o email do usuário neste método também.
 		$this->language->load('payment/mp_transparente');
 		$payment_data = array();
 		$payment_data['ccnum_placeholder'] = $this->language->get('ccnum_placeholder');

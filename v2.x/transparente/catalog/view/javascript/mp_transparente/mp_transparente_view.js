@@ -103,9 +103,7 @@ document.getElementById('button_pay').addEventListener('click', function () {
         var url_site = window.location.href.split('index.php')[0];
         var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
         url_backend += 'index.php?route=payment/mp_transparente/payment/';         
-        
-        var p_return = document.getElementById('return_message');
-        p_return.innerHTML = "";
+    
        Mercadopago.createToken(form, function (status, response) {
            var valid_status = [200, 201];
             if(response.error || valid_status.indexOf(status) < 0)
@@ -136,23 +134,20 @@ document.getElementById('button_pay').addEventListener('click', function () {
                 setTimeout(function(){
                     spinner.stop();
                     document.getElementById('formulario').style = '';
-                }, 3000); 
+                }, 5000); 
                 $.ajax({
                         type: "POST",
                         url: url_backend,
                         data: payment,
                         success: function success(data) {
-                        getMessage(data);
                         response_payment = JSON.parse(data);
                         if (response_payment.status == 200 || response_payment.status == 201)
-                           {
-                                setTimeout(function () {
-                                    var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
-                                    location += 'index.php?route=checkout/success';
-                                    window.location.href = location;
-                                    }, 5000);
-                           }
-                        }     
+                        {    
+                            var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
+                            location += 'index.php?route=checkout/success';
+                            window.location.href = location;
+                        }
+                            }     
                       });
             }
         }
@@ -186,20 +181,32 @@ document.getElementById('button_pay').addEventListener('click', function () {
  }
 
  function getMessage(data)
- {      
+ {      var div_error = document.createElement('div');
+        div_error.setAttribute('class', "alert alert-danger");
+        div_error.setAttribute('id',"div_error");
+        var btn_dismiss = document.createElement('button');
+        btn_dismiss.setAttribute('class',"close");
+        btn_dismiss.setAttribute('id',"btn_dismiss");
+        btn_dismiss.innerHTML = "x";
+
+        btn_dismiss.onclick = function()
+        {
+            document.getElementById('mp_custom').removeChild(document.getElementById('div_error'));
+        };
+     
+
         var response_payment = typeof(data) == "string"? JSON.parse(data): data;
-        var p_return = document.getElementById('return_message');
         var url_site = window.location.href.split('index.php')[0];
         var url_message = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
         url_message += 'index.php?route=payment/mp_transparente/getPaymentStatus&status=' 
         + response_payment.status + '&request_type=' + response_payment.request_type;    
         $.get(url_message, function success(rtn) 
         {
-            p_return.innerHTML = "";
             var payment_return = JSON.parse(rtn);
-            p_return.innerHTML = payment_return["message"];
-            $('#modal_popup').bPopup();
-            
+            var text = document.createTextNode(payment_return["message"]); 
+            div_error.appendChild(text);
+            div_error.appendChild(btn_dismiss);
+            document.getElementById('mp_custom').appendChild(div_error);
         });
                       
  }
@@ -217,19 +224,10 @@ function getInstallments()
         config.issuer_id = issuer;
     }
 
-    console.log('config');
-    console.log(config);
-    
-    console.log('issuer 1');
-    console.log(issuer);
-    
-
     Mercadopago.setPublishableKey(public_key);
     
     
     Mercadopago.getInstallments(config, function(httpStatus, data){
-        console.log('retorno do installments: ');
-        console.log(data);
         if (httpStatus == 200)
         {
             var installments = data[0].payer_costs;
