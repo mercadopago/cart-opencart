@@ -85,11 +85,10 @@ document.getElementById('cc_num').addEventListener('change', function () {
       }
 });
 
-document.getElementById('button_pay').addEventListener('click', function (event) {
-        event.preventDefault();
-        console.log('prevent default');
-        document.getElementById('formulario').style = 'pointer-events: none; opacity: 0.4;';
-
+document.getElementById('button_pay').addEventListener('click', function doPayment () {
+        var style = 'margin-left: 10px;'; 
+        document.getElementById('formulario').style = 'pointer-events: none; opacity: 0.4;' + style;
+        console.log('style do form 1: ' + JSON.stringify(document.getElementById('formulario').style));
         var spinner = new Spinner().spin(document.getElementById('spinner'));
         var form = {cardNumber: document.getElementById('cc_num').value,
                     securityCode: document.getElementById('cvv').value,
@@ -111,14 +110,14 @@ document.getElementById('button_pay').addEventListener('click', function (event)
             if(response.error || valid_status.indexOf(status) < 0)
             {
                 spinner.stop();
-                document.getElementById('formulario').style = '';
+                document.getElementById('formulario').style = style;
+                console.log('style do form 2: ' + JSON.stringify(document.getElementById('formulario').style));
                 var data = {status: response.cause[0].code, message: response.cause[0].description, request_type:"token"};
                 getMessage(data);
             } 
             else 
             {
                 var payment = {token: response.id, 
-                               //email: document.getElementById('email').value,
                                user: document.getElementById('card_name').value,
                                payment_method_id: document.getElementById('paymentType').value,
                                installments: document.getElementById('installments').value
@@ -135,14 +134,16 @@ document.getElementById('button_pay').addEventListener('click', function (event)
                 }
                 setTimeout(function(){
                     spinner.stop();
-                    document.getElementById('formulario').style = '';
-                }, 5000); 
+                    document.getElementById('formulario').style = style;
+                    console.log('style do form 3: ' + JSON.stringify(document.getElementById('formulario').style));
+                }, 5000);
                 $.ajax({
                         type: "POST",
                         url: url_backend,
                         data: payment,
                         success: function success(data) {
                         response_payment = JSON.parse(data);
+                        document.getElementById('formulario').style = 'margin-left: 10%';
                         if (response_payment.status == 200 || response_payment.status == 201)
                         {    
                             var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
@@ -155,7 +156,6 @@ document.getElementById('button_pay').addEventListener('click', function (event)
         }
         );
 });
-
  function getLabelNames()
  {
     var url_site =  window.location.href.split('index.php')[0];
@@ -183,7 +183,7 @@ document.getElementById('button_pay').addEventListener('click', function (event)
  }
 
  function getMessage(data)
- {      var div_error = document.createElement('div');
+ {      /*var div_error = document.createElement('div');
         div_error.setAttribute('class', "alert alert-danger");
         div_error.setAttribute('id',"div_error");
         var btn_dismiss = document.createElement('button');
@@ -194,7 +194,7 @@ document.getElementById('button_pay').addEventListener('click', function (event)
         btn_dismiss.onclick = function()
         {
             document.getElementById('mp_custom').removeChild(document.getElementById('div_error'));
-        };
+        };*/
      
 
         var response_payment = typeof(data) == "string"? JSON.parse(data): data;
@@ -205,10 +205,11 @@ document.getElementById('button_pay').addEventListener('click', function (event)
         $.get(url_message, function success(rtn) 
         {
             var payment_return = JSON.parse(rtn);
-            var text = document.createTextNode(payment_return["message"]); 
+            /*var text = document.createTextNode(payment_return["message"]); 
             div_error.appendChild(text);
             div_error.appendChild(btn_dismiss);
-            document.getElementById('mp_custom').appendChild(div_error);
+            document.getElementById('mp_custom').appendChild(div_error);*/
+            alert(payment_return['message']);
         });
                       
  }

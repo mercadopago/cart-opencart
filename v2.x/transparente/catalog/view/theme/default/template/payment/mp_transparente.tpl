@@ -78,8 +78,23 @@
             </div>
           </div>
         </div>
-            <script defer type="text/javascript" src="//fgnass.github.io/spin.js/spin.min.js"></script>
-            <script defer src="./catalog/view/javascript/mp_transparente/mask.js"></script>
-            <script defer type="text/javascript" src="./admin/view/javascript/mp_transparente/spinner.min.js"></script>
-            <script defer src="./catalog/view/javascript/mp_transparente/mp_transparente_view.js"></script>
+            <script type="text/javascript">
+         (function()
+                {
+                    var doc = document.getElementById('mp_custom');
+                    var srcs = ["//fgnass.github.io/spin.js/spin.min.js", 
+                                "./catalog/view/javascript/mp_transparente/mask.js",
+                                "./admin/view/javascript/mp_transparente/spinner.min.js", 
+                                "./catalog/view/javascript/mp_transparente/mp_transparente_view.js"];
+                    srcs.forEach(function(src){
+                        console.log('carregando ' + src);
+                       //var script = document.createElement('script');
+                       //script.setAttribute('src',src);
+                       //script.setAttribute('defer', 'defer');
+                       //doc.appendChild(script);
+                       $.getScript(src, function(){});
+                    });
+                })();
+
+               </script>
         </div>
