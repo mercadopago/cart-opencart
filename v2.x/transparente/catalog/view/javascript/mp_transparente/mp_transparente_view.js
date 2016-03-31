@@ -85,7 +85,9 @@ document.getElementById('cc_num').addEventListener('change', function () {
       }
 });
 
-document.getElementById('button_pay').addEventListener('click', function () {
+document.getElementById('button_pay').addEventListener('click', function (event) {
+        event.preventDefault();
+        console.log('prevent default');
         document.getElementById('formulario').style = 'pointer-events: none; opacity: 0.4;';
 
         var spinner = new Spinner().spin(document.getElementById('spinner'));
@@ -172,10 +174,10 @@ document.getElementById('button_pay').addEventListener('click', function () {
                     document.getElementById('installments_label').innerHTML = dt.installments_placeholder;
                     document.getElementById('cardType_label').innerHTML = dt.cardType_placeholder;
                     document.getElementById('button_pay').innerHTML = dt.payment_button;
-                    document.getElementById('paymentTitle').innerHTML = dt.payment_title;
-                    document.getElementById('return_message').innerHTML = dt.payment_processing;  
                     document.getElementById('doc_type_label').innerHTML = dt.doctype_placeholder;
                     document.getElementById('doc_number_label').innerHTML = dt.docnumber_placeholder;
+                    document.getElementById('paymentTitle').innerHTML = dt.payment_title;
+                    document.getElementById('return_message').innerHTML = dt.payment_processing; 
                 });
             }
  }

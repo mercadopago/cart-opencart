@@ -192,7 +192,7 @@ class ControllerPaymentMercadopago2 extends Controller {
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/mercadopago2.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/mercadopago2.tpl', $data);
 		} else {
-			return $this->load->view('payment/mercadopago2.tpl', $data);
+			return $this->load->view('default/template/payment/mercadopago2.tpl', $data);
 		}
 	}
 

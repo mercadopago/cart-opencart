@@ -11,7 +11,10 @@ document.getElementById('button_pay').addEventListener('click', function () {
                 response = JSON.parse(data);
                 if(response.error || valid_status.indexOf(status) < 0)
                 {
-                    $('#checkoutPayment').append('<a href="'+ response.url +'" download> Fazer download do boleto </a>');    
+                    window.open(response.url);
+                    var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
+                    location += 'index.php?route=checkout/success';
+                    window.location.href = location;
                 }
                 else
                 {

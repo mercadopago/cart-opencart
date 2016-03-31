@@ -17,7 +17,6 @@ class ControllerPaymentMPTicket extends Controller {
 
 	public function index() {
 		$this->language->load('payment/mp_ticket');
-		$data['public_key'] = $this->config->get('mp_ticket_public_key');
 		$data['payment_button'] = $this->language->get('payment_button');
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/mp_ticket.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/template/payment/mp_ticket.tpl', $data);
@@ -78,17 +77,11 @@ class ControllerPaymentMPTicket extends Controller {
 				$payment_data["sponsor_id"] = $this->sponsors[$this->config->get('mp_ticket_country')];
 			}
 
-			/*
-			$payment_json = json_encode($payment_data);
-			error_log('$payment_json');
-			error_log($payment_json);
-			*/
 			$payment_response = $mp->post("/v1/payments", $payment_data);
-			error_log("payment_response");
-			error_log(json_encode($payment_response));
+			error_log('payment response: ' . json_encode($payment_response));
+			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
 			echo json_encode(array("status" => $payment_response['status'], "url" => $payment_response['response']['transaction_details']['external_resource_url']));
-			//json_encode($payment);
-		} catch (Exception $e) {
+			} catch (Exception $e) {
 			error_log('deu erro: ' . $e);
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
 		}

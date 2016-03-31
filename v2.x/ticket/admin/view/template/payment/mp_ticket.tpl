@@ -40,16 +40,6 @@
             </select>
           </div>
         </div>
-        <div class="form-group required" id="div_public_key">
-         <label class="col-sm-2 control-label" for="mp_ticket_public_key">
-          <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_public_key_tooltip; ?> '><?php echo $entry_public_key; ?></span></label>
-          <div class="col-sm-10">
-           <input type="text" class="form-control" id="mp_ticket_public_key" name="mp_ticket_public_key" value="<?php echo $mp_ticket_public_key; ?>" />
-           <?php if (isset($error_public_key)) : ?>
-             <div class="text-danger"><?php echo $error_public_key; ?></div>
-           <?php endif; ?>
-         </div>
-       </div>     
        <div class="form-group required" id="div_access_token">
          <label class="col-sm-2 control-label" for="mp_ticket_access_token">
           <span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_access_token_tooltip; ?> '><?php echo $entry_access_token; ?></span></label>

@@ -7,7 +7,7 @@ class ControllerPaymentMPTicket extends Controller {
 
 	public function index() {
 		$prefix = 'mp_ticket_';
-		$fields = array('public_key', 'access_token', 'status', 'category_id',
+		$fields = array('access_token', 'status', 'category_id',
 			'debug', 'sandbox', 'order_status_id',
 			'order_status_id_completed', 'order_status_id_pending',
 			'order_status_id_canceled', 'order_status_id_in_process',

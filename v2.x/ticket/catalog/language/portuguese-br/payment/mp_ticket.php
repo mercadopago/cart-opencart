@@ -2,7 +2,7 @@
 // Text
 $url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $admin = strpos($url, 'admin') !== FALSE ? '' : './admin/';
-$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_ticket.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;"> - Ticket Checkout';
+$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_ticket.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;"> - Boleto';
 $_['currency_no_support'] = 'A moeda selecionada não é aceita pelo Mercadopago';
 $_['ccnum_placeholder'] = 'Número do cartão';
 $_['expiration_date_placeholder'] = 'Data de expiração';

@@ -263,6 +263,8 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment_response = $mp->create_payment($payment_json);
 			error_log("payment_response");
 			error_log(json_encode($payment_response));
+			error_log('payment response: ' . json_encode($payment_response));
+			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
 			echo json_encode(array("status" => $payment_response['status'], "message" => $payment_response['response']['status']));
 			//json_encode($payment);
 		} catch (Exception $e) {
