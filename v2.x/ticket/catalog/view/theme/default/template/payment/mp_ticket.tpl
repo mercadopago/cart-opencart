@@ -2,19 +2,11 @@
         <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
         <input type="hidden" id="public_key" value="<?php echo $public_key;?>">
         <input type="hidden" id="paymentType" value="ticket" />
-        <div class="form-group" style="margin-left: 10%;">
-            <div class="form-group" style="margin-bottom: 4%">
-                <div class="col-sm-6"  style="align:left;">
-                    <img src="./admin/view/image/payment/mp_ticket.png" />
-                </div>
-            </div>
-            <div class="clearfix"></div>
-        </div>
         <div id="spinner"> 
             <div id="formulario">
                <div class="panel-body" id="checkoutPayment">
                 <div class="form-group"id="buttonPay">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <button class="btn btn-primary pull-right" id="button_pay"><?echo $payment_button; ?></button>
                     </div>
                 </div>

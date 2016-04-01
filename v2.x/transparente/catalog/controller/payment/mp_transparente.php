@@ -67,12 +67,6 @@ class ControllerPaymentMPTransparente extends Controller {
 
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_transparente_debug');
-
-		// get credentials
-
-		//$client_id = $this->config->get('mp_transparente_client_id');
-		//$client_secret = $this->config->get('mp_transparenteclient_secret');
-		//$url = $this->config->get('mp_transparenteurl');
 		$installments = (int) $this->config->get('mp_transparente_installments');
 
 		$shipments = array(
@@ -258,15 +252,17 @@ class ControllerPaymentMPTransparente extends Controller {
 			}
 
 			$payment_json = json_encode($payment_data);
-			error_log('$payment_json');
-			error_log($payment_json);
+			$accepted_status = array('approved', "in_process");
 			$payment_response = $mp->create_payment($payment_json);
-			error_log("payment_response");
-			error_log(json_encode($payment_response));
-			error_log('payment response: ' . json_encode($payment_response));
-			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
-			echo json_encode(array("status" => $payment_response['status'], "message" => $payment_response['response']['status']));
-			//json_encode($payment);
+
+			//$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
+			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $payment_response['response']['status'], $payment_response['response']['status_detail'], true);
+			$json_response = array("status" => in_array($payment_response['response']['status_detail'], $accepted_status)? 201 : 400, "message" => $payment_response['response']['status']);
+			//echo json_encode(array("status" => $payment_response['status'], "message" => $payment_response['response']['status']));
+
+
+			echo json_encode($json_response);
+			
 		} catch (Exception $e) {
 			error_log('deu erro: ' . $e);
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
@@ -282,12 +278,11 @@ class ControllerPaymentMPTransparente extends Controller {
 
 	public function getPaymentStatus() {
 		$this->load->language('payment/mp_transparente');
-		$request_type = (string) $this->request->get['request_type'];
+		$request_type = isset($this->request->get['request_type']) ? (string) $this->request->get['request_type'] : "";
 		$status = (string) $this->request->get['status'];
-		$status = $request_type == "token" ? 'T' . $status : 'S' . $status;
-		error_log('$status: ' . $status);
+		$status = $request_type === NULL? $status: $request_type == "token" ? 'T' . $status : 'S' . $status;
+
 		$message = $this->language->get($status);
-		error_log('$message: ' . $message);
 		echo json_encode(array('message' => $message));
 	}
 
@@ -305,10 +300,9 @@ class ControllerPaymentMPTransparente extends Controller {
 		return $result;
 	}
 
-	public function callback() {
-		//$this->retorno();
+	public function callback() 
+	{
 		$this->response->redirect($this->url->link('checkout/success'));
-
 	}
 
 	public function notifications() {
@@ -324,15 +318,19 @@ class ControllerPaymentMPTransparente extends Controller {
 	}
 
 	private function retornoTransparente() {
-		$access_token = $this->config->get('mp_transparente_access_token');
 		$id = $this->request->get['data_id'];
+		$this->updateOrder($id);
+	}
+
+	private function updateOrder($id)
+	{
+		$access_token = $this->config->get('mp_transparente_access_token');
 		$url = 'https://api.mercadopago.com/v1/payments/' . $id . '?access_token=' . $access_token;
 		$payment = $this->callJson($url);
 		$order_id = $payment['external_reference'];
-		$order_status = $payment['status'];
 		$this->load->model('checkout/order');
 		$order = $this->model_checkout_order->getOrder($order_id);
-
+		$order_status = $payment['status'];
 		switch ($order_status) {
 		case 'approved':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
@@ -359,6 +357,5 @@ class ControllerPaymentMPTransparente extends Controller {
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
 			break;
 		}
-
 	}
 }

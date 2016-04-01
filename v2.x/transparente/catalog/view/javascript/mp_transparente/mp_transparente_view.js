@@ -142,15 +142,22 @@ document.getElementById('button_pay').addEventListener('click', function doPayme
                         url: url_backend,
                         data: payment,
                         success: function success(data) {
-                        response_payment = JSON.parse(data);
-                        document.getElementById('formulario').style = 'margin-left: 10%';
-                        if (response_payment.status == 200 || response_payment.status == 201)
-                        {    
-                            var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
-                            location += 'index.php?route=checkout/success';
-                            window.location.href = location;
-                        }
+                            response_payment = JSON.parse(data);
+                            console.log('json payment: ' + data);
+                            document.getElementById('formulario').style = 'margin-left: 10%';
+                            if (response_payment.status == 200 || response_payment.status == 201)
+                            {    
+                                var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
+                                location += 'index.php?route=checkout/success';
+                                window.location.href = location;
+                            }
+                            else
+                            {
+                                console.log('response_payment.status: ' + response_payment.status);
+                                delete response_payment.request_type;
+                                getMessage(response_payment);   
                             }     
+                        }
                       });
             }
         }
@@ -201,7 +208,12 @@ document.getElementById('button_pay').addEventListener('click', function doPayme
         var url_site = window.location.href.split('index.php')[0];
         var url_message = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
         url_message += 'index.php?route=payment/mp_transparente/getPaymentStatus&status=' 
-        + response_payment.status + '&request_type=' + response_payment.request_type;    
+        + response_payment.status;
+        if(response_payment.request_type)
+        {
+            url_message += '&request_type=' + response_payment.request_type;        
+        }
+        
         $.get(url_message, function success(rtn) 
         {
             var payment_return = JSON.parse(rtn);
