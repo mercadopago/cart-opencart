@@ -146,12 +146,7 @@ class ControllerPaymentMPTransparente extends Controller {
 			//case not exist exclude methods
 			$payment_methods = array("installments" => $installments);
 		}
-
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/mp_transparente.tpl')) {
-			return $this->load->view($this->config->get('config_template') . '/template/payment/mp_transparente.tpl', $data);
-		} else {
-			return $this->load->view('payment/mp_transparente.tpl', $data);
-		}
+		return $this->load->view('payment/mp_transparente.tpl', $data);
 	}
 
 	public function getPaymentDataByLanguage() {
@@ -254,15 +249,20 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment_json = json_encode($payment_data);
 			$accepted_status = array('approved', "in_process");
 			$payment_response = $mp->create_payment($payment_json);
-
+			$this->updateOrder($payment_response['id']);
+			/*3 situações:
+				200/201 aprovado
+				200/201 reprovado
+				outros status/reprovado
+				fazer if/else if/else */
 			//$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $payment_response['response']['status'], $payment_response['response']['status_detail'], true);
-			$json_response = array("status" => in_array($payment_response['response']['status_detail'], $accepted_status)? 201 : 400, "message" => $payment_response['response']['status']);
+
+			$json_response = array("status" => in_array($payment_response['response']['status_detail'], $accepted_status) ? 201 : 400, "message" => $payment_response['response']['status']);
 			//echo json_encode(array("status" => $payment_response['status'], "message" => $payment_response['response']['status']));
 
-
 			echo json_encode($json_response);
-			
+
 		} catch (Exception $e) {
 			error_log('deu erro: ' . $e);
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
@@ -280,7 +280,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$this->load->language('payment/mp_transparente');
 		$request_type = isset($this->request->get['request_type']) ? (string) $this->request->get['request_type'] : "";
 		$status = (string) $this->request->get['status'];
-		$status = $request_type === NULL? $status: $request_type == "token" ? 'T' . $status : 'S' . $status;
+		$status = $request_type === NULL ? $status : $request_type == "token" ? 'T' . $status : 'S' . $status;
 
 		$message = $this->language->get($status);
 		echo json_encode(array('message' => $message));
@@ -300,8 +300,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		return $result;
 	}
 
-	public function callback() 
-	{
+	public function callback() {
 		$this->response->redirect($this->url->link('checkout/success'));
 	}
 
@@ -322,8 +321,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$this->updateOrder($id);
 	}
 
-	private function updateOrder($id)
-	{
+	private function updateOrder($id) {
 		$access_token = $this->config->get('mp_transparente_access_token');
 		$url = 'https://api.mercadopago.com/v1/payments/' . $id . '?access_token=' . $access_token;
 		$payment = $this->callJson($url);

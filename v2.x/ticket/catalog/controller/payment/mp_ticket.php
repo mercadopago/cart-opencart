@@ -81,7 +81,7 @@ class ControllerPaymentMPTicket extends Controller {
 			error_log('payment response: ' . json_encode($payment_response));
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
 			echo json_encode(array("status" => $payment_response['status'], "url" => $payment_response['response']['transaction_details']['external_resource_url']));
-			} catch (Exception $e) {
+		} catch (Exception $e) {
 			error_log('deu erro: ' . $e);
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
 		}
@@ -99,6 +99,20 @@ class ControllerPaymentMPTicket extends Controller {
 			$error = array('status' => 400, 'message' => $this->language->get('error_access_token'));
 			return $error;
 		}
+
+	}
+
+	public function getAcceptedMethods() {
+		$token = $this->config->get('mp_ticket_access_token');
+		$methods_api = $this->getMethods($token)['response'];
+		$saved_methods = preg_split("/[\s,]+/", $this->config->get('mp_ticket_methods'));
+		$accepted_methods = array();
+		foreach ($methods_api as $method) {
+			if (in_array($method['id'], $saved_methods)) {
+				$accepted_methods[] = array('method' => $method['id'], 'secure_thumbnail' => $method['secure_thumbnail']);
+			}
+		}
+		echo json_encode(array('methods' => $accepted_methods));
 
 	}
 
@@ -126,7 +140,6 @@ class ControllerPaymentMPTicket extends Controller {
 	}
 
 	public function callback() {
-		//$this->retorno();
 		$this->response->redirect($this->url->link('checkout/success'));
 	}
 

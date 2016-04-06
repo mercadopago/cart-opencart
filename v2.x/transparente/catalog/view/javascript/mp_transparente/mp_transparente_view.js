@@ -153,7 +153,6 @@ document.getElementById('button_pay').addEventListener('click', function doPayme
                             }
                             else
                             {
-                                console.log('response_payment.status: ' + response_payment.status);
                                 delete response_payment.request_type;
                                 getMessage(response_payment);   
                             }     
@@ -190,7 +189,7 @@ document.getElementById('button_pay').addEventListener('click', function doPayme
  }
 
  function getMessage(data)
- {      /*var div_error = document.createElement('div');
+ {      var div_error = document.createElement('div');
         div_error.setAttribute('class', "alert alert-danger");
         div_error.setAttribute('id',"div_error");
         var btn_dismiss = document.createElement('button');
@@ -201,7 +200,7 @@ document.getElementById('button_pay').addEventListener('click', function doPayme
         btn_dismiss.onclick = function()
         {
             document.getElementById('mp_custom').removeChild(document.getElementById('div_error'));
-        };*/
+        };
      
 
         var response_payment = typeof(data) == "string"? JSON.parse(data): data;
@@ -217,11 +216,11 @@ document.getElementById('button_pay').addEventListener('click', function doPayme
         $.get(url_message, function success(rtn) 
         {
             var payment_return = JSON.parse(rtn);
-            /*var text = document.createTextNode(payment_return["message"]); 
+            var text = document.createTextNode(payment_return["message"]); 
+            div_error.innerHTML = "";
             div_error.appendChild(text);
             div_error.appendChild(btn_dismiss);
-            document.getElementById('mp_custom').appendChild(div_error);*/
-            alert(payment_return['message']);
+            document.getElementById('mp_custom').appendChild(div_error);
         });
                       
  }

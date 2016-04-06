@@ -1,3 +1,27 @@
+(function(){
+    var url_site = window.location.href.split('index.php')[0];
+    var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
+    url_backend += '/index.php?route=payment/mp_ticket/getAcceptedMethods';  
+    var spinner = new Spinner().spin(document.getElementById('spinner'));
+     $.ajax({
+            type: "POST",
+            url: url_backend,
+            success: function success(data){
+                 response = JSON.parse(data);
+                 var div = document.getElementById('div_payment_methods');
+                 var i = response.methods.length;
+                 while(i--)
+                 {
+                 var div_error = document.createElement('div');
+                        //adiciona os checkboxes e imagens e um event listener neles
+                        //para no onclick trocar o valor de um input hidden e
+                        // pegar sempre o meio de pagamento
+                        div_error.setAttribute('id',"div_error");
+                 }
+            }.
+            error: function(){} 
+})();
+
 document.getElementById('button_pay').addEventListener('click', function () {
     var spinner = new Spinner().spin(document.getElementById('spinner'));
     var url_site = window.location.href.split('index.php')[0];

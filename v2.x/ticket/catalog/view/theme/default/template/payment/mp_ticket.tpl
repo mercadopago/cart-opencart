@@ -5,8 +5,10 @@
         <div id="spinner"> 
             <div id="formulario">
                <div class="panel-body" id="checkoutPayment">
-                <div class="form-group"id="buttonPay">
+               <div class="form-group" id="div_payment_methods"></div>
+                <div class="form-group" id="buttonPay">
                     <div class="col-md-12">
+                        <input type="hidden" />
                         <button class="btn btn-primary pull-right" id="button_pay"><?echo $payment_button; ?></button>
                     </div>
                 </div>
