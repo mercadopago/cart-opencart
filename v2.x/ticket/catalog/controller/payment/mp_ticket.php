@@ -70,11 +70,11 @@ class ControllerPaymentMPTicket extends Controller {
 				//"token" => $this->request->post['token'],
 				"description" => 'Products',
 				//"payment_method_id" => $this->request->post['payment_method_id']);
-				"payment_method_id" => 'bolbradesco');
+				"payment_method_id" => $this->request->get['payment_method_id']);
 			$payment_data['additional_info'] = array('shipments' => $shipments, 'items' => $items);
 
 			if (strpos($order_info['email'], '@testuser.com') === false) {
-				$payment_data["sponsor_id"] = $this->sponsors[$this->config->get('mp_ticket_country')];
+				$payment_data["sponsor_id"] = $this->sponsors[$this->getCountry()];
 			}
 
 			$payment_response = $mp->post("/v1/payments", $payment_data);
@@ -86,6 +86,13 @@ class ControllerPaymentMPTicket extends Controller {
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
 		}
 
+	}
+
+	private function getCountry() {
+		$access_token = $this->config->get('mp_ticket_access_token');
+		$mp = new MP($access_token);
+		$result = $mp->get('/users/me?access_token=' . $access_token);
+		return $result['response']['site_id'];
 	}
 
 	private function getMethods($token) {

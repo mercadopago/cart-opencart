@@ -20,6 +20,7 @@ $_['payment_processing'] = "Processing payment";
 $_['payment_title'] = "Payment";
 $_['payment_button'] = "Pay";
 //Payment messages
+$_['S400'] = "We could not process your payment. Please, try again.";
 $_['S200'] = 'Payment approved!';
 $_['S201'] = 'Payment approved!';
 $_['S2000'] = 'Payment not found';

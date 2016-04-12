@@ -29,6 +29,17 @@ class ControllerPaymentMPTransparente extends Controller {
 		$this->load->model('checkout/order');
 
 		$this->language->load('payment/mp_transparente');
+		$data['ccnum_placeholder'] = $this->language->get('ccnum_placeholder');
+		$data['expiration_month_placeholder'] = $this->language->get('expiration_month_placeholder');
+		$data['expiration_year_placeholder'] = $this->language->get('expiration_year_placeholder');
+		$data['name_placeholder'] = $this->language->get('name_placeholder');
+		$data['doctype_placeholder'] = $this->language->get('doctype_placeholder');
+		$data['docnumber_placeholder'] = $this->language->get('docnumber_placeholder');
+		$data['installments_placeholder'] = $this->language->get('installments_placeholder');
+		$data['cardType_placeholder'] = $this->language->get('cardType_placeholder');
+		$data['payment_button'] = $this->language->get('payment_button');
+		$data['payment_title'] = $this->language->get('payment_title');
+		$data['payment_processing'] = $this->language->get('payment_processing');
 
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
@@ -146,7 +157,7 @@ class ControllerPaymentMPTransparente extends Controller {
 			//case not exist exclude methods
 			$payment_methods = array("installments" => $installments);
 		}
-		return $this->load->view('payment/mp_transparente.tpl', $data);
+		return $this->load->view('default/template/payment/mp_transparente.tpl', $data);
 	}
 
 	public function getPaymentDataByLanguage() {
@@ -181,14 +192,6 @@ class ControllerPaymentMPTransparente extends Controller {
 			$exclude = $this->config->get('mp_transparente_methods');
 			$accepted_methods = preg_split("/[\s,]+/", $exclude);
 			$payment_method_id = $this->request->post['payment_method_id'];
-
-			/*  if (!in_array($payment_method_id, $accepted_methods)) {
-				                $message = $this->language->get('error_invalid_payment_type');
-				                error_log('$message: ' . $message);
-				                echo json_encode(array("status" => 400, "message" => $message));
-				                return;
-			*/
-
 			$this->load->model('checkout/order');
 			$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 

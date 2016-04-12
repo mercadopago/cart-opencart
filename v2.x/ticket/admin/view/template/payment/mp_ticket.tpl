@@ -79,21 +79,6 @@
           </select>
         </div>
       </div>
-      <div class="form-group required">
-        <label class="col-sm-2 control-label" for="mp_ticket_sandbox"><span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_sandbox_tooltip; ?>'>
-          <?php echo $entry_sandbox; ?></span></label>
-          <div class="col-sm-10">
-           <select class="form-control" name="mp_ticket_sandbox" id="mp_ticket_sandbox">
-            <?php if ($mp_ticket_sandbox) : ?>
-              <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
-              <option value="0"><?php echo $text_disabled; ?></option>
-            <?php else : ?>
-              <option value="1"><?php echo $text_enabled; ?></option>
-              <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
-            <?php endif; ?>
-          </select>
-        </div>
-      </div>  
       <?php if(isset($methods)) : ?>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="mp_ticket_methods">

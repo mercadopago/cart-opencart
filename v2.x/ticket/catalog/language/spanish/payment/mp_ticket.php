@@ -2,7 +2,7 @@
 // Text
 $url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $admin = strpos($url, 'admin') !== FALSE ? '' : './admin/';
-$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_ticket.png" alt="Mercado Pago" title="Mercado Pago" style="border: 1px solid #EEEEEE;"> ';
+$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_ticket.png" alt="Mercado Pago" title="Mercado Pago" style="border: 1px solid #EEEEEE;"> - Ticket';
 $_['currency_no_support'] = 'La moneda seleccionada no es aceptada por Mercado Pago';
 
 $_['ccnum_placeholder'] = 'Número de la tarjeta';
@@ -19,7 +19,7 @@ $_['payment_processing'] = "Procesando el pago";
 $_['payment_title'] = "Pago";
 $_['payment_button'] = "Pagar";
 $_['cvv'] = "Codigo de Seguridad";
-
+$_['S400'] = "No fue posible procesar su pago. Por favor, intente nuevamente.";
 $_['S200'] = 'Pago aprobado!';
 $_['S201'] = $_['S200'];
 $_['S2000'] = 'Pago no encontrado';

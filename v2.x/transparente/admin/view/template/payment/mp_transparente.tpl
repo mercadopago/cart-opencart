@@ -104,21 +104,6 @@
         </select>
       </div>
     </div>
-    <div class="form-group required">
-      <label class="col-sm-2 control-label" for="mp_transparente_sandbox"><span data-toggle="tooltip" data-trigger="click" title='<?php echo $entry_sandbox_tooltip; ?>'>
-      <?php echo $entry_sandbox; ?></span></label>
-      <div class="col-sm-10">
-       <select class="form-control" name="mp_transparente_sandbox" id="mp_transparente_sandbox">
-        <?php if ($mp_transparente_sandbox) : ?>
-        <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
-        <option value="0"><?php echo $text_disabled; ?></option>
-        <?php else : ?>
-        <option value="1"><?php echo $text_enabled; ?></option>
-        <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
-        <?php endif; ?>
-      </select>
-    </div>
-  </div>  
 <div class="form-group required">
 <label class="col-sm-2 control-label" for="mp_transparente_installments"><?php echo $entry_installments; ?></label>
 <div class="col-sm-10">
