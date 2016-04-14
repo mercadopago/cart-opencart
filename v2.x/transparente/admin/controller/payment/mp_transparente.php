@@ -8,7 +8,7 @@ class ControllerPaymentMPTransparente extends Controller {
 	public function index() {
 		$prefix = 'mp_transparente_';
 		$fields = array('public_key', 'access_token', 'status', 'category_id',
-			'debug', 'sandbox', 'country', 'installments', 'order_status_id',
+			'debug', 'country', 'installments', 'order_status_id',
 			'order_status_id_completed', 'order_status_id_pending',
 			'order_status_id_canceled', 'order_status_id_in_process',
 			'order_status_id_rejected', 'order_status_id_refunded',
@@ -30,7 +30,6 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['entry_access_token_tooltip'] = $this->language->get('entry_access_token_tooltip');
 		$data['entry_payments_not_accept_tooltip'] = $this->language->get('entry_payments_not_accept_tooltip');
 		$data['entry_debug_tooltip'] = $this->language->get('entry_debug_tooltip');
-		$data['entry_sandbox_tooltip'] = $this->language->get('entry_sandbox_tooltip');
 		$data['entry_category_tooltip'] = $this->language->get('entry_category_tooltip');
 		$data['entry_order_status_tooltip'] = $this->language->get('entry_order_status_tooltip');
 		$data['entry_order_status_completed_tooltip'] = $this->language->get('entry_order_status_completed_tooltip');
@@ -54,8 +53,6 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['entry_order_status'] = $this->language->get('entry_order_status');
 		$data['entry_ipn_status'] = $this->language->get('entry_ipn_status');
 		$data['entry_debug'] = $this->language->get('entry_debug');
-
-		$data['entry_sandbox'] = $this->language->get('entry_sandbox');
 		$data['entry_category'] = $this->language->get('entry_category');
 
 		$data['entry_order_status_general'] = $this->language->get('entry_order_status_general');

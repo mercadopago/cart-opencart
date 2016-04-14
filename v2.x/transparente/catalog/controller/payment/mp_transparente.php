@@ -28,6 +28,7 @@ class ControllerPaymentMPTransparente extends Controller {
 
 		$this->load->model('checkout/order');
 
+		//populate labels
 		$this->language->load('payment/mp_transparente');
 		$data['ccnum_placeholder'] = $this->language->get('ccnum_placeholder');
 		$data['expiration_month_placeholder'] = $this->language->get('expiration_month_placeholder');
@@ -40,123 +41,9 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['payment_button'] = $this->language->get('payment_button');
 		$data['payment_title'] = $this->language->get('payment_title');
 		$data['payment_processing'] = $this->language->get('payment_processing');
-
-		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-
-		//Cambio el código ISO-3 de la moneda por el que se les ocurrio poner a los de mercadopago2!!!
-		$accepted_currencies = array('ARS' => 'ARS', 'ARG' => 'ARS', 'VEF' => 'VEF',
-			'BRA' => 'BRL', 'BRL' => 'BRL', 'REA' => 'BRL', 'MXN' => 'MEX',
-			'CLP' => 'CHI', 'COP' => 'COP', 'US' => 'US');
-
-		$currency = $accepted_currencies[$order_info['currency_code']];
-
-		$currencies = array('ARS', 'BRL', 'MEX', 'CHI', 'VEF', 'COP');
-		if (!in_array($currency, $currencies)) {
-			$currency = '';
-			$data['error'] = $this->language->get('currency_no_support');
-		}
-
-		$totalprice = $order_info['total'] * $order_info['currency_value'];
-		$products = '';
-		$all_products = $this->cart->getProducts();
-		$items = array();
-		foreach ($all_products as $product) {
-			$products .= $product['quantity'] . ' x ' . $product['name'] . ', ';
-			$items[] = array(
-				"id" => $product['product_id'],
-				"title" => $product['name'],
-				"description" => $product['quantity'] . ' x ' . $product['name'], // string
-				"quantity" => intval($product['quantity']),
-				"unit_price" => round(floatval($product['price']), 2), //decimal
-				"currency_id" => $currency,
-				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
-				"category_id" => $this->config->get('mp_transparentecategory_id'),
-			);
-		}
-
-		$this->id = 'payment';
-
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_transparente_debug');
-		$installments = (int) $this->config->get('mp_transparente_installments');
 
-		$shipments = array(
-			"receiver_address" => array(
-				"floor" => "-",
-				"zip_code" => $order_info['shipping_postcode'],
-				"street_name" => $order_info['shipping_address_1'] . " - " .
-				$order_info['shipping_address_2'] . " - " .
-				$order_info['shipping_city'] . " - " .
-				$order_info['shipping_zone'] . " - " .
-				$order_info['shipping_country'],
-				"apartment" => "-",
-				"street_number" => "-",
-			),
-			// "cost" => round(floatval($this->session->data['shipping_method']['cost']), 2),
-			//"mode" => "custom"
-		);
-
-		//Force format YYYY-DD-MMTH:i:s
-		$cust = $this->db->query("SELECT * FROM `" .
-			DB_PREFIX . "customer` WHERE customer_id = " .
-			$order_info['customer_id'] . " ");
-		if ($cust->num_rows > 0):
-
-			foreach ($cust->rows as $customer):
-				$date_created = $customer['date_added'];
-			endforeach;
-
-			$date_creation_user = date('Y-m-d', strtotime($date_created)) . "T" . date('H:i:s', strtotime($date_created));
-		endif;
-
-		$payer = array(
-			"name" => $order_info['payment_firstname'],
-			"surname" => $order_info['payment_lastname'],
-			"email" => $order_info['email'],
-			"phone" => array(
-				"area_code" => "-",
-				"number" => $order_info['telephone'],
-			),
-			"address" => array(
-				"zip_code" => $order_info['payment_postcode'],
-				"street_name" => $order_info['payment_address_1'] . " - " .
-				$order_info['payment_address_2'] . " - " .
-				$order_info['payment_city'] . " - " .
-				$order_info['payment_zone'] . " - " .
-				$order_info['payment_country'],
-				"street_number" => "-",
-			),
-			"identification" => array(
-				"number" => "null",
-				"type" => "null",
-			),
-		);
-
-		$exclude = $this->config->get('mp_transparente_methods');
-		$country_id = $this->config->get('mp_transparente_country') == null ? 'MLA' : $this->config->get('mp_transparente_country');
-
-		$installments = (int) $installments;
-		if ($exclude != '') {
-
-			$accepted_methods = preg_split("/[\s,]+/", $exclude);
-			$all_payment_methods = $this->getMethods($country_id);
-			$excluded_payments = array();
-			sleep(3);
-
-			foreach ($all_payment_methods as $method) {
-				if (!in_array($method['id'], $accepted_methods) && $method['id'] != 'account_money') {
-					$excluded_payments[] = array('id' => $method['id']);
-				}
-			}
-
-			$payment_methods = array(
-				"installments" => $installments,
-				"excluded_payment_methods" => $excluded_payments,
-			);
-		} else {
-			//case not exist exclude methods
-			$payment_methods = array("installments" => $installments);
-		}
 		return $this->load->view('default/template/payment/mp_transparente.tpl', $data);
 	}
 
@@ -252,7 +139,8 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment_json = json_encode($payment_data);
 			$accepted_status = array('approved', "in_process");
 			$payment_response = $mp->create_payment($payment_json);
-			$this->updateOrder($payment_response['id']);
+			error_log(json_encode($payment_response));
+			$this->updateOrder($payment_response['response']['id']);
 			/*3 situações:
 				200/201 aprovado
 				200/201 reprovado
