@@ -8,6 +8,7 @@ class ControllerPaymentMPTransparente extends Controller {
 	public $sucess = true;
 	private $order_info;
 	private $message;
+	private $special_checkouts = array('MLM', 'MLB');
 	private $sponsors = array('MLB' => 204931135,
 		'MLM' => 204931029,
 		'MLA' => 204931029,
@@ -19,7 +20,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['customer_email'] = $this->customer->getEmail();
 		$data['button_confirm'] = $this->language->get('button_confirm');
 		$data['button_back'] = $this->language->get('button_back');
-		$data['terms'] = 'Teste de termos';
+		$data['terms'] = '';
 		$data['public_key'] = $this->config->get('mp_transparente_public_key');
 
 		if ($this->config->get('mp_transparente_country')) {
@@ -43,25 +44,10 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['payment_processing'] = $this->language->get('payment_processing');
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_transparente_debug');
+		$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
+		$data['partial'] = $this->load->view('default/template/payment/partials/mp_transparente_' . $partial . '.tpl', $data);
 
 		return $this->load->view('default/template/payment/mp_transparente.tpl', $data);
-	}
-
-	public function getPaymentDataByLanguage() {
-		$this->language->load('payment/mp_transparente');
-		$payment_data = array();
-		$payment_data['ccnum_placeholder'] = $this->language->get('ccnum_placeholder');
-		$payment_data['expiration_month_placeholder'] = $this->language->get('expiration_month_placeholder');
-		$payment_data['expiration_year_placeholder'] = $this->language->get('expiration_year_placeholder');
-		$payment_data['name_placeholder'] = $this->language->get('name_placeholder');
-		$payment_data['doctype_placeholder'] = $this->language->get('doctype_placeholder');
-		$payment_data['docnumber_placeholder'] = $this->language->get('docnumber_placeholder');
-		$payment_data['installments_placeholder'] = $this->language->get('installments_placeholder');
-		$payment_data['cardType_placeholder'] = $this->language->get('cardType_placeholder');
-		$payment_data['payment_button'] = $this->language->get('payment_button');
-		$payment_data['payment_title'] = $this->language->get('payment_title');
-		$payment_data['payment_processing'] = $this->language->get('payment_processing');
-		echo json_encode($payment_data);
 	}
 
 	public function getCardIssuers() {
@@ -90,12 +76,12 @@ class ControllerPaymentMPTransparente extends Controller {
 					"title" => $product['name'],
 					"description" => $product['quantity'] . ' x ' . $product['name'], // string
 					"quantity" => intval($product['quantity']),
-					"unit_price" => round(floatval($product['price']), 2), //decimal
+					"unit_price" => round(floatval($product['price']) * floatval($order_info['currency_value']), 2), //decimal
 					"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
 					"category_id" => $this->config->get('mp_transparente_category_id'),
 				);
 			}
-			error_log(json_encode($order_info));
+
 			$payer = array("email" => $order_info['email']);
 			if ($this->config->get("mp_transparente_country") != "MLM") {
 				$payer['identification'] = array();
@@ -139,19 +125,20 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment_json = json_encode($payment_data);
 			$accepted_status = array('approved', "in_process");
 			$payment_response = $mp->create_payment($payment_json);
-			error_log(json_encode($payment_response));
+			error_log('Dados do pedido ' . $order_info['order_id'] . ': \n' . json_encode($payment_response));
 			$this->updateOrder($payment_response['response']['id']);
+			$json_response = array('status' => null, 'message' => null);
+
+			if (in_array($payment_response['response']['status'], $accepted_status)) {
+				$json_response['status'] = $payment_response['response']['status'];
+			} else {
+				$json_response['status'] = $payment_response['response']['status_detail'];
+			}
 			/*3 situações:
 				200/201 aprovado
 				200/201 reprovado
 				outros status/reprovado
 				fazer if/else if/else */
-			//$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
-			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $payment_response['response']['status'], $payment_response['response']['status_detail'], true);
-
-			$json_response = array("status" => in_array($payment_response['response']['status_detail'], $accepted_status) ? 201 : 400, "message" => $payment_response['response']['status']);
-			//echo json_encode(array("status" => $payment_response['status'], "message" => $payment_response['response']['status']));
-
 			echo json_encode($json_response);
 
 		} catch (Exception $e) {
@@ -171,7 +158,10 @@ class ControllerPaymentMPTransparente extends Controller {
 		$this->load->language('payment/mp_transparente');
 		$request_type = isset($this->request->get['request_type']) ? (string) $this->request->get['request_type'] : "";
 		$status = (string) $this->request->get['status'];
-		$status = $request_type === NULL ? $status : $request_type == "token" ? 'T' . $status : 'S' . $status;
+		error_log('Status: ' . $status);
+		if ($request_type) {
+			$status = $request_type == "token" ? 'T' . $status : 'S' . $status;
+		}
 
 		$message = $this->language->get($status);
 		echo json_encode(array('message' => $message));
@@ -203,7 +193,6 @@ class ControllerPaymentMPTransparente extends Controller {
 		} else {
 			$this->retornoTransparente();
 			echo json_encode(200);
-
 		}
 	}
 
@@ -239,7 +228,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		case 'cancelled':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
 			break;
-		case 'in_metiation':
+		case 'in_mediation':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
 			break;
 		default:

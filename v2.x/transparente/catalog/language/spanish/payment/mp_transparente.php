@@ -189,3 +189,22 @@ $_['S151'] = "Usted no puede efectuarpagos.";
 $_['S160'] = "No es posible procesar su pago.";
 $_['S204'] = "Medio de pago no disponible. Escoja otra tarjeta.";
 $_['S801'] = "Intente nuevamente en algunos minutos.";
+
+// Credit Card messages
+$_['accredited'] = "Su pago fue procesado!";
+$_['pending_contingency'] = "Estamos procesando su pago. Em menos de uma hora você receberá um e-mail com o resultado.";
+$_['pending_review_manual'] = "Estamos processando o pagamento. Em até dois dias úteis enviaremos um email informado o sucesso da operação ou se precisamos de mais informações.";
+$_['cc_rejected_bad_filled_card_number'] = "Verifique o número do cartão.";
+$_['cc_rejected_bad_filled_date'] = "Verifique a data de expiração do cartão.";
+$_['cc_rejected_bad_filled_other'] = "Verifique suas informações.";
+$_['cc_rejected_bad_filled_security_code'] = "Verifique o código de segurança do cartão.";
+$_['cc_rejected_blacklist'] = "Não foi possível processar seu pagamento.";
+$_['cc_rejected_call_for_authorize'] = "Você deve solicitar a autorização do pagamento ao Mercado Pago à sua operadora de cartão";
+$_['cc_rejected_card_disabled'] = "Ligue para sua operadora de cartão e ative seu cartão.";
+$_['cc_rejected_card_error'] = "Não foi possível processar seu pagamento.";
+$_['cc_rejected_duplicated_payment'] = "Você já escolheu um meio de pagamento para essa transação. Caso precise efetuar um novo pagamento, utilize outro cartão.";
+$_['cc_rejected_high_risk'] = 'Seu pagamento foi rejeitado. Por favor, utilize outro cartão.';
+$_['cc_rejected_insufficient_amount'] = "Seu cartão não possui saldo suficiente.";
+$_['cc_rejected_invalid_installments'] = "Esta bandeira de cartão não permite parcelamento na quantidade de vezes escolhida.";
+$_['cc_rejected_max_attempts'] = "Você atingiu o limite de tentativas. Escolha outro cartão.";
+$_['cc_rejected_other_reason'] = "Sua operadora de cartão não processou o pagamento.";
