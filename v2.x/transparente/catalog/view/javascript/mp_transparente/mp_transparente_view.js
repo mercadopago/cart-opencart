@@ -1,9 +1,8 @@
          (function(){
            var spinner = new Spinner().spin(document.getElementById('spinner'));
-           console.log('running script');
-           
            var country = document.getElementById('country').value;
            var firstname =  document.getElementById('input-payment-firstname');
+ 
            if(firstname)
            {
                 var firstname =  document.getElementById('input-payment-firstname');
@@ -13,7 +12,9 @@
            setTimeout(function(){
                     var public_key = document.getElementById("public_key").value;
                     Mercadopago.setPublishableKey(public_key);
-                    Mercadopago.getIdentificationTypes(function (httpStatus, dt) {
+                    if(country != "MLM")
+                    {
+                        Mercadopago.getIdentificationTypes(function (httpStatus, dt) {
                         var select = document.getElementById('doc_type');
                         var i = dt.length;
                         if (i > 1)
@@ -23,13 +24,10 @@
                                 var option = new Option(dt[i].name, dt[i].id);
                                 select.appendChild(option);
                             }    
-                        }
-                        else
-                        {
-                            //TODO: esconder DDL de doctype e arrumar CSS de docnumber e installments 
-                        }
-                        
-                    });
+                        }                        
+                            });  
+                    }
+                  
                 }, 3000);
             
         /* Máscaras dos inputs do cartão */
@@ -46,16 +44,18 @@
     })();
 
     document.getElementById('cc_num').addEventListener('change', function () {
-       document.getElementById('cc_num').value = document.getElementById('cc_num').value.trim();
-       var cc_num = document.getElementById('cc_num').value.replace(/[ .-]/g, '').slice(0, 6);
+        var card_number = document.getElementById('cc_num');
+        card_number.value = card_number.value.trim();
+       var cc_num = card_number.value.replace(/[ .-]/g, '').slice(0, 6);
 
        if(cc_num.length == 0)
        { 
         document.getElementById('paymentType').value = "";
+        document.getElementById('cc_num').style.background = "";
         return;
     }
 
-    if(cc_num.length >5)
+    if(cc_num.length > 5)
     {
         var public_key = document.getElementById("public_key").value;
         Mercadopago.setPublishableKey(public_key);
@@ -65,18 +65,11 @@
         }, function (status, response) {
                var paymentType = document.getElementById('paymentType')
                     paymentType.value = response[0].id;
+                    var bg = 'url("' + response[0].secure_thumbnail + '") 98% 50% no-repeat';
+                    card_number.style.background = bg;
                     if (response[0].additional_info_needed.indexOf('issuer_id') > -1)
                     {
                         getCardIssuers();
-                        document.getElementById('divIssuer').style = 'display: block;';
-                        if(document.getElementById('country').value == "MLM")
-                        {
-                            if(paymentType.value.indexOf('visa') > -1 || paymentType.value.indexOf('master') > -1)
-                            {
-                                document.getElementById('divPaymentType').style = 'display: block;';    
-                            }
-                            
-                        }
                     }
                     getInstallments();
 
@@ -85,9 +78,15 @@
     });
 
     document.getElementById('button_pay').addEventListener('click', function doPayment () {
+        var tries = localStorage.getItem('payment')? parseInt(localStorage.getItem('payment')):0;
+        if(tries)
+        {
+            Mercadopago.clearSession();
+        }
+        tries+=1;
+        localStorage.setItem('payment',tries);
         var style = 'margin-left: 22%;'; 
         document.getElementById('formulario').setAttribute('style', 'pointer-events: none; opacity: 0.4;' + style);
-        console.log('style do form 1: ' + JSON.stringify(document.getElementById('formulario').style));
         var spinner = new Spinner().spin(document.getElementById('spinner'));
         var form = {cardNumber: document.getElementById('cc_num').value,
         securityCode: document.getElementById('cvv').value,
@@ -117,7 +116,6 @@
          {
             spinner.stop();
             document.getElementById('formulario').style = style;
-            console.log('style do form 2: ' + JSON.stringify(document.getElementById('formulario').style));
             var data = {status: response.cause[0].code, message: response.cause[0].description, request_type:"token"};
             getMessage(data);
         } 
@@ -138,10 +136,10 @@
          payment.docNumber = docNumber.value;
         }
         
-        var issuer = document.getElementById('issuer').value;
+        var issuer = document.getElementById('issuer');
         if(issuer)
         {
-            payment.issuer_id = issuer;
+            payment.issuer_id = issuer.value;
         }
             
         $.ajax({
@@ -150,13 +148,13 @@
             data: payment,
             success: function success(data) {
                 response_payment = JSON.parse(data);
-                console.log('json payment: ' + data);
                 document.getElementById('formulario').style = 'margin-left: 22%';
                 var acceptable_status = ["approved", "in_process"];
                 if (acceptable_status.indexOf(response_payment.status) > -1)
                 {    
                     var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
                     location += 'index.php?route=checkout/success';
+                    localStorage.removeItem('payment');
                     window.location.href = location;
                 }
                 else
@@ -215,15 +213,14 @@
     function getInstallments()
     {
         var public_key = document.getElementById("public_key").value;
-        var issuer = document.getElementById('issuer').value;
+        var issuer = document.getElementById('issuer');
         var bin = document.getElementById('cc_num').value.replace(/[ .-]/g, '').slice(0, 6);
         var lbls = document.getElementsByClassName('text-right');
         var amount = parseFloat(lbls[lbls.length -1].textContent.split('$')[1].replace('.','').replace(',','.'));
-        console.log('total amount: ' + amount);
         var config = {"bin": bin,"amount": amount};
         if (issuer)
         {
-            config.issuer_id = issuer;
+            config.issuer_id = issuer.value;
         }
 
         Mercadopago.setPublishableKey(public_key);
@@ -254,7 +251,6 @@
     {
         var public_key = document.getElementById("public_key").value;
         var payment_method_id =  document.getElementById('paymentType').value;
-
         Mercadopago.setPublishableKey(public_key);
         Mercadopago.getIssuers(payment_method_id, function(httpStatus, dt)
         {
@@ -266,6 +262,7 @@
                 if (dt[i].name != "default") 
                 {
                     var option = new Option(dt[i].name, dt[i].id);
+                    option.style.background = 'url("' + dt[i].secure_thumbnail + '") 98% 50% no-repeat';
                 } 
                 else 
                 {
@@ -274,13 +271,15 @@
                 select.appendChild(option);
             }
 
-            document.getElementById('divIssuer').style = 'display: block';
             select.addEventListener('change', getInstallments);
         });
 
     }
+    var cardType = document.getElementById('cardType');
 
-    document.getElementById('cardType').addEventListener('change', function(){
+    if(cardType)
+    {
+        cardType.addEventListener('change', function(){
         var paymentType = document.getElementById('paymentType');
         var bg = document.querySelector('input[data-checkout="cardNumber"]');
 
@@ -300,5 +299,8 @@
             }
         }   
 
-    });
+    });    
+    }
+
+
 

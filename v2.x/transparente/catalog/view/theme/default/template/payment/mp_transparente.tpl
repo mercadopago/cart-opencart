@@ -14,7 +14,7 @@
             <div id="spinner"> 
             <div id="formulario" class="cartao">
                 <div class="panel-body" id="checkoutPayment">
-                <div class="form-group" style="margin-bottom: 4%" id="cardData">
+                <div class="form-group" style="margin-bottom: 4%;" id="cardData">
                     <?php if(isset($ccnum_placeholder)): ?>
                         <div class="row"></div>
                     <div class="col-xs-10 col-sm-6" style="margin-left: -2%;">
@@ -34,12 +34,6 @@
                         <input class="form-control" type="text" id="expiration_year" data-checkout="cardExpirationYear" maxlength="4" placeholder="AAAA" size="4"/>
                     </div>
                 <?php endif;?>
-                    <div class="row">
-                        <div class="col-xs-12 col-md-7" style="display: none;" id="divIssuer">
-                            <label class="control-label" id="issuer_label" for="issuer">Issuer</label>
-                            <select id="issuer" class="form-control"></select>
-                        </div>
-                </div>
                 <div class="clearfix"></div>
                 <div class="row" id="userInfo">
                 <?php if(isset($name_placeholder)): ?>
@@ -54,7 +48,7 @@
                 </div>    
                 </div>
                 <?php echo $partial; ?>
-                <div class="form-buttons" id="buttonPay" style="margin-right: 8%;">
+                <div class="form-buttons" id="buttonPay" style="margin-right: 8%;margin-top: 4%;">
                 <?php if(isset($payment_button)): ?>
                 <div class="text-center">
                     <button class="btn btn-primary pull-right" id="button_pay"><?php echo($payment_button); ?></button>

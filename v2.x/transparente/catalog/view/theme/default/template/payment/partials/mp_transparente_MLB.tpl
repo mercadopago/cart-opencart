@@ -1,6 +1,6 @@
 <div class="row">
 <input type="hidden" value="CPF" id="doc_type"></input>
-  <div class="form-group" style="margin-bottom: 4%" id="docInfo">
+  <div class="form-group" style="margin-bottom: 4%; margin-left: 3%" id="docInfo">
     <?php if(isset($docnumber_placeholder)): ?>
       <div class="col-xs-12 col-md-4" id="divDocNumber" style="margin-left: -3%">
         <label class="control-label" id="doc_number_label" for="doc_number">CPF</label>
