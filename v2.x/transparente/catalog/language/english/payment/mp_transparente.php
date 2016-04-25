@@ -3,7 +3,7 @@
 //$_['Stext_title'] = '<img src="./view/image/payment/mp_transparente.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;">'
 $url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $admin = strpos($url, 'admin') !== FALSE ? '' : './admin/';
-$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_transparente.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;"> - Custom Checkout';
+$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_transparente.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE; background-color: white;"> - Custom Checkout';
 $_['currency_no_support'] = 'The currency selected is not supported by MercadoPago';
 $_['ccnum_placeholder'] = 'Credit Card Number';
 $_['expiration_date_placeholder'] = 'Expiration Date';
@@ -193,11 +193,11 @@ $_['S204'] = "Payment method is not available at this time. Choose another card 
 $_['S801'] = "Try again in a few minutes.";
 
 // Credit Card messages
-$_['accredited'] =	"Done, your payment was accredited! You will see the charge for amount in your bill as statement_descriptor.";
-$_['pending_contingency'] =	"We are processing the payment. In less than an hour we will e-mail you the results.";
-$_['pending_review_manual'] ="We are processing the payment. In less than 2 business days we will tell you by e-mail whether it has accredited or we need more information.";
+$_['accredited'] = "Done, your payment was accredited! You will see the charge for amount in your bill as statement_descriptor.";
+$_['pending_contingency'] = "We are processing the payment. In less than an hour we will e-mail you the results.";
+$_['pending_review_manual'] = "We are processing the payment. In less than 2 business days we will tell you by e-mail whether it has accredited or we need more information.";
 $_['cc_rejected_bad_filled_card_number'] = "Check the card number.";
-$_['cc_rejected_bad_filled_date'] =	"Check the expiration date.";
+$_['cc_rejected_bad_filled_date'] = "Check the expiration date.";
 $_['cc_rejected_bad_filled_other'] = "Check the information.";
 $_['cc_rejected_bad_filled_security_code'] = "Check the security code.";
 $_['cc_rejected_blacklist'] = "We could not process your payment.";
@@ -206,7 +206,7 @@ $_['cc_rejected_card_disabled'] = "Call to your credit card company to activate 
 $_['cc_rejected_card_error'] = "We could not process your payment.";
 $_['cc_rejected_duplicated_payment'] = "You already made a payment for that amount. If you need to repay, use another card or other payment method.";
 $_['cc_rejected_high_risk'] = 'Your payment was rejected.Choose another payment method. We recommend cash.';
-$_['cc_rejected_insufficient_amount'] =	"Your card do not have sufficient funds.";
+$_['cc_rejected_insufficient_amount'] = "Your card do not have sufficient funds.";
 $_['cc_rejected_invalid_installments'] = "payment_method_id does not process payments in installments installments.";
-$_['cc_rejected_max_attempts'] ="You have reached the limit of allowed attempts. Choose another card or another payment method.";
+$_['cc_rejected_max_attempts'] = "You have reached the limit of allowed attempts. Choose another card or another payment method.";
 $_['cc_rejected_other_reason'] = "Your credit card company did not process the payment.";

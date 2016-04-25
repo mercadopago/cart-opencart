@@ -45,8 +45,9 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_transparente_debug');
 		$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
+		//$partial_url = 'payment/partials/mp_transparente_' . $partial . '.tpl';
+		//$file_path = DIR_TEMPLATE . $this->config->get('config_template') . $partial_url;
 		$data['partial'] = $this->load->view('default/template/payment/partials/mp_transparente_' . $partial . '.tpl', $data);
-
 		return $this->load->view('default/template/payment/mp_transparente.tpl', $data);
 	}
 
@@ -125,7 +126,6 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment_json = json_encode($payment_data);
 			$accepted_status = array('approved', "in_process");
 			$payment_response = $mp->create_payment($payment_json);
-			error_log('Dados do pedido ' . $order_info['order_id'] . ': \n' . json_encode($payment_response));
 			$this->updateOrder($payment_response['response']['id']);
 			$json_response = array('status' => null, 'message' => null);
 
@@ -134,11 +134,7 @@ class ControllerPaymentMPTransparente extends Controller {
 			} else {
 				$json_response['status'] = $payment_response['response']['status_detail'];
 			}
-			/*3 situações:
-				200/201 aprovado
-				200/201 reprovado
-				outros status/reprovado
-				fazer if/else if/else */
+
 			echo json_encode($json_response);
 
 		} catch (Exception $e) {

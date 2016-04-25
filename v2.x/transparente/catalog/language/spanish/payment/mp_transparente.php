@@ -2,7 +2,7 @@
 // Text
 $url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $admin = strpos($url, 'admin') !== FALSE ? '' : './admin/';
-$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_transparente.png" alt="Mercado Pago" title="Mercado Pago" style="border: 1px solid #EEEEEE;"> - Tarjeta de Credito y Debito ';
+$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_transparente.png" alt="Mercado Pago" title="Mercado Pago" style="border: 1px solid #EEEEEE; background-color: white;"> - Tarjeta de Credito y Debito ';
 $_['currency_no_support'] = 'La moneda seleccionada no es aceptada por Mercado Pago';
 
 $_['ccnum_placeholder'] = 'Número de la tarjeta';

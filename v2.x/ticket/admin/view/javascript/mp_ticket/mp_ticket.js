@@ -27,7 +27,10 @@
                 if (selected_payments.length == 0) 
                 {
                     var div_error_methods = document.getElementById('div_error_methods');
-                    $('#div_payments').find('input[type=checkbox]')[0].focus();
+                    if($('#div_payments').find('input[type=checkbox]'))
+                    {
+                        $('#div_payments').find('input[type=checkbox]')[0].focus();
+                    }
                     div_error_methods.innerHTML = '<b>Please, select at least one payment method</b>';
                     return;
                 };
