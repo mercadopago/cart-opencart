@@ -6,7 +6,14 @@
 \paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\f0\fs24 \cf0 CHANGELOG:\
+\f0\fs24 \cf0 IMPORTANT: YOUR SERVER MUST HAVE SSL ENABLE, OTHERWISE THE API CALLS TO MERCADO PAGO WILL NOT WORK\
+\
+CHANGELOG:\
+V 1.1\
+-  Splitted v2.x in 3 different modules (standard, ticket and custom)\
+- Improved performance\
+- Corrected the view and connection bugs\
+\
 V1.0.3 (11/03/2016)\
 -  Splitted v2.x in two different modules (standard and custom)\
 \
@@ -16,10 +23,10 @@ V1.0.2 (11/03/2016)\
 V1.0.1 (29/01/2016)\
 - Fixed issues: \
 \pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
-\ls1\ilvl0\cf0 {\listtext	\'95	}{\field{\*\fldinst{HYPERLINK "https://github.com/mercadopago/cart-opencart/issues/31"}}{\fldrslt https://github.com/mercadopago/cart-opencart/issues/31}}\
-{\listtext	\'95	}{\field{\*\fldinst{HYPERLINK "https://github.com/mercadopago/cart-opencart/issues/30"}}{\fldrslt https://github.com/mercadopago/cart-opencart/issues/30}}\
-{\listtext	\'95	}{\field{\*\fldinst{HYPERLINK "https://github.com/mercadopago/cart-opencart/issues/33"}}{\fldrslt https://github.com/mercadopago/cart-opencart/issues/33}}\
-{\listtext	\'95	}{\field{\*\fldinst{HYPERLINK "https://github.com/mercadopago/cart-opencart/issues/17"}}{\fldrslt https://github.com/mercadopago/cart-opencart/issues/17}}\
+\ls1\ilvl0\cf0  {\field{\*\fldinst{HYPERLINK "https://github.com/mercadopago/cart-opencart/issues/31"}}{\fldrslt https://github.com/mercadopago/cart-opencart/issues/31}}\
+ {\field{\*\fldinst{HYPERLINK "https://github.com/mercadopago/cart-opencart/issues/30"}}{\fldrslt https://github.com/mercadopago/cart-opencart/issues/30}}\
+ {\field{\*\fldinst{HYPERLINK "https://github.com/mercadopago/cart-opencart/issues/33"}}{\fldrslt https://github.com/mercadopago/cart-opencart/issues/33}}\
+ {\field{\*\fldinst{HYPERLINK "https://github.com/mercadopago/cart-opencart/issues/17"}}{\fldrslt https://github.com/mercadopago/cart-opencart/issues/17}}\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 \cf0 \
 - Added functional tests (fill admin data and checkout)\

@@ -65,11 +65,9 @@ class ControllerPaymentMPTicket extends Controller {
 			$payment_data = array("payer" => $payer,
 				"external_reference" => $order_info['order_id'],
 				"transaction_amount" => $value,
-				//"notification_url" => $order_info['store_url'] . 'index.php?route=payment/mp_ticket/notifications',
-				"notification_url" => 'http://www.google.com',
+				"notification_url" => $order_info['store_url'] . 'index.php?route=payment/mp_ticket/notifications',
 				//"token" => $this->request->post['token'],
 				"description" => 'Products',
-				//"payment_method_id" => $this->request->post['payment_method_id']);
 				"payment_method_id" => $this->request->get['payment_method_id']);
 			$payment_data['additional_info'] = array('shipments' => $shipments, 'items' => $items);
 
