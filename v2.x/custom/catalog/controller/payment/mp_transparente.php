@@ -44,10 +44,10 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_transparente_debug');
 		$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
-		//$partial_url = 'payment/partials/mp_transparente_' . $partial . '.tpl';
+		//$partial_url = 'default/template/payment/partials/mp_transparente_' . $partial . '.tpl';
 		//$file_path = DIR_TEMPLATE . $this->config->get('config_template') . $partial_url;
-		$data['partial'] = $this->load->view('default/template/payment/partials/mp_transparente_' . $partial . '.tpl', $data);
-		return $this->load->view('default/template/payment/mp_transparente.tpl', $data);
+		$data['partial'] = $this->load->view('payment/partials/mp_transparente_' . $partial . '.tpl', $data);
+		return $this->load->view('payment/mp_transparente.tpl', $data);
 	}
 
 	public function getCardIssuers() {
