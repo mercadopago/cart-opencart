@@ -80,7 +80,7 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
 
 2. Again in **extensions > payments > MercadoPago**, click **Edit** to Setup your MercadoPago account:
 
-	![MercadoPago Account](http://postimg.org/image/thddtc3wx/)
+	![MercadoPago Account](https://postimg.org/image/thddtc3wx/full/)
 
 3. Set your Country where your MercadoPago account was created and save config.
 	
