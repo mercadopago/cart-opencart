@@ -29,7 +29,7 @@ This feature allows merchants to have a customized ticket checkout, according to
 
 **SSL certificate**
 
-It is a requirement that you have a SSL certificate, and the payment form to be provided under an HTTPS page.
+If you're using Ticket Checkout or Custom Checkout, it is a requirement that you have a SSL certificate, and the payment form to be provided under an HTTPS page.
 During the sandbox mode tests, you can operate over HTTP, but for homologation you'll need to acquire the certificate in case you don't have it.
 
 <a name="available_versions"></a>
