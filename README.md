@@ -26,6 +26,7 @@ This feature allows merchants to have a customized ticket checkout, according to
 
 
 ***Important information***
+
 **SSL certificate**
 
 It is a requirement that you have a SSL certificate, and the payment form to be provided under an HTTPS page.
@@ -70,7 +71,7 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
 
 2. Copy the folders **admin**, **catalog** and **image** to your OpenCart ROOT installation. Make sure to keep the OpenCart folders structure intact.
 
-**Important**: If you're using OpenCart 2.0, you have 3 different types of checkout inside the OpenCart 2.x folder: Standard, Custom and Ticket. You can use them all together or individually, without any problems or dependencies between them. Each one of these folders have its own Admin, Catalog and Image folders and the installation process is the same described above.
+**Important**: If you're using OpenCart 2.0, you'll find 3 different types of checkout inside the OpenCart 2.x folder: Standard, Custom and Ticket. You can use them all together or individually, without any problems or dependencies between them. Each one of these folders have its own Admin, Catalog and Image folders and the installation process is the same described above.
 
 <a name="setup"></a>
 ## Setup MercadoPago
