@@ -44,7 +44,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_transparente_debug');
 		$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
-		//$partial_url = 'default/template/payment/partials/mp_transparente_' . $partial . '.tpl';
+		//$partial_url = 'payment/partials/mp_transparente_' . $partial . '.tpl';
 		//$file_path = DIR_TEMPLATE . $this->config->get('config_template') . $partial_url;
 		$data['partial'] = $this->load->view('payment/partials/mp_transparente_' . $partial . '.tpl', $data);
 		return $this->load->view('payment/mp_transparente.tpl', $data);
@@ -185,6 +185,23 @@ class ControllerPaymentMPTransparente extends Controller {
 		} else {
 			$this->retornoTransparente();
 			echo json_encode(200);
+		}
+	}
+	public function getCustomerId() {
+		$access_token = $this->config->get('mp_transparente_access_token');
+		$mp = new MP($access_token);
+		$customer = array('email' => $this->customer->getEmail());
+		$uri = "/v1/customers/search";
+		$response = $mp->get($uri, customer);
+		if (sizeof($response["results"]) > 0) {
+			//retorna o id, senão cria o usuário e retorna o id
+		}
+		if ($customerID != null) {
+			$data['customerID'] = $customerID;
+			$customerCards = $this->getCustomerCards($customerID);
+			$data['customerCards'] = Tools::jsonEncode($customerCards);
+		} else {
+			$data['customerCards'] = null;
 		}
 	}
 

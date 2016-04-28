@@ -35,7 +35,7 @@ def move_file(initial_path):
     final_path = '/Applications/MAMP/htdocs/oc21%s' % initial_path[position:]
     print('moving file %s to %s' % (start_path, final_path))
     cmd_move = 'ditto -V %s %s ' % (start_path, final_path)
-    print(subprocess.call(cmd_move))
+    print(subprocess.call(cmd_move, shell=True))
 
 
 if __name__ == '__main__':
