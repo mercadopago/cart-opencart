@@ -13,10 +13,24 @@
 **Standard checkout**
 
 This feature allows merchants to have a standard checkout. It includes all
-payment methods (i.e. all credit cards, bar code payment, account money) and all
-window types (i.e. redirect, iframe, modal, blank and popup). Customization is not allowed.
+payment methods (i.e. all credit cards, bar code payment, account money) and all window types (i.e. redirect, iframe, modal, blank and popup). Customization is not allowed.
 
-*Available for Argentina, Brazil, Chile, Colombia, Mexico and Venezuela*
+**Credit Card Customized Checkout**
+
+This feature will allow merchants to have a customized checkout for credit card
+payment. Thus, it will be possible to customize its look and feel, customers won’t be redirected away to complete the payment, and it will also reduce the checkout steps, improving conversion rates.
+
+**Ticket Checkout**
+
+This feature allows merchants to have a customized ticket checkout, according to each country's ticket method (i.e Boleto in Brazil, RapiPago in Argentina, etc).  Thus, it will be possible to customize its look and feel, customers won’t be redirected away to complete the payment, and it will also reduce the checkout steps, improving conversion rates. The ticket link will be shown and when the customer click on it, another tab with the ticket will be opened.
+
+
+***Important information***
+
+**SSL certificate**
+
+If you're using Ticket Checkout or Custom Checkout, it is a requirement that you have a SSL certificate, and the payment form to be provided under an HTTPS page.
+During the sandbox mode tests, you can operate over HTTP, but for homologation you'll need to acquire the certificate in case you don't have it.
 
 <a name="available_versions"></a>
 ##Available versions##
@@ -57,6 +71,8 @@ window types (i.e. redirect, iframe, modal, blank and popup). Customization is n
 
 2. Copy the folders **admin**, **catalog** and **image** to your OpenCart ROOT installation. Make sure to keep the OpenCart folders structure intact.
 
+**Important**: If you're using OpenCart 2.0, you'll find 3 different types of checkout inside the OpenCart 2.x folder: Standard, Custom and Ticket. You can use them all together or individually, without any problems or dependencies between them. Each one of these folders have its own Admin, Catalog and Image folders and the installation process is the same described above.
+
 <a name="setup"></a>
 ## Setup MercadoPago
 
@@ -64,21 +80,21 @@ window types (i.e. redirect, iframe, modal, blank and popup). Customization is n
 
 2. Again in **extensions > payments > MercadoPago**, click **Edit** to Setup your MercadoPago account:
 
-	![MercadoPago Account](https://raw.github.com/mercadopago/cart-opencart/master/README.img/MPAccount.png)
+	![MercadoPago Account](https://raw.github.com/brunocodeman/cart-opencart/master/README.img/MPAccount.png)
 
 3. Set your Country where your MercadoPago account was created and save config.
 	
 	***Note:*** *If you change the Country where your account was created you need save config to refresh the excluded payment methods.*
 
-4. Set your **CLIENT_ID** and **CLIENT_SECRET**. 
+4. Set your **CLIENT_ID** and **CLIENT_SECRET**, or **PUBLIC_KEY** and **ACCESS_TOKEN** (depending on which module you're using). 
 
-	Get your CLIENT_ID and CLIENT_SECRET in the following address:
-	* Argentina: [https://www.mercadopago.com/mla/herramientas/aplicaciones](https://www.mercadopago.com/mla/herramientas/aplicaciones)
-	* Brazil: [https://www.mercadopago.com/mlb/ferramentas/aplicacoes](https://www.mercadopago.com/mlb/ferramentas/aplicacoes)
-	* Chile: [https://www.mercadopago.com/mlc/herramientas/aplicaciones](https://www.mercadopago.com/mlc/herramientas/aplicaciones)
-	* Colombia: [https://www.mercadopago.com/mco/herramientas/aplicaciones](https://www.mercadopago.com/mco/herramientas/aplicaciones)
-	* Mexico: [https://www.mercadopago.com/mlm/herramientas/aplicaciones](https://www.mercadopago.com/mlm/herramientas/aplicaciones)
-	* Venezuela: [https://www.mercadopago.com/mlv/herramientas/aplicaciones](https://www.mercadopago.com/mlv/herramientas/aplicaciones)
+	Get your credentials in the following address:
+	* Argentina: [https://www.mercadopago.com/mla/account/credentials](https://www.mercadopago.com/mla/account/credentials)
+	* Brazil: [https://www.mercadopago.com/mlb/account/credentials](https://www.mercadopago.com/mlb/account/credentials)
+	* Chile: [https://www.mercadopago.com/mlc/account/credentials](https://www.mercadopago.com/mlc/account/credentials)
+	* Colombia: [https://www.mercadopago.com/mco/account/credentials](https://www.mercadopago.com/mco/account/credentials)
+	* Mexico: [https://www.mercadopago.com/mlm/account/credentials](https://www.mercadopago.com/mlm/account/credentials)
+	* Venezuela: [https://www.mercadopago.com/mlv/account/credentials](https://www.mercadopago.com/mlv/account/credentials)
 
 ***IMPORTANT:*** *This module will only work with the following currencies:*
 
@@ -97,13 +113,4 @@ window types (i.e. redirect, iframe, modal, blank and popup). Customization is n
 
 <a name="notifications"></a>
 ## Sync your backoffice with MercadoPago (IPN) 
-
-1. Go to **MercadoPago IPN configuration**:
-	* Argentina: [https://www.mercadopago.com/mla/herramientas/notificaciones](https://www.mercadopago.com/mla/herramientas/notificaciones)
-	* Brazil: [https://www.mercadopago.com/mlb/ferramentas/notificacoes](https://www.mercadopago.com/mlb/ferramentas/notificacoes)
-	* Chile: [https://www.mercadopago.com/mlc/herramientas/notificaciones](https://www.mercadopago.com/mlc/herramientas/notificaciones)
-	* Colombia: [https://www.mercadopago.com/mco/herramientas/notificaciones](https://www.mercadopago.com/mco/herramientas/notificaciones)
-	* Mexico: [https://www.mercadopago.com/mlm/herramientas/notificaciones](https://www.mercadopago.com/mlm/herramientas/notificaciones)
-	* Venezuela: [https://www.mercadopago.com/mlv/herramientas/notificaciones](https://www.mercadopago.com/mlv/herramientas/notificaciones)
-
-2. Enter the URL as follow: ***[yourstoreaddress.com]***/index.php?route=payment/mercadopago2/retorno/
+Your notification URL will be automatically send with your payment to our API.
