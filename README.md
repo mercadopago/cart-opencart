@@ -13,10 +13,15 @@
 **Standard checkout**
 
 This feature allows merchants to have a standard checkout. It includes all
-payment methods (i.e. all credit cards, bar code payment, account money) and all
-window types (i.e. redirect, iframe, modal, blank and popup). Customization is not allowed.
+payment methods (i.e. all credit cards, bar code payment, account money) and all window types (i.e. redirect, iframe, modal, blank and popup). Customization is not allowed.
 
-*Available for Argentina, Brazil, Chile, Colombia, Mexico and Venezuela*
+**Credit Card Customized Checkout**
+
+This feature will allow merchants to have a customized checkout for credit card
+payment. Thus, it will be possible to customize its look and feel, customers won’t be redirected away to complete the payment, and it will also reduce the checkout steps, improving conversion rates.
+
+**Ticket Checkout**
+This feature allows merchants to have a customized ticket checkout, according to each country's ticket method (i.e Boleto in Brazil, RapiPago in Argentina, etc).  Thus, it will be possible to customize its look and feel, customers won’t be redirected away to complete the payment, and it will also reduce the checkout steps, improving conversion rates. The ticket link will be shown and when the customer click on it, another tab with the ticket will be opened.
 
 <a name="available_versions"></a>
 ##Available versions##
@@ -56,6 +61,7 @@ window types (i.e. redirect, iframe, modal, blank and popup). Customization is n
     * OpenCart 2.x
 
 2. Copy the folders **admin**, **catalog** and **image** to your OpenCart ROOT installation. Make sure to keep the OpenCart folders structure intact.
+Important: If you're using OpenCart 2.0, you have 3 different types of checkout inside the OpenCart 2.x folder: Standard, Custom and Ticket. You can use them all together or individually, without any problems or dependencies between them. Each one of these folders have its own Admin, Catalog and Image folders and the installation process is the same described above.
 
 <a name="setup"></a>
 ## Setup MercadoPago
@@ -70,7 +76,7 @@ window types (i.e. redirect, iframe, modal, blank and popup). Customization is n
 	
 	***Note:*** *If you change the Country where your account was created you need save config to refresh the excluded payment methods.*
 
-4. Set your **CLIENT_ID** and **CLIENT_SECRET**. 
+4. Set your **CLIENT_ID** and **CLIENT_SECRET**, or **PUBLIC_KEY** and **ACCESS_TOKEN** (depending on which module you're using). 
 
 	Get your CLIENT_ID and CLIENT_SECRET in the following address:
 	* Argentina: [https://www.mercadopago.com/mla/herramientas/aplicaciones](https://www.mercadopago.com/mla/herramientas/aplicaciones)
@@ -97,7 +103,7 @@ window types (i.e. redirect, iframe, modal, blank and popup). Customization is n
 
 <a name="notifications"></a>
 ## Sync your backoffice with MercadoPago (IPN) 
-
+Your notification URL will be automatically.
 1. Go to **MercadoPago IPN configuration**:
 	* Argentina: [https://www.mercadopago.com/mla/herramientas/notificaciones](https://www.mercadopago.com/mla/herramientas/notificaciones)
 	* Brazil: [https://www.mercadopago.com/mlb/ferramentas/notificacoes](https://www.mercadopago.com/mlb/ferramentas/notificacoes)
