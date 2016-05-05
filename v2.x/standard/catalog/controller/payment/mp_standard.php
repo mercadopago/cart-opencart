@@ -2,7 +2,7 @@
 
 require_once "mercadopago.php";
 
-class ControllerPaymentMercadopago2 extends Controller {
+class ControllerPaymentMPStandard extends Controller {
 
 	private $error;
 	public $sucess = true;
@@ -19,19 +19,19 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$data['button_confirm'] = $this->language->get('button_confirm');
 		$data['button_back'] = $this->language->get('button_back');
 		$data['terms'] = 'Teste de termos';
-		$data['public_key'] = $this->config->get('mercadopago2_public_key');
+		$data['public_key'] = $this->config->get('mp_standard_public_key');
 
-		if ($this->config->get('mercadopago2_country')) {
-			$data['action'] = $this->config->get('mercadopago2_country');
+		if ($this->config->get('mp_standard_country')) {
+			$data['action'] = $this->config->get('mp_standard_country');
 		}
 
 		$this->load->model('checkout/order');
 
-		$this->language->load('payment/mercadopago2');
+		$this->language->load('payment/mp_standard');
 
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-		//Cambio el código ISO-3 de la moneda por el que se les ocurrio poner a los de mercadopago2!!!
+		//Cambio el código ISO-3 de la moneda por el que se les ocurrio poner a los de mp_standard!!!
 		$accepted_currencies = array('ARS' => 'ARS', 'ARG' => 'ARS', 'VEF' => 'VEF',
 			'BRA' => 'BRL', 'BRL' => 'BRL', 'REA' => 'BRL', 'MXN' => 'MEX',
 			'CLP' => 'CHI', 'COP' => 'COP', 'US' => 'US');
@@ -58,7 +58,7 @@ class ControllerPaymentMercadopago2 extends Controller {
 				"unit_price" => round(floatval($product['price']), 2) * $order_info['currency_value'], //decimal
 				"currency_id" => $currency, // string Argentina: ARS (peso argentino) � USD (D�lar estadounidense); Brasil: BRL (Real).,
 				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
-				"category_id" => $this->config->get('mercadopago2_category_id'),
+				"category_id" => $this->config->get('mp_standard_category_id'),
 			);
 		}
 
@@ -69,15 +69,15 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$this->id = 'payment';
 
 		$data['server'] = $_SERVER;
-		$data['debug'] = $this->config->get('mercadopago2_debug');
+		$data['debug'] = $this->config->get('mp_standard_debug');
 
 		// get credentials
 
-		$client_id = $this->config->get('mercadopago2_client_id');
-		$client_secret = $this->config->get('mercadopago2_client_secret');
+		$client_id = $this->config->get('mp_standard_client_id');
+		$client_secret = $this->config->get('mp_standard_client_secret');
 		error_log(json_encode($order_info));
 		$url = $order_info['store_url'];
-		$installments = (int) $this->config->get('mercadopago2_installments');
+		$installments = (int) $this->config->get('mp_standard_installments');
 
 		$shipments = array(
 			"receiver_address" => array(
@@ -135,8 +135,8 @@ class ControllerPaymentMercadopago2 extends Controller {
 			),
 		);
 
-		$exclude = $this->config->get('mercadopago2_methods');
-		$country_id = $this->config->get('mercadopago2_country') == null ? 'MLA' : $this->config->get('mercadopago2_country');
+		$exclude = $this->config->get('mp_standard_methods');
+		$country_id = $this->config->get('mp_standard_country') == null ? 'MLA' : $this->config->get('mp_standard_country');
 
 		$installments = (int) $installments;
 		if ($exclude != '') {
@@ -162,24 +162,24 @@ class ControllerPaymentMercadopago2 extends Controller {
 
 		//set back url
 		$back_urls = array(
-			"pending" => $url . 'index.php?route=payment/mercadopago2/callback',
-			"success" => $url . 'index.php?route=payment/mercadopago2/callback',
-			"failure" => $url . 'index.php?route=payment/mercadopago2/callback',
+			"pending" => $url . 'index.php?route=payment/mp_standard/callback',
+			"success" => $url . 'index.php?route=payment/mp_standard/callback',
+			"failure" => $url . 'index.php?route=payment/mp_standard/callback',
 		);
 
 		$pref = array();
 		$pref['external_reference'] = $order_info['order_id'];
 		$pref['items'] = $items;
 		$pref['shipments'] = $shipments;
-		$pref['auto_return'] = $this->config->get('mercadopago2_enable_return');
+		$pref['auto_return'] = $this->config->get('mp_standard_enable_return');
 		$pref['back_urls'] = $back_urls;
 		$pref['payment_methods'] = $payment_methods;
 		$pref['payer'] = $payer;
 		$mp = new MP($client_id, $client_secret);
 		$preferenceResult = $mp->create_preference($pref);
-		$sandbox = (bool) $this->config->get('mercadopago2_sandbox');
+		$sandbox = (bool) $this->config->get('mp_standard_sandbox');
 		if ($preferenceResult['status'] == 201):
-			$data['type_checkout'] = $this->config->get('mercadopago2_type_checkout');
+			$data['type_checkout'] = $this->config->get('mp_standard_type_checkout');
 			if ($sandbox):
 				$data['redirect_link'] = $preferenceResult['response']['sandbox_init_point'];
 			else:
@@ -189,10 +189,10 @@ class ControllerPaymentMercadopago2 extends Controller {
 			$data['error'] = "Error: " . $preferenceResult['status'];
 		endif;
 
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/mercadopago2.tpl')) {
-			return $this->load->view($this->config->get('config_template') . '/mercadopago2.tpl', $data);
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/mp_standard.tpl')) {
+			return $this->load->view($this->config->get('config_template') . '/mp_standard.tpl', $data);
 		} else {
-			return $this->load->view('default/template/payment/mercadopago2.tpl', $data);
+			return $this->load->view('default/template/payment/mp_standard.tpl', $data);
 		}
 	}
 
@@ -217,7 +217,7 @@ class ControllerPaymentMercadopago2 extends Controller {
 	}
 
 	public function callback() {
-		//$this->retorno();
+		$this->retorno();
 		$this->response->redirect($this->url->link('checkout/success'));
 
 	}
@@ -227,23 +227,29 @@ class ControllerPaymentMercadopago2 extends Controller {
 			$this->request->get['collection_id'] = $this->request->get['id'];
 			$this->retorno();
 			echo json_encode(200);
-		} else {
-			$this->retornoTransparente();
-			echo json_encode(200);
-
 		}
 	}
 
 	public function retorno() {
 		if (isset($this->request->get['collection_id'])) {
+
+			if ($this->request->get['collection_id'] == 'null') {
+				$order_id = $this->request->get['external_reference'];
+				$this->load->model('checkout/order');
+				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i'));
+				return;
+
+			}
+
 			$ids = explode(',', $this->request->get['collection_id']);
-			$client_id = $this->config->get('mercadopago2_client_id');
-			$client_secret = $this->config->get('mercadopago2_client_secret');
-			$sandbox = $this->config->get('mercadopago2_sandbox') == 1 ? true : null;
+			$client_id = $this->config->get('mp_standard_client_id');
+			$client_secret = $this->config->get('mp_standard_client_secret');
+			$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
 			$mp = new MP($client_id, $client_secret);
 			$mp->sandbox_mode($sandbox);
 
 			foreach ($ids as $id) {
+
 				$resposta = $mp->get_payment_info($id);
 				$dados = $resposta['response'];
 
@@ -259,28 +265,28 @@ class ControllerPaymentMercadopago2 extends Controller {
 
 				switch ($order_status) {
 				case 'approved':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago2_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'pending':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago2_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'in_process':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago2_order_status_id_process'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_process'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'reject':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago2_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'refunded':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago2_order_status_id_refunded'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_refunded'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'cancelled':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago2_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'in_metiation':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago2_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				default:
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago2_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				}
 				echo "ID: " . $id . " - Status: " . $order_status;

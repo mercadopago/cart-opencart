@@ -43,11 +43,23 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['payment_processing'] = $this->language->get('payment_processing');
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_transparente_debug');
-		$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
-		//$partial_url = 'default/template/payment/partials/mp_transparente_' . $partial . '.tpl';
-		//$file_path = DIR_TEMPLATE . $this->config->get('config_template') . $partial_url;
-		$data['partial'] = $this->load->view('payment/partials/mp_transparente_' . $partial . '.tpl', $data);
-		return $this->load->view('payment/mp_transparente.tpl', $data);
+		$data['cards'] = $this->getCards();
+
+		if (strpos($this->config->get('config_url'), 'localhost')) {
+			$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
+			//$partial_url = 'payment/partials/mp_transparente_' . $partial . '.tpl';
+			//$file_path = DIR_TEMPLATE . $this->config->get('config_template') . $partial_url;
+			$data['partial'] = $this->load->view('default/template/payment/partials/mp_transparente_' . $partial . '.tpl', $data);
+			$view_uri = 'default/template/payment/mp_transparente.tpl';
+		} else {
+			$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
+			//$partial_url = 'payment/partials/mp_transparente_' . $partial . '.tpl';
+			//$file_path = DIR_TEMPLATE . $this->config->get('config_template') . $partial_url;
+			$data['partial'] = $this->load->view('payment/partials/mp_transparente_' . $partial . '.tpl', $data);
+			$view_uri = 'payment/mp_transparente.tpl';
+		}
+
+		return $this->load->view($view_uri, $data);
 	}
 
 	public function getCardIssuers() {
@@ -127,6 +139,7 @@ class ControllerPaymentMPTransparente extends Controller {
 			$json_response = array('status' => null, 'message' => null);
 
 			if (in_array($payment_response['response']['status'], $accepted_status)) {
+				$this->createCart($payment_data['token']);
 				$json_response['status'] = $payment_response['response']['status'];
 			} else {
 				$json_response['status'] = $payment_response['response']['status_detail'];
@@ -150,7 +163,6 @@ class ControllerPaymentMPTransparente extends Controller {
 		$this->load->language('payment/mp_transparente');
 		$request_type = isset($this->request->get['request_type']) ? (string) $this->request->get['request_type'] : "";
 		$status = (string) $this->request->get['status'];
-		error_log('Status: ' . $status);
 		if ($request_type) {
 			$status = $request_type == "token" ? 'T' . $status : 'S' . $status;
 		}
@@ -187,8 +199,50 @@ class ControllerPaymentMPTransparente extends Controller {
 			echo json_encode(200);
 		}
 	}
+	public function getCustomerId() {
+		$access_token = $this->config->get('mp_transparente_access_token');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$customer = array('email' => $order_info['email']);
+		error_log('email customer:' . $order_info['email']);
+		$search_uri = "/v1/customers/search";
+		$mp = new MP($access_token);
+		$response = $mp->get($search_uri, $customer);
 
-	private function retornoTransparente() {
+		return array_key_exists("results", $response["response"]) && sizeof($response["response"]["results"]) > 0 ? 
+               $response["response"]["results"][0]["id"] : $this->createCustomer()["id"];
+	}
+
+	private function createCustomer() {
+		$access_token = $this->config->get('mp_transparente_access_token');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$customer = array('email' => $order_info['email']);
+		$uri = '/v1/customers/';
+		$mp = new MP($access_token);
+		$response = $mp->post($uri, $customer);
+		return $response;
+	}
+
+	private function getCards() {
+		$id = $this->getCustomerId();
+        $access_token = $this->config->get('mp_transparente_access_token');
+        $mp = new MP ($access_token);
+        $cards = $mp->get ("/v1/customers/" . $id . "/cards");
+        return array_key_exists("response", $cards) && sizeof($cards["response"]["results"]) > 0 ? 
+               $cards["response"]["results"][0]["id"] : null;
+
+print_r ($cards["response"]);
+	}
+
+	private function createCard($token) {
+		$id = $this->getCustomerId();
+		$access_token = $this->config->get('mp_transparente_access_token');
+		$mp = new MP($access_token);
+		$card = $mp->post("/v1/customers/" . $id . "/cards", array("token" => $token);
+        error_log('card criado: ' . json_encode($card));
+        return $card;
+	}
+
+	private function retornoTransparente($token) {
 		$id = $this->request->get['data_id'];
 		$this->updateOrder($id);
 	}

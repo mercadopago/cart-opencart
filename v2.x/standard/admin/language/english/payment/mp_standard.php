@@ -5,7 +5,7 @@ $_['heading_title'] = 'MercadoPago - Standard';
 // Text
 $_['text_payment'] = 'Payment';
 $_['text_success'] = 'Success, your modifications are done!';
-$_['text_mercadopago2'] = '<a onclick="window.open(\'https://www.mercadopago.com\');" target="_blank"><img src="view/image/payment/mercadopago2.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;" /></a> <br /><b> Standard Checkout</b>';
+$_['text_mp_standard'] = '<a onclick="window.open(\'https://www.mercadopago.com\');" target="_blank"><img src="view/image/payment/mp_standard.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;" /></a> <br /><b> Standard Checkout</b>';
 $_['text_argentina'] = 'Argentina';
 $_['text_brasil'] = 'Brasil';
 $_['text_colombia'] = 'Colombia';

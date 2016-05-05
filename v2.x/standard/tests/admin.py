@@ -3,7 +3,7 @@ from splinter import Browser
 
 browser = Browser()
 utils = {}
-prefix = 'mercadopago2_';
+prefix = 'mp_standard_';
 payment_methods =['visa', 'master']
 ddl_fields = {'status': 'Enabled', 'category_id': 'Computers & Tablets', 'debug': 'Enabled', 
               'sandbox': 'Enabled', 'type_checkout': 'Lightbox', 'order_status_id': 'Pending', 
@@ -36,11 +36,11 @@ def login():
     utils['token'] = browser.url.split('token=')[1]
 
 def fill_admin_data():
-    url = 'http://localhost:8888/opencart2/admin/index.php?route=payment/mercadopago2&token=%s' % utils['token']
+    url = 'http://localhost:8888/opencart2/admin/index.php?route=payment/mp_standard&token=%s' % utils['token']
     url_redirect = 'admin/index.php?route=extension/payment&token=%s' % utils['token']
     browser.visit(url)
 
-    if browser.find_by_name('mercadopago2_public_key').first.visible:
+    if browser.find_by_name('mp_standard_public_key').first.visible:
         del text_fields['client_id']
         del text_fields['client_secret']
     else:
@@ -63,10 +63,10 @@ def fill_admin_data():
 
 
 def check_if_admin_data_was_saved():
-    admin_url = 'http://localhost:8888/opencart2/admin/index.php?route=payment/mercadopago2&token=%s' % utils['token']
+    admin_url = 'http://localhost:8888/opencart2/admin/index.php?route=payment/mp_standard&token=%s' % utils['token']
     browser.visit(admin_url)
 
-    if browser.find_by_name('mercadopago2_public_key').first.visible:
+    if browser.find_by_name('mp_standard_public_key').first.visible:
         text_fields['public_key'] = public_key
         text_fields['access_token'] = access_token
     else:
