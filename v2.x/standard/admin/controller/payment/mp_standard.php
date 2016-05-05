@@ -2,17 +2,17 @@
 
 require_once '../catalog/controller/payment/mercadopago.php';
 
-class ControllerPaymentMercadopago2 extends Controller {
+class ControllerPaymentMPStandard extends Controller {
 	private $_error = array();
 	public function index() {
-		$prefix = 'mercadopago2_';
+		$prefix = 'mp_standard_';
 		$fields = array('client_id', 'client_secret', 'status', 'category_id',
 			'debug', 'sandbox', 'country', 'installments', 'order_status_id',
 			'order_status_id_completed', 'order_status_id_pending', 'order_status_id_canceled',
 			'order_status_id_in_process', 'order_status_id_rejected', 'order_status_id_refunded',
 			'order_status_id_in_mediation', 'order_status_chargeback');
 
-		$this->load->language('payment/mercadopago2');
+		$this->load->language('payment/mp_standard');
 		$this->document->setTitle($this->language->get('heading_title'));
 		$this->load->model('setting/setting');
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -81,9 +81,9 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$data['button_cancel'] = $this->language->get('button_cancel');
 		$data['tab_general'] = $this->language->get('tab_general');
 
-		$data['mercadopago2_enable_return'] = isset($this->request->post['mercadopago2_enable_return']) ?
-		$this->request->post['mercadopago2_enable_return'] :
-		$this->config->get('mercadopago2_enable_return');
+		$data['mp_standard_enable_return'] = isset($this->request->post['mp_standard_enable_return']) ?
+		$this->request->post['mp_standard_enable_return'] :
+		$this->config->get('mp_standard_enable_return');
 
 		$data['error_warning'] = isset($this->_error['warning']) ? $this->_error['warning'] : '';
 		$data['error_acc_id'] = isset($this->_error['acc_id']) ? $this->_error['acc_id'] : '';
@@ -102,9 +102,9 @@ class ControllerPaymentMercadopago2 extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('payment/mercadopago2', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('payment/mp_standard', 'token=' . $this->session->data['token'], 'SSL'),
 		);
-		$data['action'] = HTTPS_SERVER . 'index.php?route=payment/mercadopago2&token=' . $this->session->data['token'];
+		$data['action'] = HTTPS_SERVER . 'index.php?route=payment/mp_standard&token=' . $this->session->data['token'];
 		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token'];
 		$data['category_list'] = $this->getCategoryList();
 		$data['type_checkout'] = $this->getTypeCheckout();
@@ -132,12 +132,12 @@ class ControllerPaymentMercadopago2 extends Controller {
 			}
 		}
 
-		$country_id = $this->config->get('mercadopago2_country') == null ?
-		'MLA' : $this->config->get('mercadopago2_country');
+		$country_id = $this->config->get('mp_standard_country') == null ?
+		'MLA' : $this->config->get('mp_standard_country');
 
 		$methods_api = $this->getMethods($country_id);
 		$data['methods'] = array();
-		$data['mercadopago2_methods'] = preg_split("/[\s,]+/", $this->config->get('mercadopago2_methods'));
+		$data['mp_standard_methods'] = preg_split("/[\s,]+/", $this->config->get('mp_standard_methods'));
 		foreach ($methods_api as $method) {
 			$data['methods'][] = $method;
 		}
@@ -148,21 +148,21 @@ class ControllerPaymentMercadopago2 extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
 			$this->load->model('setting/setting');
 
-			if (isset($this->request->post['mercadopago2_methods'])) {
-				$names = $this->request->post['mercadopago2_methods'];
-				$this->request->post['mercadopago2_methods'] = '';
+			if (isset($this->request->post['mp_standard_methods'])) {
+				$names = $this->request->post['mp_standard_methods'];
+				$this->request->post['mp_standard_methods'] = '';
 				foreach ($names as $name) {
-					$this->request->post['mercadopago2_methods'] .= $name . ',';
+					$this->request->post['mp_standard_methods'] .= $name . ',';
 				}
 			}
-			$this->model_setting_setting->editSetting('mercadopago2', $this->request->post);
+			$this->model_setting_setting->editSetting('mp_standard', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 			$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
 
 		}
 
-		$this->response->setOutput($this->load->view('payment/mercadopago2.tpl', $data));
+		$this->response->setOutput($this->load->view('payment/mp_standard.tpl', $data));
 
 	}
 
@@ -174,15 +174,15 @@ class ControllerPaymentMercadopago2 extends Controller {
 			$data['methods'][] = $method;
 		}
 
-		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('mercadopago2_methods'));
+		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('mp_standard_methods'));
 		foreach ($methods_excludes as $exclude) {
-			$data['mercadopago2_methods'][] = $exclude;
+			$data['mp_standard_methods'][] = $exclude;
 
 		}
 
 		if (isset($data['methods'])) {
 			$data['payment_style'] = count($data['methods']) > 12 ? "float:left; margin-left:7%" : "float:left; margin-left:5%";
-			$this->response->setOutput($this->load->view('payment/mercadopago2_payment_methods_partial.tpl', $data));
+			$this->response->setOutput($this->load->view('payment/mp_standard_payment_methods_partial.tpl', $data));
 		}
 	}
 
@@ -287,14 +287,14 @@ class ControllerPaymentMercadopago2 extends Controller {
 	}
 
 	private function validate() {
-		if (!$this->user->hasPermission('modify', 'payment/mercadopago2')) {
+		if (!$this->user->hasPermission('modify', 'payment/mp_standard')) {
 			$this->_error['warning'] = $this->language->get('error_permission');
 		}
-		if (!$this->request->post['mercadopago2_client_id']) {
+		if (!$this->request->post['mp_standard_client_id']) {
 			$this->_error['error_client_id'] = $this->language->get('error_client_id');
 		}
 
-		if (!$this->request->post['mercadopago2_client_secret']) {
+		if (!$this->request->post['mp_standard_client_secret']) {
 			$this->_error['error_client_secret'] = $this->language->get('error_client_secret');
 		}
 
