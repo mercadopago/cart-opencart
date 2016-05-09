@@ -19,6 +19,7 @@ $_['cardType_placeholder'] = 'Payment Type';
 $_['payment_processing'] = "Processing payment";
 $_['payment_title'] = "Payment";
 $_['payment_button'] = "Pay";
+$_['other_card_option'] = "Other Card";
 //Payment messages
 $_['S200'] = 'Payment approved!';
 $_['S201'] = 'Payment approved!';

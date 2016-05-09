@@ -16,16 +16,24 @@
                         <div id="formulario" class="cartao">
                             <div class="panel-body" id="checkoutPayment">
                              <?php if (isset($cards) && $user_logged): ?>
-                            <div class="col-md-12">
+                            <div class="col-md-12 ">
                                 <fieldset class="form-group col-sm-6" style="margin-left: -5%;">
                                     <label class="control-label" id="ccnum_label" for="ccnum"><?php echo($ccnum_placeholder); ?></label>
                                     <select class="form-control" type="text" id="cc_num_cc">
                                         <?php foreach($cards as $card): ?>
                                             <option value="<?php echo($card['id']); ?>">****<?php echo($card['last_four_digits']);?></option>
                                         <?php endforeach;?>
+                                        <option value="-1"><?php echo $other_card_option; ?></option>
                                     </select>
                                 </fieldset>
-                            </div>
+                                <fieldset class="form-group col-sm-3">
+                                      <label id="cvv_label" class="control-label" for="cvv">CVV</label>
+                                    <input class="form-control" type="text" id="cvv" data-checkout="securityCode" size="4" maxlength="4" class="form-control"/>
+                                </fieldset>
+                                <fieldset class="form-group col-sm-3" style="margin-top: 4.5%;">                                 
+                                    <button class="btn btn-primary pull-right" id="button_pay"><?php echo($payment_button); ?></button>
+                                </fieldset>
+                            </div>            
                         <?php endif; ?>
                                 <div class="form-group" style="margin-bottom: 4%;" id="cardData">
                                     <?php if(isset($ccnum_placeholder)): ?>

@@ -41,6 +41,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['payment_button'] = $this->language->get('payment_button');
 		$data['payment_title'] = $this->language->get('payment_title');
 		$data['payment_processing'] = $this->language->get('payment_processing');
+		$data['other_card_option'] = $this->language->get('other_card_option');
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_transparente_debug');
 		$data['cards'] = $this->getCards();

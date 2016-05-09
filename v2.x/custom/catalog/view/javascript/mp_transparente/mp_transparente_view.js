@@ -286,8 +286,19 @@
 
                 function customersAndCards()
                 {
-        //TODO: JS para pegar as informações sobre o cartão escolhido
-        //e chamar a função pay
+                    //TODO: alterar o script de listener para fazer minor commits
+                    var cc_num_ddl = document.getElementById('cc_num_cc');
+                    if (cc_num_ddl.value == "-1")
+                    {
+                        //exibe form de pagamento e esconde form cc
+                    }
+                    else
+                    {
+                        //esconde form de pagamento e exibe form cc
+                    }
+                    //TODO: JS para pegar as informações sobre o cartão escolhido
+                    //e chamar a função pay
+                    //Colocar bandeiras nos selects
     }
 
     function pay(payment)
