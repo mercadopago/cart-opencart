@@ -181,7 +181,7 @@ class ControllerPaymentMPStandard extends Controller {
 		$sandbox = (bool) $this->config->get('mp_standard_sandbox');
 
 		if (strpos($order_info['email'], '@testuser.com') === false) {
-			$payment_data["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
+			$pref["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
 		}
 
 		if ($preferenceResult['status'] == 201):
