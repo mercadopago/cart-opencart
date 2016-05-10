@@ -14,6 +14,7 @@ class ControllerPaymentMPStandard extends Controller {
 		'MCO' => 204964815,
 		'MLV' => 204964612,
 		'MLC' => 204964815);
+
 	public function index() {
 		$data['customer_email'] = $this->customer->getEmail();
 		$data['button_confirm'] = $this->language->get('button_confirm');
@@ -75,7 +76,6 @@ class ControllerPaymentMPStandard extends Controller {
 
 		$client_id = $this->config->get('mp_standard_client_id');
 		$client_secret = $this->config->get('mp_standard_client_secret');
-		error_log(json_encode($order_info));
 		$url = $order_info['store_url'];
 		$installments = (int) $this->config->get('mp_standard_installments');
 
@@ -175,9 +175,15 @@ class ControllerPaymentMPStandard extends Controller {
 		$pref['back_urls'] = $back_urls;
 		$pref['payment_methods'] = $payment_methods;
 		$pref['payer'] = $payer;
+		$pref['notification_url'] = $order_info['store_url'] . 'index.php?route=payment/mp_standard/notifications';
 		$mp = new MP($client_id, $client_secret);
 		$preferenceResult = $mp->create_preference($pref);
 		$sandbox = (bool) $this->config->get('mp_standard_sandbox');
+
+		if (strpos($order_info['email'], '@testuser.com') === false) {
+			$payment_data["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
+		}
+
 		if ($preferenceResult['status'] == 201):
 			$data['type_checkout'] = $this->config->get('mp_standard_type_checkout');
 			if ($sandbox):

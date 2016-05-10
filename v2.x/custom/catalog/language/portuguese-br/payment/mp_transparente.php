@@ -19,7 +19,7 @@ $_['error_invalid_payment_type'] = 'Este meio de pagamento não é aceito';
 $_['payment_processing'] = "Processando o pagamento.";
 $_['payment_title'] = "Pagamento";
 $_['payment_button'] = "Pagar";
-
+$_['other_card_option'] = "Outro Cartão";
 $_['S200'] = 'Pagamento aprovado!';
 $_['S201'] = $_['S200'];
 $_['S2000'] = 'Pagamento não encontrado';

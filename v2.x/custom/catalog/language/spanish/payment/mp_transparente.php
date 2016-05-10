@@ -19,7 +19,7 @@ $_['payment_processing'] = "Procesando el pago";
 $_['payment_title'] = "Pago";
 $_['payment_button'] = "Pagar";
 $_['cvv'] = "Codigo de Seguridad";
-
+$_['other_card_option'] = "Otra Tarjeta";
 $_['S200'] = 'Pago aprobado!';
 $_['S201'] = $_['S200'];
 $_['S2000'] = 'Pago no encontrado';
