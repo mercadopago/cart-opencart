@@ -14,6 +14,7 @@ class ControllerPaymentMPStandard extends Controller {
 		'MCO' => 204964815,
 		'MLV' => 204964612,
 		'MLC' => 204964815);
+
 	public function index() {
 		$data['customer_email'] = $this->customer->getEmail();
 		$data['button_confirm'] = $this->language->get('button_confirm');
