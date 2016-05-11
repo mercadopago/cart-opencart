@@ -75,6 +75,8 @@ class ControllerPaymentMPTransparente extends Controller {
 
 	public function payment() {
 		$this->language->load('payment/mp_transparente');
+		$this->request->post['teste'] = "testei";
+		error_log($this->request->post['teste']);
 		try {
 			$exclude = $this->config->get('mp_transparente_methods');
 			$accepted_methods = preg_split("/[\s,]+/", $exclude);
@@ -213,7 +215,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$response = $mp->get($search_uri, $customer);
 		error_log('response get customer: ' . json_encode($response));
 		return (array_key_exists("results", $response["response"]) && sizeof($response["response"]["results"]) > 0) ?
-		$response["response"]["results"][0]["id"] : $this->createCustomer()["id"];
+		$response["response"]["results"][0]["id"] : $this->createCustomer()["response"]["id"];
 	}
 
 	private function createCustomer() {
@@ -229,13 +231,16 @@ class ControllerPaymentMPTransparente extends Controller {
 
 	private function getCards() {
 		$id = $this->getCustomerId();
+		$retorno = null;
 		$access_token = $this->config->get('mp_transparente_access_token');
 		$mp = new MP($access_token);
 		$cards = $mp->get("/v1/customers/" . $id . "/cards");
 		error_log('response get cards: ' . json_encode($cards));
-		return array_key_exists("response", $cards)
-		&& sizeof($cards["response"]) > 0 ?
-		$cards["response"] : null;
+		if (array_key_exists("response", $cards) && sizeof($cards["response"]) > 0) {
+			$this->session->data['cards'] = $cards["response"];
+			$retorno = $cards["response"];
+		}
+		return $retorno;
 	}
 
 	private function createCard($token) {

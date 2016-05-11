@@ -1,41 +1,42 @@
                  (function(){
                     $('#formulario').hide();
+                    $("#cardData :input").attr('disabled','disabled');
                     var spinner = new Spinner().spin(document.getElementById('spinner'));
                     var country = document.getElementById('country').value;
                     var firstname =  document.getElementById('input-payment-firstname');
-
+                    document.getElementById('cc_num_cc').addEventListener('change', customersAndCardsSelectHandler);
                     if(firstname)
                     {
                         var firstname =  document.getElementById('input-payment-firstname');
                         var lastname =  document.getElementById('input-payment-lastname');
                         document.getElementById('card_name').value = firstname.value + ' ' + lastname.value  ; 
                     }
-                        setTimeout(function(){
-                            $('#expiration_month').datetimepicker({minViewMode: 1, maxViewMode: 1, format: 'M'});
-                            $('#expiration_year').datetimepicker({minViewMode: 2, maxViewMode: 2, format: 'YYYY'});
+                    setTimeout(function(){
+                        $('#expiration_month').datetimepicker({minViewMode: 1, maxViewMode: 1, format: 'M'});
+                        $('#expiration_year').datetimepicker({minViewMode: 2, maxViewMode: 2, format: 'YYYY'});
 
-                            var public_key = document.getElementById("public_key").value;
-                            Mercadopago.setPublishableKey(public_key);
-                            if(country != "MLM")
-                            {
-                                Mercadopago.getIdentificationTypes(function (httpStatus, dt) {
-                                    var select = document.getElementById('doc_type');
-                                    var i = dt.length;
-                                    if (i > 1)
+                        var public_key = document.getElementById("public_key").value;
+                        Mercadopago.setPublishableKey(public_key);
+                        if(country != "MLM")
+                        {
+                            Mercadopago.getIdentificationTypes(function (httpStatus, dt) {
+                                var select = document.getElementById('doc_type');
+                                var i = dt.length;
+                                if (i > 1)
+                                {
+                                    while(i--)
                                     {
-                                        while(i--)
-                                        {
-                                            var option = new Option(dt[i].name, dt[i].id);
-                                            select.appendChild(option);
-                                        }    
-                                    }                        
-                                });  
-                            }
-                            console.log('parando spinner');
-                            spinner.stop();
-                            console.log('spinner parado');
-                            $('#formulario').show("slow"); 
-                        }, 5000);
+                                        var option = new Option(dt[i].name, dt[i].id);
+                                        select.appendChild(option);
+                                    }    
+                                }                        
+                            });  
+                        }
+                        console.log('parando spinner');
+                        spinner.stop();
+                        console.log('spinner parado');
+                        $('#formulario').show("slow"); 
+                    }, 5000);
                     
                 })();
 
@@ -59,12 +60,12 @@
                         Mercadopago.getPaymentMethod({
                             "bin": cc_num
                         }, function (status, response) {
-                         var paymentType = document.getElementById('paymentType')
-                         paymentType.value = response[0].id;
-                         var bg = 'url("' + response[0].secure_thumbnail + '") 98% 50% no-repeat';
-                         card_number.style.background = bg;
-                         if (paymentType.value == 'amex' )
-                         {
+                           var paymentType = document.getElementById('paymentType')
+                           paymentType.value = response[0].id;
+                           var bg = 'url("' + response[0].secure_thumbnail + '") 98% 50% no-repeat';
+                           card_number.style.background = bg;
+                           if (paymentType.value == 'amex' )
+                           {
                             $("#credit").mask("9999-999999-99999", {clearIfNotMatch: true});
                         }
                         else 
@@ -101,22 +102,22 @@
 
                     if (docType)
                     {
-                       form.docType = docType.value;   
-                   }
+                     form.docType = docType.value;   
+                 }
 
-                   if (docNumber) 
-                   {
-                       form.docNumber = docNumber.value;      
-                   }
+                 if (docNumber) 
+                 {
+                     form.docNumber = docNumber.value;      
+                 }
 
-                   var url_site = window.location.href.split('index.php')[0];
-                   var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
-                   url_backend += 'index.php?route=payment/mp_transparente/payment/';         
+                 var url_site = window.location.href.split('index.php')[0];
+                 var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
+                 url_backend += 'index.php?route=payment/mp_transparente/payment/';         
 
-                   Mercadopago.createToken(form, function (status, response) {
-                       var valid_status = [200, 201];
-                       if(response.error || valid_status.indexOf(status) < 0)
-                       {
+                 Mercadopago.createToken(form, function (status, response) {
+                     var valid_status = [200, 201];
+                     if(response.error || valid_status.indexOf(status) < 0)
+                     {
                         spinner.stop();
                         document.getElementById('formulario').style = style;
                         var data = {status: response.cause[0].code, message: response.cause[0].description, request_type:"token"};
@@ -125,31 +126,31 @@
                     else 
                     {
                         var payment = {token: response.id, 
-                           user: document.getElementById('card_name').value,
-                           payment_method_id: document.getElementById('paymentType').value,
-                           installments: document.getElementById('installments').value};
+                         user: document.getElementById('card_name').value,
+                         payment_method_id: document.getElementById('paymentType').value,
+                         installments: document.getElementById('installments').value};
 
-                           if (docType)
-                           {
-                               payment.docType = docType.value; 
-                           }
+                         if (docType)
+                         {
+                             payment.docType = docType.value; 
+                         }
 
-                           if (docNumber) 
-                           {
-                               payment.docNumber = docNumber.value;
-                           }
+                         if (docNumber) 
+                         {
+                             payment.docNumber = docNumber.value;
+                         }
 
-                           var issuer = document.getElementById('issuer');
-                           if(issuer)
-                           {
+                         var issuer = document.getElementById('issuer');
+                         if(issuer)
+                         {
                             payment.issuer_id = issuer.value;
                         }
-                        pay(payment);
+                        pay(payment, url_backend, spinner);
 
                     }
                 }
                 );
-               });
+             });
 
                 function getMessage(data)
                 {   
@@ -214,6 +215,7 @@
                             //document.getElementById('paymentType').value = data[0].payment_method_id;
                             var i = installments.length;
                             var select = document.getElementById('installments');
+                            select.childNodes
                             select.options.length = 0;
                             select.appendChild(new Option('Selecione'));
                             for (i = 0; i < installments.length; i++) 
@@ -284,46 +286,51 @@
                 }
 
 
-                function customersAndCards()
+                function customersAndCardsSelectHandler()
                 {
+                    console.log('this.value = ' + this.value);
                     //TODO: alterar o script de listener para fazer minor commits
-                    var cc_num_ddl = document.getElementById('cc_num_cc');
-                    if (cc_num_ddl.value == "-1")
+                    if (this.value == "-1")
                     {
-                        //exibe form de pagamento e esconde form cc
+                        $("#cc_inputs :input").attr('disabled','disabled');
+                        $("#cardData :input").removeAttr('disabled');
                     }
                     else
                     {
+                        $("#cardData :input").attr('disabled','disabled');
+                        $("#cc_inputs :input").removeAttr('disabled');
                         //esconde form de pagamento e exibe form cc
                     }
                     //TODO: JS para pegar as informações sobre o cartão escolhido
                     //e chamar a função pay
                     //Colocar bandeiras nos selects
-    }
+                }
 
-    function pay(payment)
-    {
-        $.ajax({
-            type: "POST",
-            url: url_backend,
-            data: payment,
-            success: function success(data) {
-                response_payment = JSON.parse(data);
-                document.getElementById('formulario').style = 'margin-left: 22%';
-                var acceptable_status = ["approved", "in_process"];
-                if (acceptable_status.indexOf(response_payment.status) > -1)
-                {    
-                    var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
-                    location += 'index.php?route=checkout/success';
-                    localStorage.removeItem('payment');
-                    window.location.href = location;
-                }
-                else
+                function pay(payment, url_backend, spinner)
                 {
-                    delete response_payment.request_type;
-                    getMessage(response_payment);
+
+                    $.ajax({
+                        type: "POST",
+                        url: url_backend,
+                        data: payment,
+                        success: function success(data) {
+                            response_payment = JSON.parse(data);
+                            document.getElementById('formulario').style = 'margin-left: 22%';
+                            var acceptable_status = ["approved", "in_process"];
+                            if (acceptable_status.indexOf(response_payment.status) > -1)
+                            {    
+                                var url_site = window.location.href.split('index.php')[0];
+                                var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
+                                location += 'index.php?route=checkout/success';
+                                localStorage.removeItem('payment');
+                                window.location.href = location;
+                            }
+                            else
+                            {
+                                delete response_payment.request_type;
+                                getMessage(response_payment);
+                            }
+                            spinner.stop();     
+                        }
+                    });
                 }
-                spinner.stop();     
-            }
-        });
-    }

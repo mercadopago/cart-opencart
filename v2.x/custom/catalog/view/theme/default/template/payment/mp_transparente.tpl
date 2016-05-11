@@ -26,6 +26,7 @@
                                         <option value="-1"><?php echo $other_card_option; ?></option>
                                     </select>
                                 </fieldset>
+                                <div id="cc_inputs"> 
                                 <fieldset class="form-group col-sm-3">
                                       <label id="cvv_label" class="control-label" for="cvv">CVV</label>
                                     <input class="form-control" type="text" id="cvv" data-checkout="securityCode" size="4" maxlength="4" class="form-control"/>
@@ -33,6 +34,7 @@
                                 <fieldset class="form-group col-sm-3" style="margin-top: 4.5%;">                                 
                                     <button class="btn btn-primary pull-right" id="button_pay"><?php echo($payment_button); ?></button>
                                 </fieldset>
+                                </div>
                             </div>            
                         <?php endif; ?>
                                 <div class="form-group" style="margin-bottom: 4%;" id="cardData">
