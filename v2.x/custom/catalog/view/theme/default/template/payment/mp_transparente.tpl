@@ -16,27 +16,8 @@
                         <div id="formulario" class="cartao">
                             <div class="panel-body" id="checkoutPayment">
                              <?php if (isset($cards) && $user_logged): ?>
-                            <div class="col-md-12 ">
-                                <fieldset class="form-group col-sm-6" style="margin-left: -5%;">
-                                    <label class="control-label" id="ccnum_label" for="ccnum"><?php echo($ccnum_placeholder); ?></label>
-                                    <select class="form-control" type="text" id="cc_num_cc">
-                                        <?php foreach($cards as $card): ?>
-                                            <option value="<?php echo($card['id']); ?>">****<?php echo($card['last_four_digits']);?></option>
-                                        <?php endforeach;?>
-                                        <option value="-1"><?php echo $other_card_option; ?></option>
-                                    </select>
-                                </fieldset>
-                                <div id="cc_inputs"> 
-                                <fieldset class="form-group col-sm-3">
-                                      <label id="cvv_label" class="control-label" for="cvv">CVV</label>
-                                    <input class="form-control" type="text" id="cvv" data-checkout="securityCode" size="4" maxlength="4" class="form-control"/>
-                                </fieldset>
-                                <fieldset class="form-group col-sm-3" style="margin-top: 4.5%;">                                 
-                                    <button class="btn btn-primary pull-right" id="button_pay"><?php echo($payment_button); ?></button>
-                                </fieldset>
-                                </div>
-                            </div>            
-                        <?php endif; ?>
+                            <?php echo($cc_partial); ?>
+                            <?php endif; ?>
                                 <div class="form-group" style="margin-bottom: 4%;" id="cardData">
                                     <?php if(isset($ccnum_placeholder)): ?>
                                         <div class="row"></div>
@@ -86,4 +67,5 @@
                         <script type="text/javascript" src="./catalog/view/javascript/mp_transparente/jquery.mask.min.js"></script>
                         <script type="text/javascript" src="./admin/view/javascript/mp_transparente/spinner.min.js"></script>
                         <script defer type="text/javascript" src="./catalog/view/javascript/mp_transparente/mp_transparente_view.js"></script>
+                        
                     </div>

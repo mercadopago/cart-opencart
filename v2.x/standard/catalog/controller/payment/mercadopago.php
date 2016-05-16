@@ -179,7 +179,7 @@ class MP {
 	 */
 	public function create_payment($payment) {
 		$access_token = $this->get_access_token();
-		$header = "application/json;X-Tracking-Id: platform:web, so:1.0,type:OpenCart2";
+		$header = "application/json;X-Tracking-Id: platform:desktop, so:1.0,type:OpenCart2";
 		$result = $this->post('/v1/payments?access_token=' . $access_token, $payment, $header);
 		return $result;
 	}
