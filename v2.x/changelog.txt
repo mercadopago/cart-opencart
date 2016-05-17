@@ -9,6 +9,9 @@
 \f0\fs24 \cf0 IMPORTANT: YOUR SERVER MUST HAVE SSL ENABLE, OTHERWISE THE API CALLS TO MERCADO PAGO WILL NOT WORK\
 \
 CHANGELOG:\
+V1.2\
+- Customers & Cards now available for custom checkout\
+\
 V 1.1\
 -  Splitted v2.x in 3 different modules (standard, ticket and custom)\
 - Improved performance\

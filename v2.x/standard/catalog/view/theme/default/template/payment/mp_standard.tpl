@@ -60,7 +60,7 @@
         <div class="form-group" style="margin-left: 10%;">
             <div class="form-group" style="margin-bottom: 4%">
                 <div class="col-sm-6"  style="align:left;">
-                    <img src="./admin/view/image/payment/mercadopago2.png" />
+                    <img src="./admin/view/image/payment/mp_standard.png" />
                     <img src="./image/banners/<?php echo $action;?>/credit_card.png" />
                 </div>
             </div>
@@ -132,11 +132,11 @@
           </div>
         </div>
             <script defer type="text/javascript" src="//fgnass.github.io/spin.js/spin.min.js"></script>
-            <script defer src="./catalog/view/javascript/mercadopago2/mercadopago.js"></script>
-            <script defer src="./catalog/view/javascript/mercadopago2/mask.js"></script>
-            <script defer src="./catalog/view/javascript/mercadopago2/jquery.bpopup.min.js"></script>
-            <script defer type="text/javascript" src="./admin/view/javascript/mercadopago2/spinner.min.js"></script>
-            <script defer src="./catalog/view/javascript/mercadopago2/mp_transparente_view.js"></script>
+            <script defer src="./catalog/view/javascript/mp_standard/mercadopago.js"></script>
+            <script defer src="./catalog/view/javascript/mp_standard/mask.js"></script>
+            <script defer src="./catalog/view/javascript/mp_standard/jquery.bpopup.min.js"></script>
+            <script defer type="text/javascript" src="./admin/view/javascript/mp_standard/spinner.min.js"></script>
+            <script defer src="./catalog/view/javascript/mp_standard/mp_transparente_view.js"></script>
         </div>
 
         <div id="modal_popup" class="modal fade" role="dialog" style="display: none;">

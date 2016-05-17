@@ -10,7 +10,7 @@
             {
                 var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';
                 var country = country_select.options[country_select.selectedIndex].value;
-                url_backend += 'admin/index.php?route=payment/mercadopago2/getPaymentMethodsByCountry&country_id=' + country + "&token=" + token;
+                url_backend += 'admin/index.php?route=payment/mp_standard/getPaymentMethodsByCountry&country_id=' + country + "&token=" + token;
                 $.get(url_backend , function(data) {
                     div_payments.innerHTML = data;
                     spinner.stop();
