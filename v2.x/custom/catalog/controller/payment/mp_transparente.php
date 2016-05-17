@@ -145,7 +145,6 @@ class ControllerPaymentMPTransparente extends Controller {
 			$json_response = array('status' => null, 'message' => null);
 
 			if (in_array($payment_response['response']['status'], $accepted_status)) {
-
 				$json_response['status'] = $payment_response['response']['status'];
 			} else {
 				$json_response['status'] = $payment_response['response']['status_detail'];
@@ -257,9 +256,8 @@ class ControllerPaymentMPTransparente extends Controller {
 				"payer" => array(
 					"id" => $this->getCustomerId(),
 				));
-			error_log('payment: ' . json_encode($payment));
+
 			$payment_return = $mp->post("/v1/payments", $payment);
-			error_log('payment result: ' . json_encode($payment_return));
 			$accepted_status = array('approved', "in_process");
 			$this->updateOrder($payment_return['response']['id']);
 			$json_response = array('status' => null, 'message' => null);
