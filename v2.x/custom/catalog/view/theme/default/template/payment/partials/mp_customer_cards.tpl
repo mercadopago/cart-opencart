@@ -6,7 +6,7 @@
  				<?php foreach($cards as $card): ?> 
  					<option value="<?php echo($card['id']); ?>" 
  						first_six_digits="<?php echo($card['first_six_digits']);?>" security_code_length="<?php echo($card['security_code']['length']);?>"
- 						style="background: url(<?php echo $card['payment_method']['secure_thumbnail']; ?>) 80% 50% no-repeat"> <?php echo $card['issuer']['name']; ?> - **** **** ****<?php echo($card['last_four_digits']);?></option>
+ 						style="background: url(<?php echo $card['payment_method']['secure_thumbnail']; ?>) 80% 50% no-repeat"> <?php echo $card['issuer']['name']; ?> - **** **** **** <?php echo($card['last_four_digits']);?></option>
  					<?php endforeach;?>
  					<option value="-1"><?php echo $other_card_option; ?></option>
  				</select>

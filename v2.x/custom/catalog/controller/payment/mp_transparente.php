@@ -46,7 +46,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['debug'] = $this->config->get('mp_transparente_debug');
 		$data['cards'] = $this->getCards();
 		$data['user_logged'] = $this->customer->isLogged();
-		//$data['user_logged'] = true;
+
 		if (strpos($this->config->get('config_url'), 'localhost')) {
 			$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
 			$data['partial'] = $this->load->view('default/template/payment/partials/mp_transparente_' . $partial . '.tpl', $data);
@@ -138,8 +138,6 @@ class ControllerPaymentMPTransparente extends Controller {
 			if (strpos($order_info['email'], '@testuser.com') === false) {
 				$payment_data["sponsor_id"] = $this->sponsors[$this->config->get('mp_transparente_country')];
 			}
-//TODO
-			//enviar para o mati developers site customers and cards (o que faltou na explicação)
 			$payment_json = json_encode($payment_data);
 			$accepted_status = array('approved', "in_process");
 			$payment_response = $mp->create_payment($payment_json);
