@@ -45,7 +45,8 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_transparente_debug');
 		$data['cards'] = $this->getCards();
-		$data['user_logged'] = true; //$this->customer->isLogged();
+		$data['user_logged'] = $this->customer->isLogged();
+
 		if (strpos($this->config->get('config_url'), 'localhost')) {
 			$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
 			$data['partial'] = $this->load->view('default/template/payment/partials/mp_transparente_' . $partial . '.tpl', $data);
@@ -75,6 +76,8 @@ class ControllerPaymentMPTransparente extends Controller {
 
 	public function payment() {
 		$this->language->load('payment/mp_transparente');
+		$this->request->post['teste'] = "testei";
+		error_log($this->request->post['teste']);
 		try {
 			$exclude = $this->config->get('mp_transparente_methods');
 			$accepted_methods = preg_split("/[\s,]+/", $exclude);
@@ -121,13 +124,13 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment_data = array("payer" => $payer,
 				"external_reference" => $order_info['order_id'],
 				"transaction_amount" => $value,
-				//"notification_url" => $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications',
-				"notification_url" => 'http://www.google.com',
+				"notification_url" => $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications',
 				"token" => $this->request->post['token'],
 				"description" => 'Products',
 				"installments" => (int) $this->request->post['installments'],
 				"payment_method_id" => $this->request->post['payment_method_id']);
 			$payment_data['additional_info'] = array('shipments' => $shipments, 'items' => $items);
+			$payment_data['metadata'] = array('token' => $payment_data['token']);
 			if (isset($this->request->post['issuer_id'])) {
 				$payment_data['issuer_id'] = $this->request->post['issuer_id'];
 			}
@@ -135,7 +138,6 @@ class ControllerPaymentMPTransparente extends Controller {
 			if (strpos($order_info['email'], '@testuser.com') === false) {
 				$payment_data["sponsor_id"] = $this->sponsors[$this->config->get('mp_transparente_country')];
 			}
-
 			$payment_json = json_encode($payment_data);
 			$accepted_status = array('approved', "in_process");
 			$payment_response = $mp->create_payment($payment_json);
@@ -143,7 +145,7 @@ class ControllerPaymentMPTransparente extends Controller {
 			$json_response = array('status' => null, 'message' => null);
 
 			if (in_array($payment_response['response']['status'], $accepted_status)) {
-				$this->createCard($payment_data['token']);
+
 				$json_response['status'] = $payment_response['response']['status'];
 			} else {
 				$json_response['status'] = $payment_response['response']['status_detail'];
@@ -205,6 +207,7 @@ class ControllerPaymentMPTransparente extends Controller {
 	}
 	public function getCustomerId() {
 		$access_token = $this->config->get('mp_transparente_access_token');
+		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		$customer = array('email' => $order_info['email']);
 		error_log('email customer:' . $order_info['email']);
@@ -213,11 +216,12 @@ class ControllerPaymentMPTransparente extends Controller {
 		$response = $mp->get($search_uri, $customer);
 		error_log('response get customer: ' . json_encode($response));
 		return (array_key_exists("results", $response["response"]) && sizeof($response["response"]["results"]) > 0) ?
-		$response["response"]["results"][0]["id"] : $this->createCustomer()["id"];
+		$response["response"]["results"][0]["id"] : $this->createCustomer()["response"]["id"];
 	}
 
 	private function createCustomer() {
 		$access_token = $this->config->get('mp_transparente_access_token');
+		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		$customer = array('email' => $order_info['email']);
 		$uri = '/v1/customers/';
@@ -229,13 +233,48 @@ class ControllerPaymentMPTransparente extends Controller {
 
 	private function getCards() {
 		$id = $this->getCustomerId();
+		$retorno = null;
 		$access_token = $this->config->get('mp_transparente_access_token');
 		$mp = new MP($access_token);
 		$cards = $mp->get("/v1/customers/" . $id . "/cards");
 		error_log('response get cards: ' . json_encode($cards));
-		return array_key_exists("response", $cards)
-		&& sizeof($cards["response"]) > 0 ?
-		$cards["response"] : null;
+		if (array_key_exists("response", $cards) && sizeof($cards["response"]) > 0) {
+			$this->session->data['cards'] = $cards["response"];
+			$retorno = $cards["response"];
+		}
+		return $retorno;
+	}
+
+	public function paymentCustomersAndCards() {
+		try {
+			$access_token = $this->config->get('mp_transparente_access_token');
+			$mp = new MP($access_token);
+			$payment = array(
+				"transaction_amount" => floatval($this->request->post['transaction_amount']),
+				"token" => $this->request->post['token'],
+				"description" => "Title of what you are paying for",
+				"installments" => intval($this->request->post['installments']),
+				"payer" => array(
+					"id" => $this->getCustomerId(),
+				));
+			error_log('payment: ' . json_encode($payment));
+			$payment_return = $mp->post("/v1/payments", $payment);
+			error_log('payment result: ' . json_encode($payment_return));
+			$accepted_status = array('approved', "in_process");
+			$this->updateOrder($payment_return['response']['id']);
+			$json_response = array('status' => null, 'message' => null);
+
+			if (in_array($payment_return['response']['status'], $accepted_status)) {
+				$json_response['status'] = $payment_return['response']['status'];
+			} else {
+				$json_response['status'] = $payment_return['response']['status_detail'];
+			}
+
+			echo json_encode($json_response);
+		} catch (Exception $e) {
+			error_log('deu erro: ' . $e);
+			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
+		}
 	}
 
 	private function createCard($token) {
@@ -263,6 +302,9 @@ class ControllerPaymentMPTransparente extends Controller {
 		switch ($order_status) {
 		case 'approved':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
+			$metadata = $payment['metadata'];
+			error_log('metadata' . json_encode($metadata));
+			//$this->createCard($metadata['token']);
 			break;
 		case 'pending':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
