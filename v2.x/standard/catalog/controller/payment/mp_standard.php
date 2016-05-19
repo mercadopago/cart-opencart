@@ -204,11 +204,6 @@ class ControllerPaymentMPStandard extends Controller {
 
 	private function getMethods($country_id) {
 		$url = "https://api.mercadolibre.com/sites/" . $country_id . "/payment_methods";
-		$methods = $this->callJson($url);
-		return $methods;
-	}
-
-	private function callJson($url, $posts = null) {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //returns the transference value like a string
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded')); //sets the header
