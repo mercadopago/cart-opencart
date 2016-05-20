@@ -27,21 +27,17 @@ class ControllerPaymentMPTransparente extends Controller {
 		}
 
 		$this->load->model('checkout/order');
+		$this->language->load('payment/mp_transparente');
 
 		//populate labels
-		$this->language->load('payment/mp_transparente');
-		$data['ccnum_placeholder'] = $this->language->get('ccnum_placeholder');
-		$data['expiration_month_placeholder'] = $this->language->get('expiration_month_placeholder');
-		$data['expiration_year_placeholder'] = $this->language->get('expiration_year_placeholder');
-		$data['name_placeholder'] = $this->language->get('name_placeholder');
-		$data['doctype_placeholder'] = $this->language->get('doctype_placeholder');
-		$data['docnumber_placeholder'] = $this->language->get('docnumber_placeholder');
-		$data['installments_placeholder'] = $this->language->get('installments_placeholder');
-		$data['cardType_placeholder'] = $this->language->get('cardType_placeholder');
-		$data['payment_button'] = $this->language->get('payment_button');
-		$data['payment_title'] = $this->language->get('payment_title');
-		$data['payment_processing'] = $this->language->get('payment_processing');
-		$data['other_card_option'] = $this->language->get('other_card_option');
+		$labels = array('ccnum_placeholder', 'expiration_month_placeholder', 'expiration_year_placeholder',
+			'name_placeholder', 'doctype_placeholder', 'docnumber_placeholder', 'installments_placeholder',
+			'cardType_placeholder', 'payment_button', 'payment_title', 'payment_processing', 'other_card_option');
+
+		foreach ($labels as $label) {
+			$data[$label] = $this->language->get($label);
+		}
+
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_transparente_debug');
 		$data['cards'] = $this->getCards();
@@ -77,7 +73,6 @@ class ControllerPaymentMPTransparente extends Controller {
 	public function payment() {
 		$this->language->load('payment/mp_transparente');
 		$this->request->post['teste'] = "testei";
-		error_log($this->request->post['teste']);
 		try {
 			$exclude = $this->config->get('mp_transparente_methods');
 			$accepted_methods = preg_split("/[\s,]+/", $exclude);
@@ -152,7 +147,6 @@ class ControllerPaymentMPTransparente extends Controller {
 
 			echo json_encode($json_response);
 		} catch (Exception $e) {
-			error_log('deu erro: ' . $e);
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
 		}
 
@@ -209,11 +203,9 @@ class ControllerPaymentMPTransparente extends Controller {
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		$customer = array('email' => $order_info['email']);
-		error_log('email customer:' . $order_info['email']);
 		$search_uri = "/v1/customers/search";
 		$mp = new MP($access_token);
 		$response = $mp->get($search_uri, $customer);
-		error_log('response get customer: ' . json_encode($response));
 		return (array_key_exists("results", $response["response"]) && sizeof($response["response"]["results"]) > 0) ?
 		$response["response"]["results"][0]["id"] : $this->createCustomer()["response"]["id"];
 	}
@@ -226,7 +218,6 @@ class ControllerPaymentMPTransparente extends Controller {
 		$uri = '/v1/customers/';
 		$mp = new MP($access_token);
 		$response = $mp->post($uri, $customer);
-		error_log('response create customer: ' . json_encode($response));
 		return $response;
 	}
 
@@ -236,7 +227,6 @@ class ControllerPaymentMPTransparente extends Controller {
 		$access_token = $this->config->get('mp_transparente_access_token');
 		$mp = new MP($access_token);
 		$cards = $mp->get("/v1/customers/" . $id . "/cards");
-		error_log('response get cards: ' . json_encode($cards));
 		if (array_key_exists("response", $cards) && sizeof($cards["response"]) > 0) {
 			$this->session->data['cards'] = $cards["response"];
 			$retorno = $cards["response"];
@@ -270,7 +260,6 @@ class ControllerPaymentMPTransparente extends Controller {
 
 			echo json_encode($json_response);
 		} catch (Exception $e) {
-			error_log('deu erro: ' . $e);
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
 		}
 	}
@@ -280,7 +269,6 @@ class ControllerPaymentMPTransparente extends Controller {
 		$access_token = $this->config->get('mp_transparente_access_token');
 		$mp = new MP($access_token);
 		$card = $mp->post("/v1/customers/" . $id . "/cards", array("token" => $token));
-		error_log('card criado: ' . json_encode($card));
 		return $card;
 	}
 
@@ -300,9 +288,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		switch ($order_status) {
 		case 'approved':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-			$metadata = $payment['metadata'];
-			error_log('metadata' . json_encode($metadata));
-			//$this->createCard($metadata['token']);
+			$this->createCard($payment['metadata']['token']);
 			break;
 		case 'pending':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);

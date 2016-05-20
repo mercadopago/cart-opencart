@@ -13,57 +13,34 @@ class ControllerPaymentMPTicket extends Controller {
 			'order_status_id_canceled', 'order_status_id_in_process',
 			'order_status_id_rejected', 'order_status_id_refunded',
 			'order_status_id_in_mediation', 'order_status_chargeback');
-
 		$this->load->language('payment/mp_ticket');
-		$this->document->setTitle($this->language->get('heading_title'));
 		$this->load->model('setting/setting');
 		$data['heading_title'] = $this->language->get('heading_title');
-		$data['text_enabled'] = $this->language->get('text_enabled');
-		$data['text_disabled'] = $this->language->get('text_disabled');
-		$data['text_all_zones'] = $this->language->get('text_all_zones');
-		$data['text_yes'] = $this->language->get('text_yes');
-		$data['text_no'] = $this->language->get('text_no');
-		$data['text_mercadopago'] = $this->language->get('text_mercadopago');
+		$this->document->setTitle($data['heading_title']);
 
-		//Tooltips
-		$data['entry_public_key_tooltip'] = $this->language->get('entry_public_key_tooltip');
-		$data['entry_access_token_tooltip'] = $this->language->get('entry_access_token_tooltip');
-		$data['entry_payments_not_accept_tooltip'] = $this->language->get('entry_payments_not_accept_tooltip');
-		$data['entry_debug_tooltip'] = $this->language->get('entry_debug_tooltip');
-		$data['entry_category_tooltip'] = $this->language->get('entry_category_tooltip');
-		$data['entry_order_status_tooltip'] = $this->language->get('entry_order_status_tooltip');
-		$data['entry_order_status_completed_tooltip'] = $this->language->get('entry_order_status_completed_tooltip');
-		$data['entry_order_status_pending_tooltip'] = $this->language->get('entry_order_status_pending_tooltip');
-		$data['entry_order_status_canceled_tooltip'] = $this->language->get('entry_order_status_canceled_tooltip');
-		$data['entry_order_status_in_process_tooltip'] = $this->language->get('entry_order_status_in_process_tooltip');
-		$data['entry_order_status_rejected_tooltip'] = $this->language->get('entry_order_status_rejected_tooltip');
-		$data['entry_order_status_refunded_tooltip'] = $this->language->get('entry_order_status_refunded_tooltip');
-		$data['entry_order_status_in_mediation_tooltip'] = $this->language->get('entry_order_status_in_mediation_tooltip');
-		$data['entry_order_status_chargeback_tooltip'] = $this->language->get('entry_order_status_chargeback_tooltip');
+		$text_prefix = 'text_';
+		$texts = array('enabled', 'disabled', 'all_zones', 'yes', 'no', 'mercadopago');
 
-		//end tooltips
-		$data['entry_public_key'] = $this->language->get('entry_public_key');
-		$data['entry_access_token'] = $this->language->get('entry_access_token');
-		$data['entry_installments'] = $this->language->get('entry_installments');
-		$data['entry_payments_not_accept'] = $this->language->get('entry_payments_not_accept');
-		$data['entry_status'] = $this->language->get('entry_status');
-		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
-		$data['entry_sonda_key'] = $this->language->get('entry_sonda_key');
-		$data['entry_order_status'] = $this->language->get('entry_order_status');
-		$data['entry_ipn_status'] = $this->language->get('entry_ipn_status');
-		$data['entry_debug'] = $this->language->get('entry_debug');
+		foreach ($texts as $text) {
+			$name = $text_prefix . $text;
+			$data[$name] = $this->language->get($name);
+		}
 
-		$data['entry_category'] = $this->language->get('entry_category');
+		$entry_prefix = 'entry_';
+		$entries = array('public_key_tooltip', 'access_token_tooltip', 'payments_not_accept_tooltip', 'debug_tooltip',
+			'category_tooltip', 'order_status_tooltip', 'order_status_completed_tooltip', 'order_status_pending_tooltip',
+			'order_status_canceled_tooltip', 'order_status_in_process_tooltip', 'order_status_rejected_tooltip',
+			'order_status_refunded_tooltip', 'order_status_in_mediation_tooltip', 'order_status_chargeback_tooltip',
+			'public_key', 'access_token', 'installments', 'payments_not_accept', 'status', 'geo_zone', 'sonda_key',
+			'order_status', 'ipn_status', 'debug', 'category', 'order_status_general', 'order_status_completed',
+			'order_status_pending', 'order_status_canceled', 'order_status_in_process', 'order_status_rejected',
+			'order_status_refunded', 'order_status_in_mediation', 'order_status_chargeback');
 
-		$data['entry_order_status_general'] = $this->language->get('entry_order_status_general');
-		$data['entry_order_status_completed'] = $this->language->get('entry_order_status_completed');
-		$data['entry_order_status_pending'] = $this->language->get('entry_order_status_pending');
-		$data['entry_order_status_canceled'] = $this->language->get('entry_order_status_canceled');
-		$data['entry_order_status_in_process'] = $this->language->get('entry_order_status_in_process');
-		$data['entry_order_status_rejected'] = $this->language->get('entry_order_status_rejected');
-		$data['entry_order_status_refunded'] = $this->language->get('entry_order_status_refunded');
-		$data['entry_order_status_in_mediation'] = $this->language->get('entry_order_status_in_mediation');
-		$data['entry_order_status_chargeback'] = $this->language->get('entry_order_status_chargeback');
+		foreach ($entries as $entry) {
+			$name = $entry_prefix . $entry;
+			$data[$name] = $this->language->get($name);
+		}
+
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
 		$data['tab_general'] = $this->language->get('tab_general');
@@ -91,7 +68,6 @@ class ControllerPaymentMPTicket extends Controller {
 		$data['action'] = HTTPS_SERVER . 'index.php?route=payment/mp_ticket&token=' . $this->session->data['token'];
 		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token'];
 		$data['category_list'] = $this->getCategoryList();
-		$data['installments'] = $this->getInstallments();
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -151,7 +127,6 @@ class ControllerPaymentMPTicket extends Controller {
 	}
 
 	public function getPaymentMethods() {
-
 		$access_token = $this->request->get['access_token'];
 		if ($access_token != "") {
 			$this->load->model('setting/setting');
@@ -214,66 +189,6 @@ class ControllerPaymentMPTicket extends Controller {
 		$url = "https://api.mercadolibre.com/item_categories";
 		$category = $this->callJson($url);
 		return $category;
-	}
-
-	private function getInstallments() {
-		$installments = array();
-
-		$installments[] = array(
-			'value' => '24',
-			'id' => '24');
-
-		$installments[] = array(
-			'value' => '18',
-			'id' => '18');
-		$installments[] = array(
-			'value' => '15',
-			'id' => '15');
-
-		$installments[] = array(
-			'value' => '12',
-			'id' => '12');
-
-		$installments[] = array(
-			'value' => '11',
-			'id' => '11');
-
-		$installments[] = array(
-			'value' => '10',
-			'id' => '10');
-
-		$installments[] = array(
-			'value' => '9',
-			'id' => '9');
-
-		$installments[] = array(
-			'value' => '7',
-			'id' => '7');
-
-		$installments[] = array(
-			'value' => '6',
-			'id' => '6');
-
-		$installments[] = array(
-			'value' => '5',
-			'id' => '5');
-
-		$installments[] = array(
-			'value' => '4',
-			'id' => '4');
-
-		$installments[] = array(
-			'value' => '3',
-			'id' => '3');
-		$installments[] = array(
-			'value' => '2',
-			'id' => '2');
-
-		$installments[] = array(
-			'value' => '1',
-			'id' => '1');
-
-		return $installments;
 	}
 
 	private function validate() {

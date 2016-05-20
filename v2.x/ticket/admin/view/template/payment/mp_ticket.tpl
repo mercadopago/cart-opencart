@@ -100,7 +100,7 @@
                 <?php endif; ?>
               <?php endif; ?>
             <?php endforeach; ?>
-            <div class="text-danger" id="div_error_methods"></div>
+            
           </div>
         </div>
       </div>
@@ -248,5 +248,5 @@
 </div>
 </div>
 </div>
-<script type="text/javascript" src="./view/javascript/mp_ticket/mp_ticket.js"></script>
 <script type="text/javascript" src="./view/javascript/mp_ticket/spinner.min.js"></script>
+<script defer type="text/javascript" src="./view/javascript/mp_ticket/mp_ticket.js"></script>
