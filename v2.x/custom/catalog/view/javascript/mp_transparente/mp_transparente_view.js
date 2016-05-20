@@ -169,10 +169,23 @@
 
 
                     var response_payment = typeof(data) == "string"? JSON.parse(data): data;
+                    var status = "";
+
+                    if (response_payment.status == 400)
+                    {
+                        status = response_payment.message.split('-')[1].split(':')[0].trim();
+                        response_payment.request_type = "status";
+                    }
+                    else
+                    {
+                        status = response_payment.status;
+                    }
+                    
+                    
                     var url_site = window.location.href.split('index.php')[0];
                     var url_message = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
                     url_message += 'index.php?route=payment/mp_transparente/getPaymentStatus&status=' 
-                    + response_payment.status;
+                    + status;
                     if(response_payment.request_type)
                     {
                         url_message += '&request_type=' + response_payment.request_type;        

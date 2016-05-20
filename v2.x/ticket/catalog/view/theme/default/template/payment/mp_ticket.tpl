@@ -1,6 +1,5 @@
         <div id="mp_ticket"></div>
         <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
-        <input type="hidden" id="public_key" value="<?php echo $public_key;?>">
         <input type="hidden" id="paymentType" value="ticket" />
         <div id="spinner"> 
             <div id="formulario">

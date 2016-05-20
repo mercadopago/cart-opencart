@@ -139,7 +139,6 @@
         <?php endif; ?>
       <?php endif; ?>
       <?php endforeach; ?>
-        <div class="text-danger" id="div_error_methods"></div>
   </div>
 </div>
 </div>
