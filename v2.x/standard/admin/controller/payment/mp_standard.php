@@ -4,79 +4,49 @@ require_once '../catalog/controller/payment/mercadopago.php';
 
 class ControllerPaymentMPStandard extends Controller {
 	private $_error = array();
+
 	public function index() {
 		$prefix = 'mp_standard_';
 		$fields = array('client_id', 'client_secret', 'status', 'category_id',
 			'debug', 'sandbox', 'country', 'installments', 'order_status_id',
 			'order_status_id_completed', 'order_status_id_pending', 'order_status_id_canceled',
 			'order_status_id_in_process', 'order_status_id_rejected', 'order_status_id_refunded',
-			'order_status_id_in_mediation', 'order_status_chargeback');
+			'order_status_id_in_mediation', 'order_status_chargeback', 'type_checkout');
 
+		$entries_prefix = 'entry_';
+		$entries = array('autoreturn_tooltip', 'public_key_tooltip', 'access_token_tooltip',
+			'client_id_tooltip', 'client_secret_tooltip', 'url_tooltip',
+			'payments_not_accept_tooltip', 'debug_tooltip', 'sandbox_tooltip',
+			'category_tooltip', 'order_status_tooltip', 'order_status_completed_tooltip',
+			'order_status_pending_tooltip', 'order_status_canceled_tooltip',
+			'order_status_in_process_tooltip', 'order_status_rejected_tooltip',
+			'order_status_refunded_tooltip', 'order_status_in_mediation_tooltip',
+			'order_status_chargeback_tooltip', 'notification_url_tooltip', 'public_key',
+			'access_token', 'notification_url', 'autoreturn', 'client_id', 'client_secret',
+			'installments', 'payments_not_accept', 'status', 'geo_zone', 'country', 'sonda_key',
+			'order_status', 'ipn_status', 'url', 'debug', 'ipn', 'sandbox', 'type_checkout', 'category',
+			'order_status_general', 'order_status_completed', 'order_status_pending', 'order_status_canceled',
+			'order_status_in_process', 'order_status_rejected', 'order_status_refunded', 'order_status_in_mediation',
+			'order_status_chargeback');
 		$this->load->language('payment/mp_standard');
-		$this->document->setTitle($this->language->get('heading_title'));
-		$this->load->model('setting/setting');
+
+		foreach ($entries as $entry) {
+			$name = $entries_prefix . $entry;
+			$data[$name] = $this->language->get($name);
+		}
+
 		$data['heading_title'] = $this->language->get('heading_title');
-		$data['text_enabled'] = $this->language->get('text_enabled');
-		$data['text_disabled'] = $this->language->get('text_disabled');
-		$data['text_all_zones'] = $this->language->get('text_all_zones');
-		$data['text_yes'] = $this->language->get('text_yes');
-		$data['text_no'] = $this->language->get('text_no');
-		$data['text_mercadopago'] = $this->language->get('text_mercadopago');
+		$this->document->setTitle($data['heading_title']);
+		$this->load->model('setting/setting');
 
-		//Tooltips
-		$data['entry_autoreturn_tooltip'] = $this->language->get('entry_autoreturn_tooltip');
-		$data['entry_public_key_tooltip'] = $this->language->get('entry_public_key_tooltip');
-		$data['entry_access_token_tooltip'] = $this->language->get('entry_access_token_tooltip');
-		$data['entry_client_id_tooltip'] = $this->language->get('entry_client_id_tooltip');
-		$data['entry_client_secret_tooltip'] = $this->language->get('entry_client_secret_tooltip');
-		$data['entry_url_tooltip'] = $this->language->get('entry_url_tooltip');
-		$data['entry_payments_not_accept_tooltip'] = $this->language->get('entry_payments_not_accept_tooltip');
-		$data['entry_debug_tooltip'] = $this->language->get('entry_debug_tooltip');
-		$data['entry_sandbox_tooltip'] = $this->language->get('entry_sandbox_tooltip');
-		$data['entry_category_tooltip'] = $this->language->get('entry_category_tooltip');
-		$data['entry_order_status_tooltip'] = $this->language->get('entry_order_status_tooltip');
-		$data['entry_order_status_completed_tooltip'] = $this->language->get('entry_order_status_completed_tooltip');
-		$data['entry_order_status_pending_tooltip'] = $this->language->get('entry_order_status_pending_tooltip');
-		$data['entry_order_status_canceled_tooltip'] = $this->language->get('entry_order_status_canceled_tooltip');
-		$data['entry_order_status_in_process_tooltip'] = $this->language->get('entry_order_status_in_process_tooltip');
-		$data['entry_order_status_rejected_tooltip'] = $this->language->get('entry_order_status_rejected_tooltip');
-		$data['entry_order_status_refunded_tooltip'] = $this->language->get('entry_order_status_refunded_tooltip');
-		$data['entry_order_status_in_mediation_tooltip'] = $this->language->get('entry_order_status_in_mediation_tooltip');
-		$data['entry_order_status_chargeback_tooltip'] = $this->language->get('entry_order_status_chargeback_tooltip');
-		$data['entry_notification_url_tooltip'] = $this->language->get('entry_notification_url_tooltip');
+		$text_prefix = 'text_';
+		$texts = array('enabled', 'disabled', 'all_zones', 'yes', 'no', 'mercadopago');
 
-		//end tooltips
-		$data['entry_public_key'] = $this->language->get('entry_public_key');
-		$data['entry_access_token'] = $this->language->get('entry_access_token');
-		$data['entry_notification_url'] = $this->language->get('entry_notification_url');
-		$data['entry_autoreturn'] = $this->language->get('entry_autoreturn');
-		$data['entry_client_id'] = $this->language->get('entry_client_id');
-		$data['entry_client_secret'] = $this->language->get('entry_client_secret');
-		$data['entry_installments'] = $this->language->get('entry_installments');
-		$data['entry_payments_not_accept'] = $this->language->get('entry_payments_not_accept');
-		$data['entry_status'] = $this->language->get('entry_status');
-		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
-		$data['entry_country'] = $this->language->get('entry_country');
-		$data['entry_sonda_key'] = $this->language->get('entry_sonda_key');
-		$data['entry_order_status'] = $this->language->get('entry_order_status');
-		$data['entry_ipn_status'] = $this->language->get('entry_ipn_status');
-		$data['entry_url'] = $this->language->get('entry_url');
-		$data['entry_debug'] = $this->language->get('entry_debug');
+		foreach ($texts as $text) {
+			$name = $text_prefix . $text;
+			$data[$name] = $this->language->get($name);
+		}
 
-		$data['entry_sandbox'] = $this->language->get('entry_sandbox');
-		$data['entry_type_checkout'] = $this->language->get('entry_type_checkout');
-		$data['entry_category'] = $this->language->get('entry_category');
-
-		$data['entry_ipn'] = $this->language->get('text_ipn');
-		$data['entry_order_status_general'] = $this->language->get('entry_order_status_general');
-		$data['entry_order_status_completed'] = $this->language->get('entry_order_status_completed');
-		$data['entry_order_status_pending'] = $this->language->get('entry_order_status_pending');
-		$data['entry_order_status_canceled'] = $this->language->get('entry_order_status_canceled');
-		$data['entry_order_status_in_process'] = $this->language->get('entry_order_status_in_process');
-		$data['entry_order_status_rejected'] = $this->language->get('entry_order_status_rejected');
-		$data['entry_order_status_refunded'] = $this->language->get('entry_order_status_refunded');
-		$data['entry_order_status_in_mediation'] = $this->language->get('entry_order_status_in_mediation');
-		$data['entry_order_status_chargeback'] = $this->language->get('entry_order_status_chargeback');
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
 		$data['tab_general'] = $this->language->get('tab_general');
@@ -104,10 +74,11 @@ class ControllerPaymentMPStandard extends Controller {
 			'text' => $this->language->get('heading_title'),
 			'href' => $this->url->link('payment/mp_standard', 'token=' . $this->session->data['token'], 'SSL'),
 		);
+
 		$data['action'] = HTTPS_SERVER . 'index.php?route=payment/mp_standard&token=' . $this->session->data['token'];
 		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token'];
 		$data['category_list'] = $this->getCategoryList();
-		$data['type_checkout'] = $this->getTypeCheckout();
+		$data['type_checkout'] = array("Redirect", "Lightbox", "Iframe");
 		$data['countries'] = $this->getCountries();
 		$data['installments'] = $this->getInstallments();
 		$data['header'] = $this->load->controller('common/header');
@@ -121,7 +92,6 @@ class ControllerPaymentMPStandard extends Controller {
 				$fieldname = $prefix . $field;
 				$this->request->post[$fieldname] = str_replace(" ", "", $this->request->post[$fieldname]);
 				$data[$fieldname] = $this->request->post[$fieldname];
-				error_log($field . ': ' . $data[$fieldname]);
 			}
 
 		} else {
@@ -216,14 +186,6 @@ class ControllerPaymentMPStandard extends Controller {
 		$url = "https://api.mercadolibre.com/item_categories";
 		$category = $this->callJson($url);
 		return $category;
-	}
-
-	private function getTypeCheckout() {
-
-		//$type_checkout = array("Redirect","Lightbox", "Iframe", "Transparente");
-		$type_checkout = array("Redirect", "Lightbox", "Iframe");
-
-		return $type_checkout;
 	}
 
 	private function getInstallments() {

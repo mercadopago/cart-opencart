@@ -24,18 +24,26 @@
         }
     })();
 
-        (function(){
-            var btn_save = document.getElementById('btn_save');
-            btn_save.onclick = function(){
-                var selected_payments = $('#div_payments').find('input:checked');
-                if (selected_payments.length == 0) 
-                {
-                    var div_error_methods = document.getElementById('div_error_methods');
-                    $('#div_payments').find('input[type=checkbox]')[0].focus();
-                    div_error_methods.innerHTML = '<b>Please, select at least one payment method</b>';
-                    return;
-                };
+    (function(){
+        var btn_save = document.getElementById('btn_save');
+        btn_save.onclick = saveConfigs;})();
 
-                $('#form_mp').submit();
-            };
-        })();
+        function saveConfigs(){
+            var selected_payments = $('#div_payments');;
+            var div_payment = document.getElementById('div_payments');
+            if (selected_payments.find('input:checked').length == 0) 
+            {
+                if(selected_payments.find('input[type=checkbox]'))
+                {
+                    selected_payments.find('input[type=checkbox]')[0].focus();
+                }
+                var div_error = document.createElement('div');
+                div_error.className = "text-danger";
+                div_error.id = "div_error_methods";
+                div_error.innerHTML = '<b>Please, select at least one payment method</b>';
+                div_payments.appendChild(div_error);
+                return;
+            }
+
+            $('#form_mp').submit();
+        };
