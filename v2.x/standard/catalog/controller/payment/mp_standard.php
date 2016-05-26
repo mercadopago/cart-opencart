@@ -290,8 +290,6 @@ class ControllerPaymentMPStandard extends Controller {
 					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				}
-				echo "ID: " . $id . " - Status: " . $order_status;
-
 			}
 		} else {
 			error_log('id não setado na compra!!!');
