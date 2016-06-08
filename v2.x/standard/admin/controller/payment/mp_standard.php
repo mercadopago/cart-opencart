@@ -9,9 +9,9 @@ class ControllerPaymentMPStandard extends Controller {
 		$prefix = 'mp_standard_';
 		$fields = array('client_id', 'client_secret', 'status', 'category_id',
 			'debug', 'sandbox', 'country', 'installments', 'order_status_id',
-			'order_status_id_completed', 'order_status_id_pending', 'order_status_id_canceled',
+			'order_status_id_completed', 'order_status_id_pending', 'order_status_id_canceled', 'type_checkout',
 			'order_status_id_in_process', 'order_status_id_rejected', 'order_status_id_refunded',
-			'order_status_id_in_mediation', 'order_status_chargeback', 'type_checkout');
+			'order_status_id_in_mediation', 'order_status_chargeback');
 
 		$entries_prefix = 'entry_';
 		$entries = array('autoreturn_tooltip', 'public_key_tooltip', 'access_token_tooltip',
