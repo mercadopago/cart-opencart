@@ -195,7 +195,10 @@ class ControllerPaymentMPStandard extends Controller {
 			$data['error'] = "Error: " . $preferenceResult['status'];
 		endif;
 
-		return $this->load->view('payment/mp_standard.tpl', $data);	
+		$view = floatval(VERSION) < 2.1 ? $this->load->view('default/template/payment/mp_standard.tpl', $data) :
+		$this->load->view('payment/mp_standard.tpl', $data);
+		return $view;
+		//return $this->load->view('payment/mp_standard.tpl', $data);
 	}
 
 	private function getMethods($country_id) {
