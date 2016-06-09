@@ -195,10 +195,8 @@ class ControllerPaymentMPStandard extends Controller {
 			$data['error'] = "Error: " . $preferenceResult['status'];
 		endif;
 
-		$view = floatval(VERSION) < 2.1 ? $this->load->view('default/template/payment/mp_standard.tpl', $data) :
-		$this->load->view('payment/mp_standard.tpl', $data);
-		return $view;
-		//return $this->load->view('payment/mp_standard.tpl', $data);
+		$view = floatval(VERSION) < 2.1 ? 'default/template/payment/mp_standard.tpl' : 'payment/mp_standard.tpl';
+		return $this->load->view($view, $data);
 	}
 
 	private function getMethods($country_id) {
@@ -289,8 +287,6 @@ class ControllerPaymentMPStandard extends Controller {
 					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				}
-				echo "ID: " . $id . " - Status: " . $order_status;
-
 			}
 		} else {
 			error_log('id não setado na compra!!!');
