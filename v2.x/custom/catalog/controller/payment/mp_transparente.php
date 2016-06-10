@@ -43,19 +43,21 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['cards'] = $this->getCards();
 		$data['user_logged'] = $this->customer->isLogged();
 
-		if (strpos($this->config->get('config_url'), 'localhost')) {
+		$view = 'default/template/payment/';
+		$view_uri = $view . 'mp_transparente.tpl';
+		if (strpos($this->config->get('config_url'), 'localhost:')) {
 			$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
-			$data['partial'] = $this->load->view('default/template/payment/partials/mp_transparente_' . $partial . '.tpl', $data);
-			$view_uri = 'default/template/payment/mp_transparente.tpl';
+			$data['partial'] = $this->load->view($view . 'partials/mp_transparente_' . $partial . '.tpl', $data);
 			if ($data['cards']) {
-				$data['cc_partial'] = $this->load->view('default/template/payment/partials/mp_customer_cards.tpl', $data);
+				$data['cc_partial'] = $this->load->view($view . 'partials/mp_customer_cards.tpl', $data);
 			}
 		} else {
+
 			$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
-			$data['partial'] = $this->load->view('payment/partials/mp_transparente_' . $partial . '.tpl', $data);
-			$view_uri = 'payment/mp_transparente.tpl';
+			$data['partial'] = $this->load->view($view . 'partials/mp_transparente_' . $partial . '.tpl', $data);
+
 			if ($data['cards']) {
-				$data['cc_partial'] = $this->load->view('payment/partials/mp_customer_cards.tpl', $data);
+				$data['cc_partial'] = $this->load->view($view . 'mp_customer_cards.tpl', $data);
 			}
 		}
 
@@ -119,7 +121,8 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment_data = array("payer" => $payer,
 				"external_reference" => $order_info['order_id'],
 				"transaction_amount" => $value,
-				"notification_url" => $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications',
+				//"notification_url" => $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications',
+				"notification_url" => 'http://www.google.com',
 				"token" => $this->request->post['token'],
 				"description" => 'Products',
 				"installments" => (int) $this->request->post['installments'],

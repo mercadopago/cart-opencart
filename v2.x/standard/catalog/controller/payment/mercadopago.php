@@ -68,10 +68,11 @@ class MP {
 	 * @return array(json)
 	 */
 	public function get_payment($id) {
-		$uri_prefix = $this->sandbox ? "/sandbox" : "";
+		//$uri_prefix = $this->sandbox ? "/sandbox" : "";
 
 		$request = array(
-			"uri" => $uri_prefix . "/collections/notifications/{$id}",
+			//"uri" => $uri_prefix . "/collections/notifications/{$id}",
+			"uri" => "/collections/notifications/{$id}",
 			"params" => array(
 				"access_token" => $this->get_access_token(),
 			),
@@ -179,7 +180,7 @@ class MP {
 	 */
 	public function create_payment($payment) {
 		$access_token = $this->get_access_token();
-		$header = "application/json;X-Tracking-Id: platform:desktop, so:1.0,type:OpenCart2";
+		$header = array("X-Tracking-Id" => "platform:desktop,so:1.0,type:OpenCart2");
 		$result = $this->post('/v1/payments?access_token=' . $access_token, $payment, $header);
 		return $result;
 	}

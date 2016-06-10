@@ -194,12 +194,8 @@ class ControllerPaymentMPStandard extends Controller {
 		else:
 			$data['error'] = "Error: " . $preferenceResult['status'];
 		endif;
-
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/mp_standard.tpl')) {
-			return $this->load->view($this->config->get('config_template') . '/mp_standard.tpl', $data);
-		} else {
-			return $this->load->view('default/template/payment/mp_standard.tpl', $data);
-		}
+		$view = floatval(VERSION) < 2.2 ? 'default/template/payment/mp_standard.tpl' : 'payment/mp_standard.tpl';
+		return $this->load->view($view, $data);
 	}
 
 	private function getMethods($country_id) {
@@ -233,8 +229,9 @@ class ControllerPaymentMPStandard extends Controller {
 
 	public function retorno() {
 		if (isset($this->request->get['collection_id'])) {
-
+			error_log('pegou o collection_id');
 			if ($this->request->get['collection_id'] == 'null') {
+				error_log('collection_id nulo');
 				$order_id = $this->request->get['external_reference'];
 				$this->load->model('checkout/order');
 				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i'));
@@ -243,16 +240,19 @@ class ControllerPaymentMPStandard extends Controller {
 			}
 
 			$ids = explode(',', $this->request->get['collection_id']);
+			error_log('ids: ' . json_encode($ids));
 			$client_id = $this->config->get('mp_standard_client_id');
 			$client_secret = $this->config->get('mp_standard_client_secret');
 			$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
 			$mp = new MP($client_id, $client_secret);
 			$mp->sandbox_mode($sandbox);
-
+			error_log('antes do foreach');
 			foreach ($ids as $id) {
-
+				error_log('pegando info do pagamento ' . $id);
 				$resposta = $mp->get_payment_info($id);
+				error_log('resposta: ' . json_encode($resposta));
 				$dados = $resposta['response'];
+				error_log('dados: ' . json_encode($dados));
 
 				$order_id = $dados['collection']['external_reference'];
 				$order_status = $dados['collection']['status'];
