@@ -9,11 +9,12 @@ class ControllerPaymentMPTicket extends Controller {
 	private $order_info;
 	private $message;
 	private $sponsors = array('MLB' => 204931135,
-		'MLM' => 204931029,
+		'MLM' => 204962951,
 		'MLA' => 204931029,
 		'MCO' => 204964815,
 		'MLV' => 204964612,
-		'MLC' => 204964815);
+		'MPE' => 217176790,
+		'MLC' => 204927454);
 
 	public function index() {
 		$this->language->load('payment/mp_ticket');

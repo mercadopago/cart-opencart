@@ -180,7 +180,7 @@ class MP {
 	 */
 	public function create_payment($payment) {
 		$access_token = $this->get_access_token();
-		$header = array("X-Tracking-Id" => "platform:desktop,so:1.0,type:OpenCart2");
+		$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
 		$result = $this->post('/v1/payments?access_token=' . $access_token, $payment, $header);
 		return $result;
 	}
@@ -190,12 +190,14 @@ class MP {
  * @return array(json)
  */
 	public function create_preference($preference) {
+		$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
 		$request = array(
 			"uri" => "/checkout/preferences",
 			"params" => array(
 				"access_token" => $this->get_access_token(),
 			),
 			"data" => $preference,
+			"headers" => $header,
 		);
 		$preference_result = MPRestClient::post($request);
 		return $preference_result;

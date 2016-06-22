@@ -100,19 +100,23 @@
 
                     if (docType)
                     {
-                     form.docType = docType.value;   
+                     form.docType = docType.value;
+                     console.log('doctype: '+ docType.value);   
                  }
 
                  if (docNumber) 
                  {
                      form.docNumber = docNumber.value;      
+                     console.log('docnumber: '+ docNumber.value);   
                  }
-
+                console.log('form');
+                console.log(form);
                  var url_site = window.location.href.split('index.php')[0];
                  var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
                  url_backend += 'index.php?route=payment/mp_transparente/payment/';         
 
                  Mercadopago.createToken(form, function (status, response) {
+                    
                      var valid_status = [200, 201];
                      if(response.error || valid_status.indexOf(status) < 0)
                      {
@@ -143,6 +147,7 @@
                          {
                             payment.issuer_id = issuer.value;
                         }
+                        
                         pay(payment, url_backend, spinner);
 
                     }

@@ -179,15 +179,15 @@ class MP {
 	 */
 	public function create_payment($payment) {
 		$access_token = $this->get_access_token();
-		$header = array("X-Tracking-Id" => "platform:v1-whitelabel,so:1.0, type:OpenCart2");
+		$header = array("x-tracking-id" => "platform:v1-whitelabel,type:OpenCart2,so:1.0");
 		$result = $this->post('/v1/payments?access_token=' . $access_token, $payment, $header);
 		return $result;
 	}
-/**
- * Create a checkout preference
- * @param array $preference
- * @return array(json)
- */
+	/**
+	 * Create a checkout preference
+	 * @param array $preference
+	 * @return array(json)
+	 */
 	public function create_preference($preference) {
 		$request = array(
 			"uri" => "/checkout/preferences",
@@ -267,7 +267,6 @@ class MP {
 	 * @param string $preapproval_payment, $id
 	 * @return array(json)
 	 */
-
 	public function update_preapproval_payment($id, $preapproval_payment) {
 		$request = array(
 			"uri" => "/preapproval/{$id}",
@@ -286,7 +285,6 @@ class MP {
 	 * @param params (deprecated)
 	 * @param authenticate = true (deprecated)
 	 */
-
 	public function get($request, $params = null, $authenticate = true) {
 		if (is_string($request)) {
 			$request = array(

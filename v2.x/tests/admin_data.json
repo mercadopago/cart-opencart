@@ -1,0 +1,84 @@
+{
+	"sellers": {
+		"MLA": [{
+			"user": "TETE7444146",
+			"password": "qatest2325",
+			"user_id": 204620652,
+			"email": "test_user_16158901@testuser.com",
+			"client_id": 5249833162698191,
+			"client_secret": "EnGFPl78mVukNSYHhaXgEG2rcJp3rl1e",
+			"public_key": "TEST-688247aa-6fbc-4d8d-8d6c-d58a077f2a8a",
+			"access_token": "TEST-5249833162698191-020413-831f3b52f3922cb013847f9e02829d69__LC_LD__-204620652"
+		}],
+		"MLB": [{
+			"user": "TT916432",
+			"password": "qatest8213",
+			"user_id": 200429801,
+			"email": "",
+			"client_id": 6990185330840813,
+			"client_secret": "G1YyZNeO54jmuxJ4QNwOGrf0rEzW4dJe",
+			"public_key": "TEST-c9e985fc-34d2-4518-a8f0-d1886b37ba86",
+			"access_token": "TEST-6990185330840813-011415-4323cd45dfe446411e241f052e7bbebd__LD_LB__-200429801"
+		},
+		{
+			"user": "TESTZYTRBYGO",
+			"password": "qatest1265",
+			"user_id": 210968992,
+			"email": "test_user_53699615@testuser.com",
+			"client_id": 2367506043397408,
+			"client_secret": "iqxXeRxlqU8izLB48yX5DGa3hTD85DTK",
+			"public_key": "TEST-c7058257-126f-4b3f-aaee-f6217ac0377f",
+			"access_token": "TEST-2367506043397408-051212-70f86162c12c25c5d44e186b9351a07a__LB_LA__-210968992"
+		}],
+		"MLC": [{
+			"user": "TETE8087906",
+			"password": "qatest6675",
+			"user_id": 204638499,
+			"email": "test_user_64930275@testuser.com",
+			"client_id": 1812366329262902,
+			"client_secret": "zJxYNuEFkhCtHZuAquM6Gi0xV5giUIIB",
+			"public_key": "TEST-a547c43e-d03f-4e02-9cfd-705b7890ebe0",
+			"access_token": "TEST-1812366329262902-030813-09adc281362b0caf821fc184a2a9cc36__LC_LB__-204638499"
+		}],
+		"MCO": [{
+			"user": "TT760627",
+			"password": "qatest2147",
+			"user_id": 204634828,
+			"email": "test_user_68035421@testuser.com",
+			"client_id": 1250090532419011,
+			"client_secret": "A2sCVdFIENQDnWRW5nKImFSghl2iyp9W",
+			"public_key": "TEST-e92d52e4-804c-4390-9ec8-e0cfac38919e",
+			"access_token": "TEST-1250090532419011-030814-b92c934d7664f865867f741f0a02117a__LA_LD__-204634828"
+		}],
+		"MLM": [{
+			"user": "TETE1390952",
+			"password": "qatest1908",
+			"user_id": 204638312,
+			"email": "test_user_29389998@testuser.com",
+			"client_id": 2039333317737006,
+			"client_secret": "5x1Gv7dEwX1Sm2lQ6RBvE36lw4J6ZY57",
+			"public_key": "TEST-78e4533c-4b10-45f4-900f-e4c7195c9f74",
+			"access_token": "TEST-2039333317737006-022418-4d6c34cdf796deca2c8d063c88b3994d__LD_LA__-204638312"
+		}],
+		"MLV": {
+			"user": "TETE2786707",
+			"password": "qatest6919",
+			"user_id": 204636658,
+			"email": "test_user_41250045@testuser.com",
+			"client_id": 6091109766046547,
+			"client_secret": "97c6YoTUM1z0DQGwwGq7c4ozgET29PAQ",
+			"public_key": "TEST-ab2ff380-656c-42d8-8b08-4c13629c25ee",
+			"access_token": "TEST-6091109766046547-021209-091cd1352c93079d85e6ae9310ec2945__LB_LC__-204636658"
+		},
+		"MPE": [{
+			"user": "TETE6973158",
+			"password": "qatest1432",
+			"user_id": 216731142,
+			"email": "test_user_25440825@testuser.com",
+			"client_id": 615948908823631,
+			"client_secret": "bKBfPw0OmU5OZTRDKd5TOK1zPZxzQfPU",
+			"public_key": "TEST-bef28df6-2c17-4855-b762-81afc98f1693",
+			"access_token": "TEST-615948908823631-060918-5f10fe100d903ba929887b796ebaef39__LD_LC__-216731142"
+		}]
+	}
+}

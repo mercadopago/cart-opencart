@@ -1,0 +1,5 @@
+mercadopago==0.3.4
+requests==2.9.1
+selenium==2.52.0
+splinter==0.7.3
+wheel==0.29.0

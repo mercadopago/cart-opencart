@@ -180,7 +180,7 @@ class MP {
 	public function create_payment($payment) {
 		$access_token = $this->get_access_token();
 		v1-whitelabel
-		$header = array("X-Tracking-Id" => "platform:v1-whitelabel,so:1.0,type:OpenCart2");
+		$header = array("x-tracking-id" => "platform:v1-whitelabel,type:OpenCart2,so:1.0");
 		$result = $this->post('/v1/payments?access_token=' . $access_token, $payment, $header);
 		return $result;
 	}

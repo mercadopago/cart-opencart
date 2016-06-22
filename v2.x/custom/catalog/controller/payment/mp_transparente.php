@@ -9,11 +9,12 @@ class ControllerPaymentMPTransparente extends Controller {
 	private $message;
 	private $special_checkouts = array('MLM', 'MLB');
 	private $sponsors = array('MLB' => 204931135,
-		'MLM' => 204931029,
+		'MLM' => 204962951,
 		'MLA' => 204931029,
 		'MCO' => 204964815,
 		'MLV' => 204964612,
-		'MLC' => 204964815);
+		'MPE' => 217176790,
+		'MLC' => 204927454);
 
 	public function index() {
 		$data['customer_email'] = $this->customer->getEmail();
@@ -74,7 +75,7 @@ class ControllerPaymentMPTransparente extends Controller {
 
 	public function payment() {
 		$this->language->load('payment/mp_transparente');
-		$this->request->post['teste'] = "testei";
+		error_log(json_encode($this->request->post));
 		try {
 			$exclude = $this->config->get('mp_transparente_methods');
 			$accepted_methods = preg_split("/[\s,]+/", $exclude);
@@ -129,15 +130,26 @@ class ControllerPaymentMPTransparente extends Controller {
 				"payment_method_id" => $this->request->post['payment_method_id']);
 			$payment_data['additional_info'] = array('shipments' => $shipments, 'items' => $items);
 			$payment_data['metadata'] = array('token' => $payment_data['token']);
+			$is_test_user = strpos($order_info['email'], '@testuser.com');
+$is_test_user = strpos($order_info['email'], '@testuser.com');
+		if (!$is_test_user) {
+			error_log('not test_user. sponsor_id will be sent');
+			$pref["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
+		} else {
+			error_log('test_user. sponsor_id will not be sent');
+		}
+
+			
 			if (isset($this->request->post['issuer_id'])) {
 				$payment_data['issuer_id'] = $this->request->post['issuer_id'];
 			}
 
-			if (strpos($order_info['email'], '@testuser.com') === false) {
+			if () {
 				$payment_data["sponsor_id"] = $this->sponsors[$this->config->get('mp_transparente_country')];
 			}
 			$payment_json = json_encode($payment_data);
 			$accepted_status = array('approved', "in_process");
+
 			$payment_response = $mp->create_payment($payment_json);
 			$this->updateOrder($payment_response['response']['id']);
 			$json_response = array('status' => null, 'message' => null);
