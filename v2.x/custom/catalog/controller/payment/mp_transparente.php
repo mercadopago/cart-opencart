@@ -118,12 +118,11 @@ class ControllerPaymentMPTransparente extends Controller {
 
 			$value = floatval($order_info['total']) * floatval($order_info['currency_value']);
 			$access_token = $this->config->get('mp_transparente_access_token');
-			$mp = new MP($access_token);
 			$payment_data = array("payer" => $payer,
 				"external_reference" => $order_info['order_id'],
 				"transaction_amount" => $value,
-				//"notification_url" => $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications',
-				"notification_url" => 'http://www.google.com',
+				"notification_url" => $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications',
+				//"notification_url" => 'http://www.google.com',
 				"token" => $this->request->post['token'],
 				"description" => 'Products',
 				"installments" => (int) $this->request->post['installments'],
@@ -131,25 +130,21 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment_data['additional_info'] = array('shipments' => $shipments, 'items' => $items);
 			$payment_data['metadata'] = array('token' => $payment_data['token']);
 			$is_test_user = strpos($order_info['email'], '@testuser.com');
-$is_test_user = strpos($order_info['email'], '@testuser.com');
-		if (!$is_test_user) {
-			error_log('not test_user. sponsor_id will be sent');
-			$pref["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
-		} else {
-			error_log('test_user. sponsor_id will not be sent');
-		}
+			if (!$is_test_user) {
+				error_log('not test_user. sponsor_id will be sent');
+				$pref["sponsor_id"] = $this->sponsors[$this->config->get('mp_transparente_country')];
 
-			
+			} else {
+				error_log('test_user. sponsor_id will not be sent');
+			}
+
 			if (isset($this->request->post['issuer_id'])) {
 				$payment_data['issuer_id'] = $this->request->post['issuer_id'];
 			}
 
-			if () {
-				$payment_data["sponsor_id"] = $this->sponsors[$this->config->get('mp_transparente_country')];
-			}
 			$payment_json = json_encode($payment_data);
 			$accepted_status = array('approved', "in_process");
-
+			$mp = new MP($access_token);
 			$payment_response = $mp->create_payment($payment_json);
 			$this->updateOrder($payment_response['response']['id']);
 			$json_response = array('status' => null, 'message' => null);
@@ -252,7 +247,7 @@ $is_test_user = strpos($order_info['email'], '@testuser.com');
 	public function paymentCustomersAndCards() {
 		try {
 			$access_token = $this->config->get('mp_transparente_access_token');
-			$mp = new MP($access_token);
+	
 			$payment = array(
 				"transaction_amount" => floatval($this->request->post['transaction_amount']),
 				"token" => $this->request->post['token'],
@@ -261,7 +256,11 @@ $is_test_user = strpos($order_info['email'], '@testuser.com');
 				"payer" => array(
 					"id" => $this->getCustomerId(),
 				));
-
+			$payment["sponsor_id"] = strpos($this->customer->getEmail(), '@testuser.com')? null:
+									$this->sponsors[$this->config->get('mp_transparente_country')];
+				error_log('sponsor_id:' . $payment["sponsor_id"] );
+				
+			$mp = new MP($access_token);
 			$payment_return = $mp->post("/v1/payments", $payment);
 			$accepted_status = array('approved', "in_process");
 			$this->updateOrder($payment_return['response']['id']);

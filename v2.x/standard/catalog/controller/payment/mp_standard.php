@@ -170,11 +170,12 @@ class ControllerPaymentMPStandard extends Controller {
 		$pref['notification_url'] = $order_info['store_url'] . 'index.php?route=payment/mp_standard/notifications';
 		$sandbox = (bool) $this->config->get('mp_standard_sandbox');
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
+
 		if (!$is_test_user) {
-			error_log('not test_user. sponsor_id will be sent');
+			error_log('not test_user. sponsor_id will be send');
 			$pref["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
 		} else {
-			error_log('test_user. sponsor_id will not be sent');
+			error_log('test_user. sponsor_id will not be send');
 		}
 
 		error_log('order_info email: ' . $order_info['email']);
