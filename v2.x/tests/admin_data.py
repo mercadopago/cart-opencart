@@ -9,13 +9,12 @@ class AdminData(BaseConfig):
 
     def __init__(self):
         super(AdminData, self).__init__()
-        admin_data_file = open('admin_data.json', 'r').read()
         config_file = open('config_admin.json', 'r').read()
-        self.admin_data = json.loads(admin_data_file)
         self.config = json.loads(config_file)
 
     def fill_status(self, module_status):
         self._browser.select(self.config['status'], module_status)
+        return self
 
     def fill_country(self, country):
         self._browser.select(self.config['country'], country)
@@ -30,7 +29,7 @@ class AdminData(BaseConfig):
         return self
 
     def fill_category(self, store_category):
-        self._browser
+        self._browser.select(self.config['country'], country)
         return self
 
     def fill_debug_mode(self, debug_mode_option):
