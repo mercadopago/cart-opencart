@@ -43,8 +43,8 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['debug'] = $this->config->get('mp_transparente_debug');
 		$data['cards'] = $this->getCards();
 		$data['user_logged'] = $this->customer->isLogged();
-
-		$view = 'default/template/payment/';
+		$view = floatval(VERSION) < 2.2 ? 'default/template/payment/' : 'payment/';
+		//$view = 'default/template/payment/';
 		$view_uri = $view . 'mp_transparente.tpl';
 		if (strpos($this->config->get('config_url'), 'localhost:')) {
 			$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
@@ -117,6 +117,7 @@ class ControllerPaymentMPTransparente extends Controller {
 					"street_number" => "-"));
 
 			$value = floatval($order_info['total']) * floatval($order_info['currency_value']);
+			error_log('valor da transação: ' . $value);
 			$access_token = $this->config->get('mp_transparente_access_token');
 			$payment_data = array("payer" => $payer,
 				"external_reference" => $order_info['order_id'],
@@ -247,7 +248,7 @@ class ControllerPaymentMPTransparente extends Controller {
 	public function paymentCustomersAndCards() {
 		try {
 			$access_token = $this->config->get('mp_transparente_access_token');
-	
+
 			$payment = array(
 				"transaction_amount" => floatval($this->request->post['transaction_amount']),
 				"token" => $this->request->post['token'],
@@ -256,10 +257,10 @@ class ControllerPaymentMPTransparente extends Controller {
 				"payer" => array(
 					"id" => $this->getCustomerId(),
 				));
-			$payment["sponsor_id"] = strpos($this->customer->getEmail(), '@testuser.com')? null:
-									$this->sponsors[$this->config->get('mp_transparente_country')];
-				error_log('sponsor_id:' . $payment["sponsor_id"] );
-				
+			$payment["sponsor_id"] = strpos($this->customer->getEmail(), '@testuser.com') ? null :
+			$this->sponsors[$this->config->get('mp_transparente_country')];
+			error_log('sponsor_id:' . $payment["sponsor_id"]);
+
 			$mp = new MP($access_token);
 			$payment_return = $mp->post("/v1/payments", $payment);
 			$accepted_status = array('approved', "in_process");

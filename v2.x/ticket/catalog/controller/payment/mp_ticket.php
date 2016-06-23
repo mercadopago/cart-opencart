@@ -71,8 +71,8 @@ class ControllerPaymentMPTicket extends Controller {
 				"description" => 'Products',
 				"payment_method_id" => $this->request->get['payment_method_id']);
 			$payment_data['additional_info'] = array('shipments' => $shipments, 'items' => $items);
-
-			if (strpos($order_info['email'], '@testuser.com') === false) {
+			$is_test_user = strpos($order_info['email'], '@testuser.com');
+			if (!$is_test_user) {
 				$payment_data["sponsor_id"] = $this->sponsors[$this->getCountry()];
 			}
 
