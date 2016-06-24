@@ -214,7 +214,7 @@
                     var issuer = document.getElementById('issuer');
                     var bin = document.getElementById('cc_num').value.replace(/[ .-]/g, '').slice(0, 6);
                     var lbls = document.getElementsByClassName('text-right');
-                    var amount = parseFloat(lbls[lbls.length -1].textContent.split('$')[1].replace('.','').replace(',','.'));
+                    var amount = parseFloat(lbls[lbls.length -1].textContent.split('$')[1]);
                     var config = {"bin": bin,"amount": amount};
                     if (issuer)
                     {
@@ -223,7 +223,8 @@
 
                     Mercadopago.setPublishableKey(public_key);
 
-
+                    console.log('config');
+                    console.log(config);
                     Mercadopago.getInstallments(config, function(httpStatus, data){
                         if (httpStatus == 200)
                         {
@@ -312,6 +313,8 @@
                     url: url_backend,
                     data: payment,
                     success: function success(data) {
+                        console.log('payment data');
+                        console.log(data);
                         response_payment = JSON.parse(data);
                         document.getElementById('formulario').style = 'margin-left: 22%';
                         var acceptable_status = ["approved", "in_process"];
