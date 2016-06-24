@@ -155,19 +155,14 @@ class ControllerPaymentMPTransparente extends Controller {
 			error_log(json_encode($payment_response));
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' .
 				$payment_data['payment_method_id']);
-			error_log("1");
 			$this->updateOrder($payment_response['response']['id']);
-			error_log("2");
 			$json_response = array('status' => null, 'message' => null);
-			error_log("3");
 			if (in_array($payment_response['response']['status'], $accepted_status)) {
 				$json_response['status'] = $payment_response['response']['status'];
-				error_log("3.1");
 			} else {
 				$json_response['status'] = $payment_response['response']['status_detail'];
-				error_log("3.2");
 			}
-			error_log("4");
+
 			echo json_encode($json_response);
 		} catch (Exception $e) {
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));

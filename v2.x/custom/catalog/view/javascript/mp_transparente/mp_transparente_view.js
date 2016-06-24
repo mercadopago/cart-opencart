@@ -214,7 +214,8 @@
                     var issuer = document.getElementById('issuer');
                     var bin = document.getElementById('cc_num').value.replace(/[ .-]/g, '').slice(0, 6);
                     var lbls = document.getElementsByClassName('text-right');
-                    var amount = parseFloat(lbls[lbls.length -1].textContent.split('$')[1]);
+                    var text_amount = lbls[lbls.length -1].textContent.split('$')[1];
+                    var amount = parseFloat(buildAmount(text_amount);
                     var config = {"bin": bin,"amount": amount};
                     if (issuer)
                     {
@@ -246,6 +247,14 @@
                 });
                 }
 
+                function buildAmount(amount)
+                {
+                    var comma = amount.indexOf(',');
+                    var dot =  amount.indexOf('.');
+                    //TODO: terminar essa função de análise da string do valor (fazer lógica de substituição de ponto e de vírgula nos preços antes de enviar)
+                    if (true) {}
+                        else{}
+                }
                 function getCardIssuers()
                 {
                     var public_key = document.getElementById("public_key").value;
