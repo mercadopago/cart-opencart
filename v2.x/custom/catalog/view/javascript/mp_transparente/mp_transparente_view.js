@@ -74,6 +74,16 @@
                         {
                             getCardIssuers();
                         }
+                        console.log("response 0:");
+                        console.log(response[0]);
+                        if (response[0].issuer)
+                        {
+                            card_number.setAttribute('data-card-issuer', response[0][0].issuer.id)  
+                        }
+                        else
+                        {
+                            console.log('num tem issuer!!!')
+                        }
                         getInstallments();
                     });    
                     }
@@ -215,7 +225,7 @@
                     var bin = document.getElementById('cc_num').value.replace(/[ .-]/g, '').slice(0, 6);
                     var lbls = document.getElementsByClassName('text-right');
                     var text_amount = lbls[lbls.length -1].textContent.split('$')[1];
-                    var amount = parseFloat(buildAmount(text_amount);
+                    var amount = parseFloat(buildAmount(text_amount));
                     var config = {"bin": bin,"amount": amount};
                     if (issuer)
                     {
@@ -249,11 +259,12 @@
 
                 function buildAmount(amount)
                 {
-                    var comma = amount.indexOf(',');
+                    return amount
+                    /*var comma = amount.indexOf(',');
                     var dot =  amount.indexOf('.');
-                    //TODO: terminar essa função de análise da string do valor (fazer lógica de substituição de ponto e de vírgula nos preços antes de enviar)
+                    //TODO: terminar essa função de análise da string do valor (fazer lógica de substituição de ponto)
                     if (true) {}
-                        else{}
+                        else{}*/
                 }
                 function getCardIssuers()
                 {
@@ -283,12 +294,14 @@
                     });
 
                 }
+
                 var cardType = document.getElementById('cardType');
 
                 if(cardType)
                 {
                     cardType.addEventListener('change', cardTypeEventListener);    
                 }
+                
                 function cardTypeEventListener(){
                  var paymentType = document.getElementById('paymentType');
                  var bg = document.querySelector('input[data-checkout="cardNumber"]');
@@ -316,7 +329,15 @@
 
             function pay(payment, url_backend, spinner)
             {
+                var card_number = document.getElementById('cc_num');
+                payment.issuer_id = card_number.hasAttribute("data-card-issuer")? 
+                card_number.getAttribute("data-card-issuer") : payment.issuer_id;
 
+                payment.payment_method_id = card_number.hasAttribute("data-card-payment-method-id")? 
+                card_number.getAttribute("data-card-payment-method-id") : payment.payment_method_id;
+                
+                    console.log("issuer id do data card: " + payment.issuer_id)  ;
+                
                 $.ajax({
                     type: "POST",
                     url: url_backend,

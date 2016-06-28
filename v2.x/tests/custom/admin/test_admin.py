@@ -6,9 +6,8 @@ import splinter
 class AdminTest(unittest.TestCase):
 
     def setUp(self):
-    	self.countries = ["MLA", "MLB", "MLC", "MCO", "MLM", "MLV", "MPE"]
         json_file = open(
-            os.path.dirname(__file__) + '/../../admin_data.json', 'r').read()
+            os.path.dirname(__file__) + '../../admin_data.json', 'r').read()
         self.config = json.loads(json_file)
 
     def tearDown(self):
@@ -20,10 +19,8 @@ class AdminTest(unittest.TestCase):
     def test_must_save_admin_data(self):
         pass
 
-    def load_payment_data(country):
-    	for country in countries:
-    		#TODO: Preencher a 
-    		pass
+    def test_must_reload_payment_methods_according_to_country(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()

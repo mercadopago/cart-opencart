@@ -16,6 +16,9 @@ class BaseConfig(object):
 
     def __init__(self):
         self._browser = Browser("chrome")
+        self.countries = ("MLA", "MLB", "MLC", "MCO", "MLM", "MLV", "MPE")
+        self.currencies = ('ARS', 'BRL', 'MEX', 'CHI', 'PEN', 'VEF', 'COP')
+
 
     def visit_url(self, url_to_visit):
         self._browser.visit(url_to_visit)
@@ -27,6 +30,9 @@ class BaseConfig(object):
     def then(self):
         return self
 
+    def wait(self, seconds):
+        time.sleep(seconds)
+        return self
 
 if __name__ == '__main__':
     try:

@@ -36,11 +36,11 @@ class ControllerPaymentMPStandard extends Controller {
 		//Cambio el código ISO-3 de la moneda por el que se les ocurrio poner a los de mp_standard!!!
 		$accepted_currencies = array('ARS' => 'ARS', 'ARG' => 'ARS', 'VEF' => 'VEF',
 			'BRA' => 'BRL', 'BRL' => 'BRL', 'REA' => 'BRL', 'MXN' => 'MEX',
-			'CLP' => 'CHI', 'COP' => 'COP', 'US' => 'US');
+			'CLP' => 'CHI', 'COP' => 'COP', 'PEN' => 'PEN', 'US' => 'US');
 
 		$currency = $accepted_currencies[$order_info['currency_code']];
 
-		$currencies = array('ARS', 'BRL', 'MEX', 'CHI', 'VEF', 'COP');
+		$currencies = array('ARS', 'BRL', 'MEX', 'CHI', 'PEN', 'VEF', 'COP');
 		if (!in_array($currency, $currencies)) {
 			$currency = '';
 			$data['error'] = $this->language->get('currency_no_support');
