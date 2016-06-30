@@ -7,7 +7,7 @@ class ControllerPaymentMPTransparente extends Controller {
 	public $sucess = true;
 	private $order_info;
 	private $message;
-	private $special_checkouts = array('MLM', 'MLB');
+	private $special_checkouts = array('MLM', 'MLB', "MPE");
 	private $sponsors = array('MLB' => 204931135,
 		'MLM' => 204962951,
 		'MLA' => 204931029,
@@ -58,7 +58,7 @@ class ControllerPaymentMPTransparente extends Controller {
 			$data['partial'] = $this->load->view($view . 'partials/mp_transparente_' . $partial . '.tpl', $data);
 
 			if ($data['cards'] && $data['user_logged']) {
-				$data['cc_partial'] = $this->load->view($view . 'mp_customer_cards.tpl', $data);
+				$data['cc_partial'] = $this->load->view($view . 'partials/mp_customer_cards.tpl', $data);
 			}
 		}
 
@@ -141,14 +141,23 @@ class ControllerPaymentMPTransparente extends Controller {
 				error_log('test_user. sponsor_id will not be sent');
 			}
 
-			if (isset($this->request->post['issuer_id'])) {
+			if (isset($this->request->post['issuer_id']) && strlen($this->request->post['issuer_id']) > 0) {
+				error_log('issuer_id set, will be sent: ' . $this->request->post['issuer_id']);
 				$payment_data['issuer_id'] = $this->request->post['issuer_id'];
+			} else {
+				error_log('issuer_id NOT set, will NOT be sent');
+				unset($payment_data['issuer_id']);
 			}
 
 			$payment_json = json_encode($payment_data);
+			error_log("pagamento: " . $payment_json);
 			$accepted_status = array('approved', "in_process");
 			$mp = new MP($access_token);
 			$payment_response = $mp->create_payment($payment_json);
+			error_log("pagamento processado: ");
+			error_log($payment_json);
+			error_log("------------------------------------------------------------- payment status: " . $payment_response['response']['status']);
+
 			error_log("payment send:");
 			error_log(json_encode($payment_data));
 			error_log("payment received");
@@ -258,7 +267,7 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment = array(
 				"transaction_amount" => floatval($this->request->post['transaction_amount']),
 				"token" => $this->request->post['token'],
-				"description" => "Title of what you are paying for",
+				"description" => "Products",
 				"installments" => intval($this->request->post['installments']),
 				"payer" => array(
 					"id" => $this->getCustomerId(),
@@ -268,11 +277,12 @@ class ControllerPaymentMPTransparente extends Controller {
 			error_log('sponsor_id:' . $payment["sponsor_id"]);
 
 			$this->load->model('checkout/order');
+			$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'],
-				$this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment_data['payment_method_id']);
+				$this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i'));
 			$mp = new MP($access_token);
 			$payment_return = $mp->post("/v1/payments", $payment);
-			$accepted_status = array('approved', "in_process");
+			$accepted_status = array('approved', "in_process", 200, 201);
 			$this->updateOrder($payment_return['response']['id']);
 
 			error_log("payment send:");
@@ -295,11 +305,14 @@ class ControllerPaymentMPTransparente extends Controller {
 	}
 
 	private function createCard($token) {
-		$id = $this->getCustomerId();
-		$access_token = $this->config->get('mp_transparente_access_token');
-		$mp = new MP($access_token);
-		$card = $mp->post("/v1/customers/" . $id . "/cards", array("token" => $token));
-		return $card;
+		$country = $this->config->get('mp_transparente_country');
+		if ($country != "MPE") {
+			$id = $this->getCustomerId();
+			$access_token = $this->config->get('mp_transparente_access_token');
+			$mp = new MP($access_token);
+			$card = $mp->post("/v1/customers/" . $id . "/cards", array("token" => $token));
+			return $card;
+		}
 	}
 
 	private function retornoTransparente($token) {
@@ -309,6 +322,7 @@ class ControllerPaymentMPTransparente extends Controller {
 
 	private function updateOrder($id) {
 		$access_token = $this->config->get('mp_transparente_access_token');
+
 		$url = 'https://api.mercadopago.com/v1/payments/' . $id . '?access_token=' . $access_token;
 		$payment = $this->callJson($url);
 		$order_id = $payment['external_reference'];
@@ -318,7 +332,9 @@ class ControllerPaymentMPTransparente extends Controller {
 		switch ($order_status) {
 		case 'approved':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-			$this->createCard($payment['metadata']['token']);
+			if (isset($payment['metadata']['token']) && strlen($payment['metadata']['token']) > 0) {
+				$this->createCard($payment['metadata']['token']);
+			}
 			break;
 		case 'pending':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);

@@ -4,7 +4,7 @@
                     var spinner = new Spinner().spin(document.getElementById('spinner'));
                     var country = document.getElementById('country').value;
                     var firstname =  document.getElementById('input-payment-firstname');
-                    
+                    console.log("pais: " + country);
                     if(firstname)
                     {
                         var firstname =  document.getElementById('input-payment-firstname');
@@ -74,16 +74,6 @@
                         {
                             getCardIssuers();
                         }
-                        console.log("response 0:");
-                        console.log(response[0]);
-                        if (response[0].issuer)
-                        {
-                            card_number.setAttribute('data-card-issuer', response[0][0].issuer.id)  
-                        }
-                        else
-                        {
-                            console.log('num tem issuer!!!')
-                        }
                         getInstallments();
                     });    
                     }
@@ -91,6 +81,7 @@
 
                 document.getElementById('button_pay').addEventListener('click', function doPayment () {
                     var tries = localStorage.getItem('payment')? parseInt(localStorage.getItem('payment')):0;
+                    var card_number = document.getElementById('cc_num');
                     if(tries)
                     {
                         Mercadopago.clearSession();
@@ -100,7 +91,7 @@
                     var style = 'margin-left: 22%;'; 
                     document.getElementById('formulario').setAttribute('style', 'pointer-events: none; opacity: 0.4;' + style);
                     var spinner = new Spinner().spin(document.getElementById('spinner'));
-                    var form = {cardNumber: document.getElementById('cc_num').value,
+                    var form = {cardNumber: card_number.value,
                     securityCode: document.getElementById('cvv').value,
                     cardExpirationMonth:document.getElementById('expiration_month').value,
                     cardExpirationYear:document.getElementById('expiration_year').value,
@@ -109,15 +100,13 @@
                     var docNumber = document.getElementById('doc_number');
 
                     if (docType)
-                    {
+                {
                      form.docType = docType.value;
-                     console.log('doctype: '+ docType.value);   
                  }
 
                  if (docNumber) 
                  {
                      form.docNumber = docNumber.value;      
-                     console.log('docnumber: '+ docNumber.value);   
                  }
                 console.log('form');
                 console.log(form);
@@ -157,6 +146,9 @@
                          {
                             payment.issuer_id = issuer.value;
                         }
+                        payment.issuer_id =  issuer? issuer.value : card_number.getAttribute('data-card-issuer');
+                        console.log('pagamento');
+                        console.log(payment);
                         
                         pay(payment, url_backend, spinner);
 
@@ -220,9 +212,11 @@
 
                 function getInstallments()
                 {
+                    var card_number = document.getElementById('cc_num');
+                    var country = document.getElementById('country');
                     var public_key = document.getElementById("public_key").value;
                     var issuer = document.getElementById('issuer');
-                    var bin = document.getElementById('cc_num').value.replace(/[ .-]/g, '').slice(0, 6);
+                    var bin = card_number.value.replace(/[ .-]/g, '').slice(0, 6);
                     var lbls = document.getElementsByClassName('text-right');
                     var text_amount = lbls[lbls.length -1].textContent.split('$')[1];
                     var amount = parseFloat(buildAmount(text_amount));
@@ -237,10 +231,12 @@
                     console.log('config');
                     console.log(config);
                     Mercadopago.getInstallments(config, function(httpStatus, data){
+                        console.log('data no installments');
+                        console.log(data);
                         if (httpStatus == 200)
                         {
                             var installments = data[0].payer_costs;
-                        //document.getElementById('paymentType').value = data[0].payment_method_id;
+                            //document.getElementById('paymentType').value = data[0].payment_method_id;
                         var i = installments.length;
                         var select = document.getElementById('installments');
                         select.options.length = 0;
@@ -252,20 +248,41 @@
                             opt.value = installments[i].installments;
                             select.appendChild(opt);
                         }
+
+                        if (country.value == "MPE")
+                        {
+                            card_number.setAttribute("data-card-issuer",data[0].issuer.id);
+                            country.setAttribute("data-card-payment-method-id", data[0].payment_method_id);
+                        }
                         
                     }
                 });
                 }
 
-                function buildAmount(amount)
-                {
-                    return amount
-                    /*var comma = amount.indexOf(',');
-                    var dot =  amount.indexOf('.');
-                    //TODO: terminar essa função de análise da string do valor (fazer lógica de substituição de ponto)
-                    if (true) {}
-                        else{}*/
-                }
+               function buildAmount(amount)
+{
+    var string_amount = amount.toString();
+    var splitted_amount = string_amount.split("");
+    var comma = amount.indexOf(',');
+    var dot =  amount.indexOf('.');
+    //virgula vem antes do ponto
+    if(comma < dot)
+    {
+        splitted_amount[comma] = "";
+    }//virgula vem depois do ponto
+    else
+    {
+        splitted_amount[comma] = ".";
+        splitted_amount[dot] = "";
+    }
+   var final_amount = splitted_amount.join("");
+    console.log("comma:" + comma);
+    console.log("dot:" + dot);
+    console.log("final value:" + final_amount);
+    return Number(final_amount);
+}
+
+
                 function getCardIssuers()
                 {
                     var public_key = document.getElementById("public_key").value;
@@ -301,7 +318,7 @@
                 {
                     cardType.addEventListener('change', cardTypeEventListener);    
                 }
-                
+
                 function cardTypeEventListener(){
                  var paymentType = document.getElementById('paymentType');
                  var bg = document.querySelector('input[data-checkout="cardNumber"]');
