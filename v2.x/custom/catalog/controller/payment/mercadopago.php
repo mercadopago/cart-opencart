@@ -178,8 +178,6 @@ class MP {
 	 */
 	public function create_payment($payment) {
 		$access_token = $this->get_access_token();
-		/*$header = array("x-tracking-id" => "platform:v1-whitelabel,type:OpenCart2,so:1.0");
-		$result = $this->post('/v1/payments?access_token=' . $access_token, $payment, $header);*/
 		$request = array(
 			"uri" => "/v1/payments",
 			"params" => array(

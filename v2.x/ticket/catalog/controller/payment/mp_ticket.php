@@ -60,7 +60,7 @@ class ControllerPaymentMPTicket extends Controller {
 					"apartment" => "-",
 					"street_number" => "-"));
 
-			$value = floatval($order_info['total']) * floatval($order_info['currency_value']);
+			$value = floatval(number_format(floatval($order_info['total']) * floatval($order_info['currency_value']), 2));
 			$access_token = $this->config->get('mp_ticket_access_token');
 			$mp = new MP($access_token);
 			$payment_data = array("payer" => $payer,
@@ -76,7 +76,7 @@ class ControllerPaymentMPTicket extends Controller {
 				$payment_data["sponsor_id"] = $this->sponsors[$this->getCountry()];
 			}
 
-			$payment_response = $mp->post("/v1/payments", $payment_data);
+			$payment_response = $mp->create_payment($payment_data);
 			error_log('payment response: ' . json_encode($payment_response));
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
 			echo json_encode(array("status" => $payment_response['status'], "url" => $payment_response['response']['transaction_details']['external_resource_url']));
