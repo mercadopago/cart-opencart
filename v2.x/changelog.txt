@@ -1,7 +1,7 @@
 IMPORTANT: YOUR SERVER MUST HAVE SSL ENABLE, OTHERWISE THE API CALLS TO MERCADO PAGO WILL NOT WORK
 
 CHANGELOG:
-V1.31
+V1.3.1
 - Checkout Peru (Custom and Standard)
 - Tons of bug fixes
 - Tracking now working
