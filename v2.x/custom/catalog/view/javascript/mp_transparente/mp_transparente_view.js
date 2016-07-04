@@ -4,7 +4,7 @@
                     var spinner = new Spinner().spin(document.getElementById('spinner'));
                     var country = document.getElementById('country').value;
                     var firstname =  document.getElementById('input-payment-firstname');
-                    
+                    console.log("pais: " + country);
                     if(firstname)
                     {
                         var firstname =  document.getElementById('input-payment-firstname');
@@ -81,6 +81,7 @@
 
                 document.getElementById('button_pay').addEventListener('click', function doPayment () {
                     var tries = localStorage.getItem('payment')? parseInt(localStorage.getItem('payment')):0;
+                    var card_number = document.getElementById('cc_num');
                     if(tries)
                     {
                         Mercadopago.clearSession();
@@ -90,7 +91,7 @@
                     var style = 'margin-left: 22%;'; 
                     document.getElementById('formulario').setAttribute('style', 'pointer-events: none; opacity: 0.4;' + style);
                     var spinner = new Spinner().spin(document.getElementById('spinner'));
-                    var form = {cardNumber: document.getElementById('cc_num').value,
+                    var form = {cardNumber: card_number.value,
                     securityCode: document.getElementById('cvv').value,
                     cardExpirationMonth:document.getElementById('expiration_month').value,
                     cardExpirationYear:document.getElementById('expiration_year').value,
@@ -99,20 +100,22 @@
                     var docNumber = document.getElementById('doc_number');
 
                     if (docType)
-                    {
-                     form.docType = docType.value;   
+                {
+                     form.docType = docType.value;
                  }
 
                  if (docNumber) 
                  {
                      form.docNumber = docNumber.value;      
                  }
-
+                console.log('form');
+                console.log(form);
                  var url_site = window.location.href.split('index.php')[0];
                  var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
                  url_backend += 'index.php?route=payment/mp_transparente/payment/';         
 
                  Mercadopago.createToken(form, function (status, response) {
+                    
                      var valid_status = [200, 201];
                      if(response.error || valid_status.indexOf(status) < 0)
                      {
@@ -143,6 +146,10 @@
                          {
                             payment.issuer_id = issuer.value;
                         }
+                        payment.issuer_id =  issuer? issuer.value : card_number.getAttribute('data-card-issuer');
+                        console.log('pagamento');
+                        console.log(payment);
+                        
                         pay(payment, url_backend, spinner);
 
                     }
@@ -205,11 +212,14 @@
 
                 function getInstallments()
                 {
+                    var card_number = document.getElementById('cc_num');
+                    var country = document.getElementById('country');
                     var public_key = document.getElementById("public_key").value;
                     var issuer = document.getElementById('issuer');
-                    var bin = document.getElementById('cc_num').value.replace(/[ .-]/g, '').slice(0, 6);
+                    var bin = card_number.value.replace(/[ .-]/g, '').slice(0, 6);
                     var lbls = document.getElementsByClassName('text-right');
-                    var amount = parseFloat(lbls[lbls.length -1].textContent.split('$')[1].replace('.','').replace(',','.'));
+                    var text_amount = lbls[lbls.length -1].textContent.split('$')[1];
+                    var amount = parseFloat(buildAmount(text_amount));
                     var config = {"bin": bin,"amount": amount};
                     if (issuer)
                     {
@@ -218,12 +228,15 @@
 
                     Mercadopago.setPublishableKey(public_key);
 
-
+                    console.log('config');
+                    console.log(config);
                     Mercadopago.getInstallments(config, function(httpStatus, data){
+                        console.log('data no installments');
+                        console.log(data);
                         if (httpStatus == 200)
                         {
                             var installments = data[0].payer_costs;
-                        //document.getElementById('paymentType').value = data[0].payment_method_id;
+                            //document.getElementById('paymentType').value = data[0].payment_method_id;
                         var i = installments.length;
                         var select = document.getElementById('installments');
                         select.options.length = 0;
@@ -235,10 +248,40 @@
                             opt.value = installments[i].installments;
                             select.appendChild(opt);
                         }
+
+                        if (country.value == "MPE")
+                        {
+                            card_number.setAttribute("data-card-issuer",data[0].issuer.id);
+                            country.setAttribute("data-card-payment-method-id", data[0].payment_method_id);
+                        }
                         
                     }
                 });
                 }
+
+               function buildAmount(amount)
+{
+    var string_amount = amount.toString();
+    var splitted_amount = string_amount.split("");
+    var comma = amount.indexOf(',');
+    var dot =  amount.indexOf('.');
+    //virgula vem antes do ponto
+    if(comma < dot)
+    {
+        splitted_amount[comma] = "";
+    }//virgula vem depois do ponto
+    else
+    {
+        splitted_amount[comma] = ".";
+        splitted_amount[dot] = "";
+    }
+   var final_amount = splitted_amount.join("");
+    console.log("comma:" + comma);
+    console.log("dot:" + dot);
+    console.log("final value:" + final_amount);
+    return Number(final_amount);
+}
+
 
                 function getCardIssuers()
                 {
@@ -268,12 +311,14 @@
                     });
 
                 }
+
                 var cardType = document.getElementById('cardType');
 
                 if(cardType)
                 {
                     cardType.addEventListener('change', cardTypeEventListener);    
                 }
+
                 function cardTypeEventListener(){
                  var paymentType = document.getElementById('paymentType');
                  var bg = document.querySelector('input[data-checkout="cardNumber"]');
@@ -301,12 +346,22 @@
 
             function pay(payment, url_backend, spinner)
             {
+                var card_number = document.getElementById('cc_num');
+                payment.issuer_id = card_number.hasAttribute("data-card-issuer")? 
+                card_number.getAttribute("data-card-issuer") : payment.issuer_id;
 
+                payment.payment_method_id = card_number.hasAttribute("data-card-payment-method-id")? 
+                card_number.getAttribute("data-card-payment-method-id") : payment.payment_method_id;
+                
+                    console.log("issuer id do data card: " + payment.issuer_id)  ;
+                
                 $.ajax({
                     type: "POST",
                     url: url_backend,
                     data: payment,
                     success: function success(data) {
+                        console.log('payment data');
+                        console.log(data);
                         response_payment = JSON.parse(data);
                         document.getElementById('formulario').style = 'margin-left: 22%';
                         var acceptable_status = ["approved", "in_process"];

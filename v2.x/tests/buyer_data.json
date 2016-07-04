@@ -1,0 +1,130 @@
+{
+    "buyers": {
+        "MLA": [{
+                "user": "TETE2828099",
+                "password": "qatest135",
+                "user_id": 205044847,
+                "email": "",
+                "client_id": 0,
+                "client_secret": "",
+                "public_key": "",
+                "access_token": ""
+            }, {
+                "user": "TETE6554848",
+                "password": "qatest3138",
+                "user_id": 205046514,
+                "email": "",
+                "client_id": 0,
+                "client_secret": "",
+                "public_key": "",
+                "access_token": ""
+            }, {
+                "user": "TT590398",
+                "password": "qatest944",
+                "user_id": 204617269,
+                "email": "test_user_26738664@testuser.com",
+                "client_id": 0,
+                "client_secret": "",
+                "public_key": "",
+                "access_token": ""
+            }
+
+        ],
+        "MLB": [{
+            "user": "TETE9746972",
+            "password": "qatest6030",
+            "user_id": 200333005,
+            "email": "",
+            "client_id": 0,
+            "client_secret": "",
+            "public_key": "",
+            "access_token": ""
+        }, {
+            "user": "TETE2576356",
+            "password": "qatest1288",
+            "user_id": 201658358,
+            "email": "test_user_42014680@testuser.com",
+            "client_id": 0,
+            "client_secret": "",
+            "public_key": "",
+            "access_token": ""
+        }],
+        "MLC": [{
+            "user": "TETE4853049",
+            "password": "qatest2146",
+            "user_id": 202431677,
+            "email": "",
+            "client_id": 0,
+            "client_secret": "",
+            "public_key": "",
+            "access_token": ""
+        }, {
+            "user": "TT299227",
+            "password": "qatest3224",
+            "user_id": 202432160,
+            "email": "",
+            "client_id": 0,
+            "client_secret": "",
+            "public_key": "",
+            "access_token": ""
+        }, {
+            "user": "TETE9914224",
+            "password": "qatest7378",
+            "user_id": 204635059,
+            "email": "test_user_95201263@testuser.com",
+            "client_id": 0,
+            "client_secret": "",
+            "public_key": "",
+            "access_token": ""
+        }],
+        "MCO": [{
+            "user": "TETE3862372",
+            "password": "qatest2284",
+            "user_id": 204634870,
+            "email": "test_user_93718122@testuser.com",
+            "client_id": 0,
+            "client_secret": "",
+            "public_key": "",
+            "access_token": ""
+        }],
+        "MLM": [{
+            "user": "TETE2515675",
+            "password": "qatest762",
+            "user_id": 204638335,
+            "email": "test_user_54673885@testuser.com",
+            "client_id": 0,
+            "client_secret": "",
+            "public_key": "",
+            "access_token": ""
+        }],
+        "MLV": [{
+            "user": "TETE479840",
+            "password": "qatest5680",
+            "user_id": 204636716,
+            "email": "test_user_6407898@testuser.com",
+            "client_id": 0,
+            "client_secret": "",
+            "public_key": "",
+            "access_token": ""
+        }],
+        "MPE": [{
+            "user": "TESTNRPYWCFU",
+            "password": "qatest2586",
+            "user_id": 216731114,
+            "email": "test_user_98295874@testuser.com",
+            "client_id": 0,
+            "client_secret": "",
+            "public_key": "",
+            "access_token": ""
+        }, {
+            "user": "TT667152",
+            "password": "qatest7723",
+            "user_id": 216731124,
+            "email": "test_user_3401908@testuser.com",
+            "client_id": 0,
+            "client_secret": "",
+            "public_key": "",
+            "access_token": ""
+        }]
+    }
+}

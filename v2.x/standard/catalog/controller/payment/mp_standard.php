@@ -9,11 +9,12 @@ class ControllerPaymentMPStandard extends Controller {
 	private $order_info;
 	private $message;
 	private $sponsors = array('MLB' => 204931135,
-		'MLM' => 204931029,
+		'MLM' => 204962951,
 		'MLA' => 204931029,
 		'MCO' => 204964815,
 		'MLV' => 204964612,
-		'MLC' => 204964815);
+		'MPE' => 217176790,
+		'MLC' => 204927454);
 
 	public function index() {
 		$data['customer_email'] = $this->customer->getEmail();
@@ -35,11 +36,11 @@ class ControllerPaymentMPStandard extends Controller {
 		//Cambio el código ISO-3 de la moneda por el que se les ocurrio poner a los de mp_standard!!!
 		$accepted_currencies = array('ARS' => 'ARS', 'ARG' => 'ARS', 'VEF' => 'VEF',
 			'BRA' => 'BRL', 'BRL' => 'BRL', 'REA' => 'BRL', 'MXN' => 'MEX',
-			'CLP' => 'CHI', 'COP' => 'COP', 'US' => 'US');
+			'CLP' => 'CHI', 'COP' => 'COP', 'PEN' => 'PEN', 'US' => 'US');
 
 		$currency = $accepted_currencies[$order_info['currency_code']];
 
-		$currencies = array('ARS', 'BRL', 'MEX', 'CHI', 'VEF', 'COP');
+		$currencies = array('ARS', 'BRL', 'MEX', 'CHI', 'PEN', 'VEF', 'COP');
 		if (!in_array($currency, $currencies)) {
 			$currency = '';
 			$data['error'] = $this->language->get('currency_no_support');
@@ -57,22 +58,16 @@ class ControllerPaymentMPStandard extends Controller {
 				"description" => $product['quantity'] . ' x ' . $product['name'], // string
 				"quantity" => intval($product['quantity']),
 				"unit_price" => round(floatval($product['price']), 2) * $order_info['currency_value'], //decimal
-				"currency_id" => $currency, // string Argentina: ARS (peso argentino) � USD (D�lar estadounidense); Brasil: BRL (Real).,
+				"currency_id" => $currency,
 				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
 				"category_id" => $this->config->get('mp_standard_category_id'),
 			);
 		}
 
-		//$firstproduct = reset($allproducts);
-
-		// dados 2.0
-
 		$this->id = 'payment';
 
 		$data['server'] = $_SERVER;
 		$data['debug'] = $this->config->get('mp_standard_debug');
-
-		// get credentials
 
 		$client_id = $this->config->get('mp_standard_client_id');
 		$client_secret = $this->config->get('mp_standard_client_secret');
@@ -95,7 +90,6 @@ class ControllerPaymentMPStandard extends Controller {
 			"mode" => "custom",
 		);
 
-		//Force format YYYY-DD-MMTH:i:s
 		$cust = $this->db->query("SELECT * FROM `" .
 			DB_PREFIX . "customer` WHERE customer_id = " .
 			$order_info['customer_id'] . " ");
@@ -103,11 +97,9 @@ class ControllerPaymentMPStandard extends Controller {
 		$date_creation_user = "";
 
 		if ($cust->num_rows > 0):
-
 			foreach ($cust->rows as $customer):
 				$date_created = $customer['date_added'];
 			endforeach;
-
 			$date_creation_user = date('Y-m-d', strtotime($date_created)) . "T" . date('H:i:s', strtotime($date_created));
 		endif;
 
@@ -176,13 +168,21 @@ class ControllerPaymentMPStandard extends Controller {
 		$pref['payment_methods'] = $payment_methods;
 		$pref['payer'] = $payer;
 		$pref['notification_url'] = $order_info['store_url'] . 'index.php?route=payment/mp_standard/notifications';
+		$sandbox = (bool) $this->config->get('mp_standard_sandbox');
+		$is_test_user = strpos($order_info['email'], '@testuser.com');
+
+		if (!$is_test_user) {
+			error_log('not test_user. sponsor_id will be send');
+			$pref["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
+		} else {
+			error_log('test_user. sponsor_id will not be send');
+		}
+
+		error_log('order_info email: ' . $order_info['email']);
+		error_log('preference: ' . json_encode($pref));
+
 		$mp = new MP($client_id, $client_secret);
 		$preferenceResult = $mp->create_preference($pref);
-		$sandbox = (bool) $this->config->get('mp_standard_sandbox');
-
-		if (strpos($order_info['email'], '@testuser.com') === false) {
-			$pref["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
-		}
 
 		if ($preferenceResult['status'] == 201):
 			$data['type_checkout'] = $this->config->get('mp_standard_type_checkout');
@@ -194,6 +194,9 @@ class ControllerPaymentMPStandard extends Controller {
 		else:
 			$data['error'] = "Error: " . $preferenceResult['status'];
 		endif;
+		error_log('atualizando status na preference');
+		$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('order_status_id_pending'), date('d/m/Y h:i'));
+		error_log('status na preference atualizado');
 		$view = floatval(VERSION) < 2.2 ? 'default/template/payment/mp_standard.tpl' : 'payment/mp_standard.tpl';
 		return $this->load->view($view, $data);
 	}
@@ -214,6 +217,13 @@ class ControllerPaymentMPStandard extends Controller {
 	}
 
 	public function callback() {
+		if (isset($this->request->get['topic'])) {
+			$this->request->get['collection_id'] = $this->request->get['id'];
+		}
+		$this->load->model('checkout/order');
+		error_log('atualizando status na preference');
+		$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago_order_status_id'), date('d/m/Y h:i'));
+		error_log('status na preference atualizado');
 		$this->retorno();
 		$this->response->redirect($this->url->link('checkout/success'));
 
@@ -234,7 +244,7 @@ class ControllerPaymentMPStandard extends Controller {
 				error_log('collection_id nulo');
 				$order_id = $this->request->get['external_reference'];
 				$this->load->model('checkout/order');
-				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i'));
+				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_' . $this->request->get['status']), date('d/m/Y h:i'));
 				return;
 
 			}
@@ -261,7 +271,7 @@ class ControllerPaymentMPStandard extends Controller {
 				$order = $this->model_checkout_order->getOrder($order_id);
 
 				if ($order['order_status_id'] == '0') {
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago_order_status_id'));
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id'));
 				}
 
 				switch ($order_status) {

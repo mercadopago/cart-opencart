@@ -173,13 +173,20 @@ class ControllerPaymentMPStandard extends Controller {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //returns the transference value like a string
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded')); //sets the header
 		curl_setopt($ch, CURLOPT_URL, $url); //oauth API
-		if (isset($posts)) {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
+		try {
+			if (isset($posts)) {
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
+			}
+			$jsonresult = curl_exec($ch); //execute the conection
+			curl_close($ch);
+			$result = json_decode($jsonresult, true);
+			return $result;
+		} catch (Exception $e) {
+			$error = curl_error($ch);
+			error_log($error);
+			$this->_error['warning'] = $error;
 		}
-		$jsonresult = curl_exec($ch); //execute the conection
-		curl_close($ch);
-		$result = json_decode($jsonresult, true);
-		return $result;
+
 	}
 
 	private function getCategoryList() {

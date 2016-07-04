@@ -32,7 +32,7 @@ class FileListenerHandler(PatternMatchingEventHandler):
 def move_file(initial_path):
     position = initial_path[2:].find('/') + 2
     start_path = '/Users/bobemfica/Documents/projetos/cart-opencart/v2.x%s' % initial_path[1:]
-    final_path = '/Applications/MAMP/htdocs/oc21%s' % initial_path[position:]
+    final_path = '/Applications/MAMP/htdocs/octeste%s' % initial_path[position:]
     print('moving file %s to %s' % (start_path, final_path))
     cmd_move = 'ditto -V %s %s ' % (start_path, final_path)
     print(subprocess.call(cmd_move, shell=True))
