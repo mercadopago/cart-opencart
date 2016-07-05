@@ -110,7 +110,8 @@ class ControllerPaymentMPTicket extends Controller {
 
 	public function getAcceptedMethods() {
 		$token = $this->config->get('mp_ticket_access_token');
-		$methods_api = $this->getMethods($token)['response'];
+		$methods = $this->getMethods($token);
+		$methods_api = $methods['response'];
 		$saved_methods = preg_split("/[\s,]+/", $this->config->get('mp_ticket_methods'));
 		$accepted_methods = array();
 		foreach ($methods_api as $method) {

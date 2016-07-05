@@ -232,8 +232,17 @@ class ControllerPaymentMPTransparente extends Controller {
 		$search_uri = "/v1/customers/search";
 		$mp = new MP($access_token);
 		$response = $mp->get($search_uri, $customer);
-		return (array_key_exists("results", $response["response"]) && sizeof($response["response"]["results"]) > 0) ?
-		$response["response"]["results"][0]["id"] : $this->createCustomer()["response"]["id"];
+		$response_has_results_key = array_key_exists("results", $response["response"]);
+		$response_has_at_least_one_item = sizeof($response["response"]["results"]) > 0;
+
+		if ($response_has_results_key && $response_has_at_least_one_item) {
+			$customer_id = $response["response"]["results"][0]["id"];
+		} else {
+			$new_customer = $this->createCustomer();
+			error_log("new customer: " . json_encode($new_customer));
+			$customer_id = $new_customer["response"]["id"];
+		}
+		return $customer_id;
 	}
 
 	private function createCustomer() {
