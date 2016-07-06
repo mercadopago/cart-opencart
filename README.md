@@ -24,6 +24,10 @@ Offer a checkout fully customized to your brand experience with our simple-to-us
 * Accept tickets in addition to cards.
 * Improve conversion rate.
 
+**Ticket Checkout**
+
+This feature allows merchants to have a customized ticket checkout, according to each country's ticket method (i.e Boleto in Brazil, RapiPago in Argentina, etc).  Thus, it will be possible to customize its look and feel, customers won’t be redirected away to complete the payment, and it will also reduce the checkout steps, improving conversion rates. The ticket link will be shown and when the customer click on it, another tab with the ticket will be opened.
+
 **Standard Checkout**
 
 Great for merchants who want to get going quickly and easily.
@@ -33,10 +37,6 @@ Great for merchants who want to get going quickly and easily.
 * Store buyer’s card for fast checkout.
 * Accept tickets, bank transfer and account money in addition to cards.
 * Accept Mercado Pago's discount coupons.
-
-**Ticket Checkout**
-
-This feature allows merchants to have a customized ticket checkout, according to each country's ticket method (i.e Boleto in Brazil, RapiPago in Argentina, etc).  Thus, it will be possible to customize its look and feel, customers won’t be redirected away to complete the payment, and it will also reduce the checkout steps, improving conversion rates. The ticket link will be shown and when the customer click on it, another tab with the ticket will be opened.
 
 * All checkouts are available for Argentina, Brazil, Chile, Colombia, Mexico, Peru and Venezuela*
 
@@ -125,6 +125,7 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
   * Chile: [https://www.mercadopago.com/mlc/account/credentials](https://www.mercadopago.com/mlc/account/credentials)
   * Colombia: [https://www.mercadopago.com/mco/account/credentials](https://www.mercadopago.com/mco/account/credentials)
   * Mexico: [https://www.mercadopago.com/mlm/account/credentials](https://www.mercadopago.com/mlm/account/credentials)
+  * Peru: [https://www.mercadopago.com/mpe/account/credentials](https://www.mercadopago.com/mpe/account/credentials)
   * Venezuela: [https://www.mercadopago.com/mlv/account/credentials](https://www.mercadopago.com/mlv/account/credentials)
 4. If you're using **Custom Checkout** or **Standard Checkout**, select the country related to your **Mercado Pago** account. If you're using **Ticket Checkout**, there is no need to configure the country.
 
