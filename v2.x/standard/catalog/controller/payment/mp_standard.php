@@ -172,14 +172,8 @@ class ControllerPaymentMPStandard extends Controller {
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 
 		if (!$is_test_user) {
-			error_log('not test_user. sponsor_id will be send');
 			$pref["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
-		} else {
-			error_log('test_user. sponsor_id will not be send');
 		}
-
-		error_log('order_info email: ' . $order_info['email']);
-		error_log('preference: ' . json_encode($pref));
 
 		$mp = new MP($client_id, $client_secret);
 		$preferenceResult = $mp->create_preference($pref);
@@ -194,9 +188,7 @@ class ControllerPaymentMPStandard extends Controller {
 		else:
 			$data['error'] = "Error: " . $preferenceResult['status'];
 		endif;
-		error_log('atualizando status na preference');
 		$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('order_status_id_pending'), date('d/m/Y h:i'));
-		error_log('status na preference atualizado');
 		$view = floatval(VERSION) < 2.2 ? 'default/template/payment/mp_standard.tpl' : 'payment/mp_standard.tpl';
 		return $this->load->view($view, $data);
 	}
@@ -221,9 +213,7 @@ class ControllerPaymentMPStandard extends Controller {
 			$this->request->get['collection_id'] = $this->request->get['id'];
 		}
 		$this->load->model('checkout/order');
-		error_log('atualizando status na preference');
 		$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago_order_status_id'), date('d/m/Y h:i'));
-		error_log('status na preference atualizado');
 		$this->retorno();
 		$this->response->redirect($this->url->link('checkout/success'));
 
@@ -239,9 +229,7 @@ class ControllerPaymentMPStandard extends Controller {
 
 	public function retorno() {
 		if (isset($this->request->get['collection_id'])) {
-			error_log('pegou o collection_id');
 			if ($this->request->get['collection_id'] == 'null') {
-				error_log('collection_id nulo');
 				$order_id = $this->request->get['external_reference'];
 				$this->load->model('checkout/order');
 				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_' . $this->request->get['status']), date('d/m/Y h:i'));
@@ -250,19 +238,14 @@ class ControllerPaymentMPStandard extends Controller {
 			}
 
 			$ids = explode(',', $this->request->get['collection_id']);
-			error_log('ids: ' . json_encode($ids));
 			$client_id = $this->config->get('mp_standard_client_id');
 			$client_secret = $this->config->get('mp_standard_client_secret');
 			$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
 			$mp = new MP($client_id, $client_secret);
 			$mp->sandbox_mode($sandbox);
-			error_log('antes do foreach');
 			foreach ($ids as $id) {
-				error_log('pegando info do pagamento ' . $id);
 				$resposta = $mp->get_payment_info($id);
-				error_log('resposta: ' . json_encode($resposta));
 				$dados = $resposta['response'];
-				error_log('dados: ' . json_encode($dados));
 
 				$order_id = $dados['collection']['external_reference'];
 				$order_status = $dados['collection']['status'];
