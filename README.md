@@ -24,6 +24,8 @@ Offer a checkout fully customized to your brand experience with our simple-to-us
 * Accept tickets in addition to cards.
 * Improve conversion rate.
 
+*Available for Argentina, Brazil, Colombia, Mexico, Peru and Venezuela*
+
 **Standard Checkout**
 
 Great for merchants who want to get going quickly and easily.
@@ -34,7 +36,7 @@ Great for merchants who want to get going quickly and easily.
 * Accept tickets, bank transfer and account money in addition to cards.
 * Accept Mercado Pago's discount coupons.
 
-* All checkouts are available for Argentina, Brazil, Chile, Colombia, Mexico, Peru and Venezuela*
+*Available for Argentina, Brazil, Chile, Colombia, Mexico, Peru and Venezuela*
 
 <a name="requirements"></a>
 ## Requirements:
