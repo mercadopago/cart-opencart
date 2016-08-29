@@ -1,6 +1,13 @@
 IMPORTANT: YOUR SERVER MUST HAVE SSL ENABLE, OTHERWISE THE API CALLS TO MERCADO PAGO WILL NOT WORK
 
 CHANGELOG:
+
+V1.4.0 - 26/08/2016
+- Feature coupon
+- Fix when the user canceled the purchase at checkout standard and back to the store.
+- Fix issue about shipment and voucher
+- Apply improvements
+
 V1.3.1
 - Checkout Peru (Custom and Standard)
 - Tons of bug fixes
