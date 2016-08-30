@@ -23,6 +23,28 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['terms'] = '';
 		$data['public_key'] = $this->config->get('mp_transparente_public_key');
 
+		$data['mp_transparente_coupon'] = $this->config->get('mp_transparente_coupon');
+	  if ($this->config->get('mp_transparente_coupon')) {
+			$data['mercadopago_coupon'] = $this->language->get('mercadopago_coupon');
+			$data['cupom_obrigatorio'] = $this->language->get('cupom_obrigatorio');
+			$data['campanha_nao_encontrado'] = $this->language->get('campanha_nao_encontrado');
+			$data['cupom_nao_pode_ser_aplicado'] = $this->language->get('cupom_nao_pode_ser_aplicado');
+
+			$data['cupom_invalido'] = $this->language->get('cupom_invalido');
+			$data['valor_minimo_invalido'] = $this->language->get('valor_minimo_invalido');
+			$data['erro_validacao_cupom'] = $this->language->get('erro_validacao_cupom');
+			$data['aguarde'] = $this->language->get('aguarde');
+			$data['you_save'] = $this->language->get('you_save');
+			$data['desconto_exclusivo'] = $this->language->get('desconto_exclusivo');
+			$data['total_compra'] = $this->language->get('total_compra');
+			$data['total_desconto'] = $this->language->get('total_desconto');
+			$data['upon_aproval'] = $this->language->get('upon_aproval');
+			$data['see_conditions'] = $this->language->get('see_conditions');
+			$data['aplicar'] = $this->language->get('aplicar');
+			$data['remover'] = $this->language->get('remover');
+
+		}
+
 		if ($this->config->get('mp_transparente_country')) {
 			$data['action'] = $this->config->get('mp_transparente_country');
 		}
@@ -37,6 +59,11 @@ class ControllerPaymentMPTransparente extends Controller {
 
 		foreach ($labels as $label) {
 			$data[$label] = $this->language->get($label);
+		}
+
+
+	  if ($this->config->get('mp_transparente_coupon')) {
+			$data['mercadopago_coupon'] = $this->language->get('mercadopago_coupon');
 		}
 
 		$data['server'] = $_SERVER;
@@ -72,6 +99,51 @@ class ControllerPaymentMPTransparente extends Controller {
 		$issuers = $this->callJson($url);
 		echo json_encode($issuers);
 	}
+
+	public function coupon() {
+		$coupon_id = $this->request->get['coupon_id'];
+    if ($coupon_id != '') {
+        $coupon_id = $coupon_id;
+        $response = $this->validCoupon($coupon_id);
+    } else {
+        $response = array(
+            'status' => 400,
+            'response' => array(
+                'error' => 'invalid_id',
+                'message' => 'invalid id'
+            )
+        );
+	    header('Content-Type: application/json');
+			echo json_encode($response);
+			exit();
+		}
+	}
+
+  public function validCoupon($coupon_id)
+  {
+
+			$this->load->model('checkout/order');
+			$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
+			$transaction_amount = floatval($order_info['total']) * floatval($order_info['currency_value']);
+			$transaction_amount = round($transaction_amount, 2);
+
+			$access_token = $this->config->get('mp_transparente_access_token');
+			$mp = new MP($access_token);
+
+      $params = array(
+          'transaction_amount' => $transaction_amount,
+          'payer_email' => $order_info['email'],
+          'coupon_code' => $coupon_id,
+      );
+
+      $details_discount = $mp->getDiscount($params);
+      // add value on return api discount
+      $details_discount['response']['transaction_amount'] = $params['transaction_amount'];
+      $details_discount['response']['params'] = $params;
+
+      return $details_discount;
+  }
 
 	public function payment() {
 		$this->language->load('payment/mp_transparente');
@@ -122,21 +194,38 @@ class ControllerPaymentMPTransparente extends Controller {
 			$payment_data = array("payer" => $payer,
 				"external_reference" => $order_info['order_id'],
 				"transaction_amount" => floatval($value),
-				"notification_url" => $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications',
-				//"notification_url" => 'http://www.google.com',
 				"token" => $this->request->post['token'],
 				"description" => 'Products',
 				"installments" => (int) $this->request->post['installments'],
 				"payment_method_id" => $this->request->post['payment_method_id']);
+
+			$notification_url = $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications';
+
+      if (!strrpos($notification_url, 'localhost')) {
+      	$payment_data['notification_url'] = $notification_url;
+      }
+
+      $mercadopago_coupon = isset($this->request->post['mercadopago_coupon']) ? $this->request->post['mercadopago_coupon'] : '';
+      error_log("===mercadopago_coupon====".$mercadopago_coupon );
+
+      if ($mercadopago_coupon != '') {
+          $coupon = $this->validCoupon($mercadopago_coupon);
+          error_log("=====coupon======".json_encode($coupon));
+
+          if ($coupon['status'] == 200) {
+              $payment_data['campaign_id'] = $coupon['response']['id'];
+              $payment_data['coupon_amount'] = (float) $coupon['response']['coupon_amount'];
+              $payment_data['coupon_code'] = strtoupper($mercadopago_coupon);
+          }
+      }
+
 			$payment_data['additional_info'] = array('shipments' => $shipments, 'items' => $items);
 			$payment_data['metadata'] = array('token' => $payment_data['token']);
 			$is_test_user = strpos($order_info['email'], '@testuser.com');
 			if (!$is_test_user) {
 				$sponsor_id = $this->sponsors[$this->config->get('mp_transparente_country')];
 				error_log('not test_user. sponsor_id will be sent: ' . $sponsor_id);
-
 				$payment_data["sponsor_id"] = $sponsor_id;
-
 			} else {
 				error_log('test_user. sponsor_id will not be sent');
 			}
@@ -171,7 +260,6 @@ class ControllerPaymentMPTransparente extends Controller {
 			} else {
 				$json_response['status'] = $payment_response['response']['status_detail'];
 			}
-
 			echo json_encode($json_response);
 		} catch (Exception $e) {
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
@@ -215,6 +303,7 @@ class ControllerPaymentMPTransparente extends Controller {
 	}
 
 	public function notifications() {
+		error_log("====Entrou aqui=====");
 		if (isset($this->request->get['topic'])) {
 			$this->request->get['collection_id'] = $this->request->get['id'];
 			$this->retornoTransparente();
@@ -227,7 +316,9 @@ class ControllerPaymentMPTransparente extends Controller {
 	public function getCustomerId() {
 		$access_token = $this->config->get('mp_transparente_access_token');
 		$this->load->model('checkout/order');
+
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
 		$customer = array('email' => $order_info['email']);
 		$search_uri = "/v1/customers/search";
 		$mp = new MP($access_token);
@@ -239,7 +330,6 @@ class ControllerPaymentMPTransparente extends Controller {
 			$customer_id = $response["response"]["results"][0]["id"];
 		} else {
 			$new_customer = $this->createCustomer();
-			error_log("new customer: " . json_encode($new_customer));
 			$customer_id = $new_customer["response"]["id"];
 		}
 		return $customer_id;
@@ -324,7 +414,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		}
 	}
 
-	private function retornoTransparente($token) {
+	private function retornoTransparente() {
 		$id = $this->request->get['data_id'];
 		$this->updateOrder($id);
 	}

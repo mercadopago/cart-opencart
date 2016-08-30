@@ -1,6 +1,6 @@
                  (function(){
                     $('#formulario').hide();
-                    
+
                     var spinner = new Spinner().spin(document.getElementById('spinner'));
                     var country = document.getElementById('country').value;
                     var firstname =  document.getElementById('input-payment-firstname');
@@ -9,7 +9,7 @@
                     {
                         var firstname =  document.getElementById('input-payment-firstname');
                         var lastname =  document.getElementById('input-payment-lastname');
-                        document.getElementById('card_name').value = firstname.value + ' ' + lastname.value  ; 
+                        document.getElementById('card_name').value = firstname.value + ' ' + lastname.value  ;
                     }
                     setTimeout(function(){
                         $('#expiration_month').datetimepicker({minViewMode: 1, maxViewMode: 1, format: 'M'});
@@ -28,14 +28,14 @@
                                     {
                                         var option = new Option(dt[i].name, dt[i].id);
                                         select.appendChild(option);
-                                    }    
-                                }                        
-                            });  
+                                    }
+                                }
+                            });
                         }
                         spinner.stop();
-                        $('#formulario').show("slow"); 
+                        $('#formulario').show("slow");
                     }, 5000);
-                    
+
                 })();
 
                 document.getElementById('cc_num').addEventListener('change', function () {
@@ -44,7 +44,7 @@
                     var cc_num = card_number.value.replace(/[ .-]/g, '').slice(0, 6);
 
                     if(cc_num.length == 0)
-                    { 
+                    {
                         document.getElementById('paymentType').value = "";
                         document.getElementById('cc_num').style.background = "";
                         return;
@@ -66,16 +66,16 @@
                            {
                             $("#credit").mask("9999-999999-99999", {clearIfNotMatch: true});
                         }
-                        else 
-                        { 
-                            $("#credit").mask("9999-9999-9999-9999", {clearIfNotMatch: true}); 
+                        else
+                        {
+                            $("#credit").mask("9999-9999-9999-9999", {clearIfNotMatch: true});
                         }
                         if (response[0].additional_info_needed.indexOf('issuer_id') > -1)
                         {
                             getCardIssuers();
                         }
                         getInstallments();
-                    });    
+                    });
                     }
                 });
 
@@ -88,7 +88,7 @@
                     }
                     tries+=1;
                     localStorage.setItem('payment',tries);
-                    var style = 'margin-left: 22%;'; 
+                    var style = 'margin-left: 22%;';
                     document.getElementById('formulario').setAttribute('style', 'pointer-events: none; opacity: 0.4;' + style);
                     var spinner = new Spinner().spin(document.getElementById('spinner'));
                     var form = {cardNumber: card_number.value,
@@ -104,18 +104,18 @@
                      form.docType = docType.value;
                  }
 
-                 if (docNumber) 
+                 if (docNumber)
                  {
-                     form.docNumber = docNumber.value;      
+                     form.docNumber = docNumber.value;
                  }
                 console.log('form');
                 console.log(form);
                  var url_site = window.location.href.split('index.php')[0];
-                 var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
-                 url_backend += 'index.php?route=payment/mp_transparente/payment/';         
+                 var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';
+                 url_backend += 'index.php?route=payment/mp_transparente/payment/';
 
                  Mercadopago.createToken(form, function (status, response) {
-                    
+
                      var valid_status = [200, 201];
                      if(response.error || valid_status.indexOf(status) < 0)
                      {
@@ -123,20 +123,20 @@
                         document.getElementById('formulario').style = style;
                         var data = {status: response.cause[0].code, message: response.cause[0].description, request_type:"token"};
                         getMessage(data);
-                    } 
-                    else 
+                    }
+                    else
                     {
-                        var payment = {token: response.id, 
+                        var payment = {token: response.id,
                          user: document.getElementById('card_name').value,
                          payment_method_id: document.getElementById('paymentType').value,
                          installments: document.getElementById('installments').value};
 
                          if (docType)
                          {
-                             payment.docType = docType.value; 
+                             payment.docType = docType.value;
                          }
 
-                         if (docNumber) 
+                         if (docNumber)
                          {
                              payment.docNumber = docNumber.value;
                          }
@@ -149,7 +149,7 @@
                         payment.issuer_id =  issuer? issuer.value : card_number.getAttribute('data-card-issuer');
                         console.log('pagamento');
                         console.log(payment);
-                        
+
                         pay(payment, url_backend, spinner);
 
                     }
@@ -158,7 +158,7 @@
              });
 
                 function getMessage(data)
-                {   
+                {
                     var div_main = document.getElementById('mp_custom');
                     div_main.innerHTML = '';
                     var div_error = document.createElement('div');
@@ -187,21 +187,21 @@
                     {
                         status = response_payment.status;
                     }
-                    
-                    
+
+
                     var url_site = window.location.href.split('index.php')[0];
-                    var url_message = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
-                    url_message += 'index.php?route=payment/mp_transparente/getPaymentStatus&status=' 
+                    var url_message = url_site.slice(-1) == '/' ? url_site : url_site + '/';
+                    url_message += 'index.php?route=payment/mp_transparente/getPaymentStatus&status='
                     + status;
                     if(response_payment.request_type)
                     {
-                        url_message += '&request_type=' + response_payment.request_type;        
+                        url_message += '&request_type=' + response_payment.request_type;
                     }
 
-                    $.get(url_message, function success(rtn) 
+                    $.get(url_message, function success(rtn)
                     {
                         var payment_return = JSON.parse(rtn);
-                        var text = document.createTextNode(payment_return["message"]); 
+                        var text = document.createTextNode(payment_return["message"]);
                         div_error.innerHTML = "";
                         div_error.appendChild(text);
                         div_error.appendChild(btn_dismiss);
@@ -209,7 +209,11 @@
                     });
 
                 }
-
+                function getValueTotal() {
+                    var lbls = document.getElementsByClassName('text-right');
+                    var amount = parseFloat(lbls[lbls.length -1].textContent.split('$')[1].replace(',', '.'));
+                    return amount;
+                }
                 function getInstallments()
                 {
                     var card_number = document.getElementById('cc_num');
@@ -218,8 +222,7 @@
                     var issuer = document.getElementById('issuer');
                     var bin = card_number.value.replace(/[ .-]/g, '').slice(0, 6);
                     var lbls = document.getElementsByClassName('text-right');
-                    var text_amount = lbls[lbls.length -1].textContent.split('$')[1];
-                    var amount = parseFloat(buildAmount(text_amount));
+                    var amount = returnAmount();
                     var config = {"bin": bin,"amount": amount};
                     if (issuer)
                     {
@@ -241,9 +244,9 @@
                         var select = document.getElementById('installments');
                         select.options.length = 0;
                         select.appendChild(new Option('Selecione'));
-                        for (i = 0; i < installments.length; i++) 
+                        for (i = 0; i < installments.length; i++)
                         {
-                            var opt = document.createElement('option');    
+                            var opt = document.createElement('option');
                             opt.appendChild(document.createTextNode(installments[i].recommended_message));
                             opt.value = installments[i].installments;
                             select.appendChild(opt);
@@ -254,7 +257,7 @@
                             card_number.setAttribute("data-card-issuer",data[0].issuer.id);
                             country.setAttribute("data-card-payment-method-id", data[0].payment_method_id);
                         }
-                        
+
                     }
                 });
                 }
@@ -295,12 +298,12 @@
 
                         while(i--)
                         {
-                            if (dt[i].name != "default") 
+                            if (dt[i].name != "default")
                             {
                                 var option = new Option(dt[i].name, dt[i].id);
                                 option.style.background = 'url("' + dt[i].secure_thumbnail + '") 98% 50% no-repeat';
-                            } 
-                            else 
+                            }
+                            else
                             {
                                 var option = new Option("Otro", dt[i].id);
                             }
@@ -316,7 +319,7 @@
 
                 if(cardType)
                 {
-                    cardType.addEventListener('change', cardTypeEventListener);    
+                    cardType.addEventListener('change', cardTypeEventListener);
                 }
 
                 function cardTypeEventListener(){
@@ -335,26 +338,26 @@
                     else
                     {
                         paymentType.value = paymentType.value.replace('deb','')
-                        bg.style.background =   bg.style.background.replace('debvisa.gif', 'visa.gif').replace('debmaster.gif', 'master.gif');    
+                        bg.style.background =   bg.style.background.replace('debvisa.gif', 'visa.gif').replace('debmaster.gif', 'master.gif');
                     }
-                }   
+                }
 
 
             }
 
-            
+
 
             function pay(payment, url_backend, spinner)
             {
                 var card_number = document.getElementById('cc_num');
-                payment.issuer_id = card_number.hasAttribute("data-card-issuer")? 
+                payment.issuer_id = card_number.hasAttribute("data-card-issuer")?
                 card_number.getAttribute("data-card-issuer") : payment.issuer_id;
 
-                payment.payment_method_id = card_number.hasAttribute("data-card-payment-method-id")? 
+                payment.payment_method_id = card_number.hasAttribute("data-card-payment-method-id")?
                 card_number.getAttribute("data-card-payment-method-id") : payment.payment_method_id;
-                
+
                     console.log("issuer id do data card: " + payment.issuer_id)  ;
-                
+
                 $.ajax({
                     type: "POST",
                     url: url_backend,
@@ -366,9 +369,9 @@
                         document.getElementById('formulario').style = 'margin-left: 22%';
                         var acceptable_status = ["approved", "in_process"];
                         if (acceptable_status.indexOf(response_payment.status) > -1)
-                        {    
+                        {
                             var url_site = window.location.href.split('index.php')[0];
-                            var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
+                            var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';
                             location += 'index.php?route=checkout/success';
                             localStorage.removeItem('payment');
                             window.location.href = location;
@@ -378,7 +381,7 @@
                             delete response_payment.request_type;
                             getMessage(response_payment);
                         }
-                        spinner.stop();     
+                        spinner.stop();
                     }
                 });
             }

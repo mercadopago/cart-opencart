@@ -1,9 +1,9 @@
 <?php
 // Text
-//$_['Stext_title'] = '<img src="./view/image/payment/mp_transparente.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;">'
+//$_['Stext_title'] = '<img src="./view/image/payment/mp_standard.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;">'
 $url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $admin = strpos($url, 'admin') !== FALSE ? '' : './admin/';
-$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_transparente.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE; background-color: white;"> - Custom Checkout';
+$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_standard.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;"> - Standard Checkout';
 $_['currency_no_support'] = 'The currency selected is not supported by MercadoPago';
 $_['ccnum_placeholder'] = 'Credit Card Number';
 $_['expiration_date_placeholder'] = 'Expiration Date';
@@ -19,31 +19,6 @@ $_['cardType_placeholder'] = 'Payment Type';
 $_['payment_processing'] = "Processing payment";
 $_['payment_title'] = "Payment";
 $_['payment_button'] = "Pay";
-$_['other_card_option'] = "Other Card";
-
-$_['habilitar_cupom_desconto'] = 'Habilitar Cupom de Desconto:';
-$_['aplicar'] = 'Aplicar';
-$_['aguarde'] = ' Aguarde...';
-$_['cupom_obrigatorio'] = 'Cupom é obrigatório.';
-$_['campanha_nao_encontrado'] = 'Não foi encontrado uma campanha com o cupom informado.';
-$_['cupom_nao_pode_ser_aplicado'] = 'O cupom não pode ser aplicado para esse valor.';
-$_['remover'] = 'Remover';
-
-$_['cupom_utilizado'] = 'Cupom já utilizado.';
-$_['cupom_invalido'] = 'Por favor entre com um cupom válido.';
-$_['valor_minimo_invalido'] = 'Sua compra não atingiu o valor mínimo ou o montante máximo.';
-$_['erro_validacao_cupom'] = 'Um erro ocorreu durante a validação do cupom. Tente novamente.';
-
-$_['mercadopago_coupon'] = 'Cupom Mercado Pago';
-
-$_['you_save'] = 'Você teve';
-$_['desconto_exclusivo'] = 'com o desconto exclusivo';
-
-$_['total_compra'] = 'Total da sua compra:';
-$_['total_desconto'] = 'Valor total da sua compra com o desconto do Mercado Pago:';
-$_['upon_aproval'] = 'Válido após confirmação de compra.';
-$_['see_conditions'] = 'Consulte condições.';
-
 //Payment messages
 $_['S200'] = 'Payment approved!';
 $_['S201'] = 'Payment approved!';
@@ -216,22 +191,3 @@ $_['S151'] = "You can not make payments.";
 $_['S160'] = "We could not process your payment.";
 $_['S204'] = "Payment method is not available at this time. Choose another card or another payment method.";
 $_['S801'] = "Try again in a few minutes.";
-
-// Credit Card messages
-$_['accredited'] = "Done, your payment was accredited! You will see the charge for amount in your bill as statement_descriptor.";
-$_['pending_contingency'] = "We are processing the payment. In less than an hour we will e-mail you the results.";
-$_['pending_review_manual'] = "We are processing the payment. In less than 2 business days we will tell you by e-mail whether it has accredited or we need more information.";
-$_['cc_rejected_bad_filled_card_number'] = "Check the card number.";
-$_['cc_rejected_bad_filled_date'] = "Check the expiration date.";
-$_['cc_rejected_bad_filled_other'] = "Check the information.";
-$_['cc_rejected_bad_filled_security_code'] = "Check the security code.";
-$_['cc_rejected_blacklist'] = "We could not process your payment.";
-$_['cc_rejected_call_for_authorize'] = "You must authorize to payment_method_id the payment of amount to MercadoPago";
-$_['cc_rejected_card_disabled'] = "Call to your credit card company to activate your card. The phone is on the back of your card.";
-$_['cc_rejected_card_error'] = "We could not process your payment.";
-$_['cc_rejected_duplicated_payment'] = "You already made a payment for that amount. If you need to repay, use another card or other payment method.";
-$_['cc_rejected_high_risk'] = 'Your payment was rejected.Choose another payment method. We recommend cash.';
-$_['cc_rejected_insufficient_amount'] = "Your card do not have sufficient funds.";
-$_['cc_rejected_invalid_installments'] = "payment_method_id does not process payments in installments installments.";
-$_['cc_rejected_max_attempts'] = "You have reached the limit of allowed attempts. Choose another card or another payment method.";
-$_['cc_rejected_other_reason'] = "Your credit card company did not process the payment.";

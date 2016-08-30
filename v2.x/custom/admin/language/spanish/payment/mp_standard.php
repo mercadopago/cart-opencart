@@ -1,11 +1,11 @@
 <?php
 // Heading
-$_['heading_title'] = 'Mercado Pago - Custom Checkout';
+$_['heading_title'] = 'Mercado Pago';
 
 // Text
 $_['text_payment'] = 'Pago';
 $_['text_success'] = 'Éxito! Las modificaciones están listas!';
-$_['text_mp_transparente'] = '<a onclick="window.open(\'https://www.mercadopago.com\');" target="_blank"><img src="view/image/payment/mp_transparente.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE; background-color: white;" /></a> <br /><b> Custom Checkout</b>';
+$_['text_mp_standard'] = '<a onclick="window.open(\'https://www.mercadopago.com\');" target="_blank"><img src="view/image/payment/mp_standard.png" alt="Mercado Pago" title="Mercado pago" style="border: 1px solid #EEEEEE;" /></a>';
 $_['text_argentina'] = 'Argentina';
 $_['text_brasil'] = 'Brasil';
 $_['text_colombia'] = 'Colombia';
@@ -29,9 +29,6 @@ $_['entry_payments_not_accept_tooltip'] = '<b>Importante</b> Si cambia el país 
 $_['entry_status'] = 'Estado:';
 $_['entry_country'] = 'País de las ventas:';
 $_['entry_sort_order'] = 'Orden:';
-
-$_['entry_coupon'] = 'Cupón de descuento: ';
-$_['entry_coupon_tooltip'] = '<span class="help">* Opción válida sólo para los sitios campañas de cupones participantes.</span>';
 
 $_['entry_url'] = 'URL de la tienda: ';
 $_['entry_url_tooltip'] = '<span class="help"> Inserte la URL de instalación de tu tienda<br /> (Siempre escribe la URL con <b>http://</b> o <b>https://</b> )<br/><i>Ejemplo: http://www.mitienda.com/tienda/</i><br /></span>';

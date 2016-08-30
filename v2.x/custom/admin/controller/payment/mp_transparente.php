@@ -34,7 +34,7 @@ class ControllerPaymentMPTransparente extends Controller {
 			'order_status_rejected_tooltip', 'order_status_refunded_tooltip', 'order_status_in_mediation_tooltip',
 			'order_status_chargeback_tooltip', 'order_status_chargeback_tooltip', 'public_key', 'access_token',
 			'installments', 'payments_not_accept', 'status', 'geo_zone', 'country', 'sonda_key', 'order_status',
-			'ipn_status', 'debug', 'category', 'order_status_general', 'order_status_completed', 'order_status_pending',
+			'ipn_status', 'debug', 'coupon','category', 'order_status_general', 'order_status_completed', 'order_status_pending',
 			'order_status_canceled', 'order_status_in_process', 'order_status_rejected', 'order_status_refunded',
 			'order_status_in_mediation', 'order_status_chargeback');
 
