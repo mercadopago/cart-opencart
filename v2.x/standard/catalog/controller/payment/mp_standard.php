@@ -36,7 +36,7 @@ class ControllerPaymentMPStandard extends Controller {
 		//Cambio el código ISO-3 de la moneda por el que se les ocurrio poner a los de mp_standard!!!
 		$accepted_currencies = array('ARS' => 'ARS', 'ARG' => 'ARS', 'VEF' => 'VEF',
 			'BRA' => 'BRL', 'BRL' => 'BRL', 'REA' => 'BRL', 'MXN' => 'MEX',
-			'CLP' => 'CHI', 'COP' => 'COP', 'PEN' => 'PEN', 'US' => 'US');
+			'CLP' => 'CHI', 'COP' => 'COP', 'PEN' => 'PEN', 'US' => 'US', 'USD' => 'USD');
 
 		$currency = $accepted_currencies[$order_info['currency_code']];
 
@@ -64,6 +64,27 @@ class ControllerPaymentMPStandard extends Controller {
 			);
 		}
 
+		if (isset($this->session->data['coupon'])) {
+			$total_data = array(
+				'totals' => &$totals,
+				'taxes'  => &$taxes,
+				'total'  => &$total
+			);
+			$this->load->model('total/coupon');
+			$results = $this->model_extension_extension->getExtensions('total');
+			$this->model_total_coupon->getTotal($total_data);
+
+			$items[] = array(
+				"id" => $this->session->data['coupon'],
+				"title" => 'coupon',
+				"description" => 'coupon_code_by_seller',
+				"quantity" => 1,
+				"unit_price" => round(floatval($total_data['total']) * $order_info['currency_value'], 2),
+				"currency_id" => $currency,
+				"category_id" => $this->config->get('mp_standard_category_id')
+			);
+		}
+
 		$this->id = 'payment';
 
 		$data['server'] = $_SERVER;
@@ -74,21 +95,23 @@ class ControllerPaymentMPStandard extends Controller {
 		$url = $order_info['store_url'];
 		$installments = (int) $this->config->get('mp_standard_installments');
 
-		$shipments = array(
-			"receiver_address" => array(
-				"floor" => "-",
-				"zip_code" => $order_info['shipping_postcode'],
-				"street_name" => $order_info['shipping_address_1'] . " - " .
-				$order_info['shipping_address_2'] . " - " .
-				$order_info['shipping_city'] . " - " .
-				$order_info['shipping_zone'] . " - " .
-				$order_info['shipping_country'],
-				"apartment" => "-",
-				"street_number" => "-",
-			),
-			"cost" => round(floatval($this->session->data['shipping_method']['cost']), 2) * $order_info['currency_value'],
-			"mode" => "custom",
-		);
+		if (isset($this->session->data['shipping_method'])) {
+			$shipments = array(
+				"receiver_address" => array(
+					"floor" => "-",
+					"zip_code" => $order_info['shipping_postcode'],
+					"street_name" => $order_info['shipping_address_1'] . " - " .
+					$order_info['shipping_address_2'] . " - " .
+					$order_info['shipping_city'] . " - " .
+					$order_info['shipping_zone'] . " - " .
+					$order_info['shipping_country'],
+					"apartment" => "-",
+					"street_number" => "-",
+				),
+				"cost" => round(floatval($this->session->data['shipping_method']['cost']), 2) * $order_info['currency_value'],
+				"mode" => "custom",
+			);
+		}
 
 		$cust = $this->db->query("SELECT * FROM `" .
 			DB_PREFIX . "customer` WHERE customer_id = " .
@@ -162,12 +185,18 @@ class ControllerPaymentMPStandard extends Controller {
 		$pref = array();
 		$pref['external_reference'] = $order_info['order_id'];
 		$pref['items'] = $items;
-		$pref['shipments'] = $shipments;
+
+		if (isset($this->session->data['shipping_method'])) {
+			$pref['shipments'] = $shipments;
+		}
+
 		$pref['auto_return'] = $this->config->get('mp_standard_enable_return');
 		$pref['back_urls'] = $back_urls;
 		$pref['payment_methods'] = $payment_methods;
 		$pref['payer'] = $payer;
-		$pref['notification_url'] = $order_info['store_url'] . 'index.php?route=payment/mp_standard/notifications';
+    if (!strrpos($url, 'localhost')) {
+    	$pref['notification_url'] = $url . 'index.php?route=payment/mp_standard/notifications';
+    }
 		$sandbox = (bool) $this->config->get('mp_standard_sandbox');
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 
@@ -209,14 +238,17 @@ class ControllerPaymentMPStandard extends Controller {
 	}
 
 	public function callback() {
-		if (isset($this->request->get['topic'])) {
-			$this->request->get['collection_id'] = $this->request->get['id'];
-		}
-		$this->load->model('checkout/order');
-		$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago_order_status_id'), date('d/m/Y h:i'));
-		$this->retorno();
-		$this->response->redirect($this->url->link('checkout/success'));
+		if ($this->request->get['collection_status'] == "null") {
+			$this->response->redirect($this->url->link('checkout/checkout'));
+		} elseif (isset($this->request->get['preference_id'])) {
+			$order_id = $this->request->get['collection_id'];
 
+			$this->load->model('checkout/order');
+			$order = $this->model_checkout_order->getOrder($order_id);
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago_order_status_id'), date('d/m/Y h:i'));
+			$this->retorno();
+			$this->response->redirect($this->url->link('checkout/success'));
+		}
 	}
 
 	public function notifications() {
@@ -228,6 +260,11 @@ class ControllerPaymentMPStandard extends Controller {
 	}
 
 	public function retorno() {
+
+		error_log("=====collection_id======".$this->request->get['collection_id']);
+
+		error_log("=====collection_id request======".json_encode($this->request));
+
 		if (isset($this->request->get['collection_id'])) {
 			if ($this->request->get['collection_id'] == 'null') {
 				$order_id = $this->request->get['external_reference'];

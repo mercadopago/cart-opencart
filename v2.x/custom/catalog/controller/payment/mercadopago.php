@@ -62,16 +62,37 @@ class MP {
 		$this->access_data = $access_data['response'];
 		return $this->access_data['access_token'];
 	}
+
+  public function getDiscount($params)
+  {
+    $access_token = $this->get_access_token();
+    $uri = "/discount_campaigns";
+    $uri_prefix = $this->sandbox ? "/sandbox" : "";
+
+		$request = array(
+			"uri" => $uri_prefix . "/discount_campaigns",
+			"params" => array_merge($params, array(
+				"access_token" => $this->get_access_token(),
+			)),
+		);
+		error_log("====request api======".json_encode($request));
+		$result = MPRestClient::get($request);
+		error_log("====result api======".json_encode($result));
+
+    return $result;
+  }
+
 	/**
 	 * Get information for specific payment
 	 * @param int $id
 	 * @return array(json)
 	 */
 	public function get_payment($id) {
-		$uri_prefix = $this->sandbox ? "/sandbox" : "";
+		//$uri_prefix = $this->sandbox ? "/sandbox" : "";
 
 		$request = array(
-			"uri" => $uri_prefix . "/collections/notifications/{$id}",
+			//"uri" => $uri_prefix . "/collections/notifications/{$id}",
+			"uri" => "/collections/notifications/{$id}",
 			"params" => array(
 				"access_token" => $this->get_access_token(),
 			),
@@ -162,6 +183,7 @@ class MP {
 		$filters["offset"] = $offset;
 		$filters["limit"] = $limit;
 		$uri_prefix = $this->sandbox ? "/sandbox" : "";
+
 		$request = array(
 			"uri" => $uri_prefix . "/collections/search",
 			"params" => array_merge($filters, array(
@@ -191,11 +213,11 @@ class MP {
 		$result = MPRestClient::post($request);
 		return $result;
 	}
-	/**
-	 * Create a checkout preference
-	 * @param array $preference
-	 * @return array(json)
-	 */
+/**
+ * Create a checkout preference
+ * @param array $preference
+ * @return array(json)
+ */
 	public function create_preference($preference) {
 		$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
 
@@ -278,6 +300,7 @@ class MP {
 	 * @param string $preapproval_payment, $id
 	 * @return array(json)
 	 */
+
 	public function update_preapproval_payment($id, $preapproval_payment) {
 		$request = array(
 			"uri" => "/preapproval/{$id}",
@@ -296,6 +319,7 @@ class MP {
 	 * @param params (deprecated)
 	 * @param authenticate = true (deprecated)
 	 */
+
 	public function get($request, $params = null, $authenticate = true) {
 		if (is_string($request)) {
 			$request = array(
@@ -414,7 +438,7 @@ class MPRestClient {
 		$connect = curl_init();
 		curl_setopt($connect, CURLOPT_USERAGENT, "MercadoPago PHP SDK v" . MP::version);
 		curl_setopt($connect, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($connect, CURLOPT_SSL_VERIFYPEER, true);
+		//curl_setopt($connect, CURLOPT_SSL_VERIFYPEER, true);
 		curl_setopt($connect, CURLOPT_CAINFO, $GLOBALS["LIB_LOCATION"] . "/cacert.pem");
 		curl_setopt($connect, CURLOPT_CUSTOMREQUEST, $request["method"]);
 		curl_setopt($connect, CURLOPT_HTTPHEADER, $headers);

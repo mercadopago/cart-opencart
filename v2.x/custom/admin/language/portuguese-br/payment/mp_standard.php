@@ -1,11 +1,11 @@
 <?php
 // Heading
-$_['heading_title'] = 'Mercado Pago - Custom Checkout';
+$_['heading_title'] = 'MercadoPago - Standard';
 
 // Text
 $_['text_payment'] = 'Pagamento';
 $_['text_success'] = 'Successo, suas modificações foram salvas!';
-$_['text_mp_transparente'] = '<a onclick="window.open(\'https://www.mercadopago.com\');" target="_blank"><img src="view/image/payment/mp_transparente.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE; background-color: white;" /></a> <br /><b> Custom Checkout</b>';
+$_['text_mp_standard'] = '<a onclick="window.open(\'https://www.mercadopago.com\');" target="_blank"><img src="view/image/payment/mp_standard.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;" /></a> <br /><b> Standard Checkout</b>';
 $_['text_argentina'] = 'Argentina';
 $_['text_brasil'] = 'Brasil';
 $_['text_colombia'] = 'Colombia';
@@ -39,8 +39,6 @@ $_['entry_debug'] = 'Modo Debug:';
 $_['entry_debug_tooltip'] = '<span class="help">Habilite para exibir os erros no checkout</span>';
 
 $_['entry_sandbox'] = 'Modo Sandbox: ';
-$_['entry_coupon'] = 'Cúpom de Desconto: ';
-$_['entry_coupon_tooltip'] = '<span class="help">* Opção válida apenas para sites participantes de campanhas de cupom.</span>';
 $_['entry_sandbox_tooltip'] = '<span class="help">Sandbox é utilizado para testar o Checkout e Notificações de pagamento sem precisar de um cartão válido para aprovar a compra de teste.</span>';
 $_['entry_type_checkout'] = 'Tipo de Checkout: ';
 $_['entry_category'] = 'Categoria:';

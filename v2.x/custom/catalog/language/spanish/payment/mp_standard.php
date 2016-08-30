@@ -2,47 +2,22 @@
 // Text
 $url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $admin = strpos($url, 'admin') !== FALSE ? '' : './admin/';
-$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_transparente.png" alt="Mercado Pago" title="Mercado Pago" style="border: 1px solid #EEEEEE; background-color: white;"> - Tarjeta de Credito y Debito ';
+$_['text_title'] = '<img src="' . $admin . 'view/image/payment/mp_standard.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;"> - Standard Checkout';
 $_['currency_no_support'] = 'La moneda seleccionada no es aceptada por Mercado Pago';
 
-$_['ccnum_placeholder'] = 'Número de la tarjeta';
-$_['name_placeholder'] = 'Nombre (como figura en la tarjeta)';
+$_['ccnum_placeholder'] = 'Número de la tarjeta de crédito';
+$_['name_placeholder'] = 'Nombre (como esta escrito en la tarjeta)';
 $_['doctype_placeholder'] = 'Tipo de documento';
 $_['docnumber_placeholder'] = 'Número de documento';
-$_['expiration_month_placeholder'] = 'Mes de vencimiento';
-$_['expiration_year_placeholder'] = 'Año de vencimiento';
+$_['expiration_month_placeholder'] = 'Mes de expiración';
+$_['expiration_year_placeholder'] = 'Año de expiración';
 $_['error_invalid_payment_type'] = 'Medio de pago no aceptado.';
-$_['installments_placeholder'] = 'Cuotas';
+$_['installments_placeholder'] = 'Parcelas';
 $_['issuer_placeholder'] = 'Banco';
-$_['cardType_placeholder'] = 'Tipo de Tarjeta';
+$_['cardType_placeholder'] = 'Tipo de Pago';
 $_['payment_processing'] = "Procesando el pago";
 $_['payment_title'] = "Pago";
 $_['payment_button'] = "Pagar";
-$_['cvv'] = "Codigo de Seguridad";
-$_['other_card_option'] = "Otra Tarjeta";
-
-$_['habilitar_cupom_desconto'] = 'Habilitar Cupón:';
-$_['aplicar'] = 'Aplicar';
-$_['aguarde'] = ' Por favor, espere ...';
-$_['cupom_obrigatorio'] = 'Se requiere cupón.';
-$_['campanha_nao_encontrado'] = 'No se pudo encontrar una campaña con el cupón informado.';
-$_['cupom_nao_pode_ser_aplicado'] = 'El cupón no se puede aplicar a este valor.';
-$_['remover'] = 'Eliminar';
-
-$_['cupom_utilizado'] = 'El cupón ya utilizado.';
-$_['cupom_invalido'] = 'Por favor, introduzca un cupón válido.';
-$_['valor_minimo_invalido'] = 'Su compra no ha alcanzado la cantidad mínima o máxima.';
-$_['erro_validacao_cupom'] = 'Ha ocurrido un error durante la validación de cupones. Inténtalo de nuevo.';
-
-$_['mercadopago_coupon'] = 'Cupón de Mercado Pago';
-
-$_['you_save'] = 'Ganaste';
-$_['desconto_exclusivo'] = 'con descuento exclusivo';
-
-$_['total_compra'] = 'Total de su compra:';
-$_['total_desconto'] = 'Total de su compra con el descuento:';
-$_['upon_aproval'] = 'Válida después de la confirmación de compra.';
-$_['see_conditions'] = 'Ver condiciones.';
 
 $_['S200'] = 'Pago aprobado!';
 $_['S201'] = $_['S200'];
@@ -213,22 +188,3 @@ $_['S151'] = "Usted no puede efectuarpagos.";
 $_['S160'] = "No es posible procesar su pago.";
 $_['S204'] = "Medio de pago no disponible. Escoja otra tarjeta.";
 $_['S801'] = "Intente nuevamente en algunos minutos.";
-
-// Credit Card messages
-$_['accredited'] = "Su pago fue procesado!";
-$_['pending_contingency'] = "Estamos procesando su pago. Em menos de uma hora você receberá um e-mail com o resultado.";
-$_['pending_review_manual'] = "Estamos processando o pagamento. Em até dois dias úteis enviaremos um email informado o sucesso da operação ou se precisamos de mais informações.";
-$_['cc_rejected_bad_filled_card_number'] = "Verifique o número do cartão.";
-$_['cc_rejected_bad_filled_date'] = "Verifique a data de expiração do cartão.";
-$_['cc_rejected_bad_filled_other'] = "Verifique suas informações.";
-$_['cc_rejected_bad_filled_security_code'] = "Verifique o código de segurança do cartão.";
-$_['cc_rejected_blacklist'] = "Não foi possível processar seu pagamento.";
-$_['cc_rejected_call_for_authorize'] = "Você deve solicitar a autorização do pagamento ao Mercado Pago à sua operadora de cartão";
-$_['cc_rejected_card_disabled'] = "Ligue para sua operadora de cartão e ative seu cartão.";
-$_['cc_rejected_card_error'] = "Não foi possível processar seu pagamento.";
-$_['cc_rejected_duplicated_payment'] = "Você já escolheu um meio de pagamento para essa transação. Caso precise efetuar um novo pagamento, utilize outro cartão.";
-$_['cc_rejected_high_risk'] = 'Seu pagamento foi rejeitado. Por favor, utilize outro cartão.';
-$_['cc_rejected_insufficient_amount'] = "Seu cartão não possui saldo suficiente.";
-$_['cc_rejected_invalid_installments'] = "Esta bandeira de cartão não permite parcelamento na quantidade de vezes escolhida.";
-$_['cc_rejected_max_attempts'] = "Você atingiu o limite de tentativas. Escolha outro cartão.";
-$_['cc_rejected_other_reason'] = "Sua operadora de cartão não processou o pagamento.";

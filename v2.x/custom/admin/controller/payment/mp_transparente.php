@@ -8,7 +8,7 @@ class ControllerPaymentMPTransparente extends Controller {
 	public function index() {
 		$prefix = 'mp_transparente_';
 		$fields = array('public_key', 'access_token', 'status', 'category_id',
-			'debug', 'country', 'installments', 'order_status_id',
+			'debug', 'coupon', 'country', 'installments', 'order_status_id',
 			'order_status_id_completed', 'order_status_id_pending',
 			'order_status_id_canceled', 'order_status_id_in_process',
 			'order_status_id_rejected', 'order_status_id_refunded',
@@ -28,13 +28,13 @@ class ControllerPaymentMPTransparente extends Controller {
 
 		$entry_prefix = 'entry_';
 		$entries = array('public_key_tooltip', 'access_token_tooltip', 'access_token_tooltip',
-			'payments_not_accept_tooltip', 'payments_not_accept_tooltip', 'debug_tooltip',
+			'payments_not_accept_tooltip', 'payments_not_accept_tooltip', 'debug_tooltip', 'coupon_tooltip',
 			'category_tooltip', 'order_status_tooltip', 'order_status_completed_tooltip',
 			'order_status_pending_tooltip', 'order_status_canceled_tooltip', 'order_status_in_process_tooltip',
 			'order_status_rejected_tooltip', 'order_status_refunded_tooltip', 'order_status_in_mediation_tooltip',
 			'order_status_chargeback_tooltip', 'order_status_chargeback_tooltip', 'public_key', 'access_token',
 			'installments', 'payments_not_accept', 'status', 'geo_zone', 'country', 'sonda_key', 'order_status',
-			'ipn_status', 'debug', 'category', 'order_status_general', 'order_status_completed', 'order_status_pending',
+			'ipn_status', 'debug', 'coupon','category', 'order_status_general', 'order_status_completed', 'order_status_pending',
 			'order_status_canceled', 'order_status_in_process', 'order_status_rejected', 'order_status_refunded',
 			'order_status_in_mediation', 'order_status_chargeback');
 
