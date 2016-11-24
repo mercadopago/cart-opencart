@@ -1,4 +1,4 @@
-# OpenCart - MercadoPago Module (v1.4.9, 1.5.x, 2.x)
+# OpenCart - Mercado Pago Module (v1.4.9, 1.5.x, 2.x)
 
 * [Features](#features)
 * [Available Versions](#versions)
@@ -107,17 +107,13 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
 **Important**: If you're using OpenCart 2.0, you'll find 3 different types of checkout inside the OpenCart 2.x folder: Standard, Custom and Ticket. You can use them all together or individually, without any problems or dependencies between them. Each one of these folders have its own Admin, Catalog and Image folders and the installation process is the same described above.
 
 <a name="setup"></a>
-## Setup MercadoPago
+## Setup Mercado Pago
 
-1. On your store administration, go to **extensions > payments > MercadoPago** and click **Install**.
+1. On your store administration, go to **extensions > payments > Mercado Pago** and click **Install**.
 
-2. Again in **extensions > payments > MercadoPago**, click **Edit** to Setup your MercadoPago account:
+2. Again in **extensions > payments > Mercado Pago**, click **Edit** to Setup your MercadoPago account:
 
 	![MercadoPago Account](https://raw.github.com/mercadopago/cart-opencart/master/README.img/MPAccount.png)
-
-<a name="notifications"></a>
-## Sync your backoffice with MercadoPago (IPN) 
-Your notification URL will be automatically send with your payment to our API.
 
 <a name="configuration"></a>
 ## Configuration
@@ -155,6 +151,11 @@ Your notification URL will be automatically send with your payment to our API.
     *  *Iframe*: Opens an OpenCart URL with a iframe as the content.
     *  *Redirect*: Redirects to Mercado Pago URL.
     *  *Lightbox*: Similar to Iframe option but opens a lightbox instead of an iframe. 
+
+<a name="notifications"></a>
+## Notifications
+
+Your store will automatically sync with Mercado Pago. The notification URL will be sent in each payment.
 
 <a name="upgrade"></a>
 ## Upgrade MercadoPago Plugin ##
