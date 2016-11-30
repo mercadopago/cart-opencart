@@ -1,11 +1,11 @@
 <?php
 // Heading
-$_['heading_title'] = 'MercadoPago - Standard';
+$_['heading_title'] = 'Mercado Pago - Standard';
 
 // Text
 $_['text_payment'] = 'Payment';
 $_['text_success'] = 'Success, your modifications are done!';
-$_['text_mp_standard'] = '<a onclick="window.open(\'https://www.mercadopago.com\');" target="_blank"><img src="view/image/payment/mp_standard.png" alt="Mercadopago" title="Mercadopago" style="border: 1px solid #EEEEEE;" /></a> <br /><b> Standard Checkout</b>';
+$_['text_mp_standard'] = '<a onclick="window.open(\'https://www.mercadopago.com\');" target="_blank"><img src="view/image/payment/mp_standard.png" alt="Mercado Pago" title="Mercado Pago" style="border: 1px solid #EEEEEE;" /></a> <br /><b> Standard Checkout</b>';
 $_['text_argentina'] = 'Argentina';
 $_['text_brasil'] = 'Brasil';
 $_['text_colombia'] = 'Colombia';
@@ -14,7 +14,7 @@ $_['text_chile'] = 'Chile';
 // Entry
 $_['entry_notification_url'] = 'Your notification URL is: ';
 $_['entry_notification_url_tooltip'] = '<span class="help"> This URL will be used to notify your store about payments and orders. Copy this URL and click ' .
-	'<a href="https://www.mercadopago.com/mlb/ferramentas/notificacoes" target="_blank">here</a> to configure your MercadoPago account.</span>';
+	'<a href="https://www.mercadopago.com/mlb/ferramentas/notificacoes" target="_blank">here</a> to configure your Mercado Pago account.</span>';
 $_['entry_autoreturn'] = 'Auto Return';
 $_['entry_autoreturn_tooltip'] = '<span class="help"> Enables auto return to your store after the checkout is finished. </span>';
 $_['entry_client_id'] = 'Client ID : ';
@@ -67,7 +67,7 @@ $_['entry_public_key_tooltip'] = '<span class="help">Public key to use transpare
 $_['entry_access_token'] = 'Access Token:';
 $_['entry_access_token_tooltip'] = '<span class="help">Access Token to use transparent checkout. To obtain it, click <a target="_blank" href="https://www.mercadopago.com/mlb/account/credentials">here</a></span>';
 // Error
-$_['error_permission'] = 'Sorry, you don\'t have permission to to modify MercadoPago';
+$_['error_permission'] = 'Sorry, you don\'t have permission to to modify Mercado Pago';
 $_['error_client_id'] = 'Sorry, your <b>Client Id</b> is mandatory.';
 $_['error_client_secret'] = 'Sorry <b>Client Secret</b> is mandatory.';
 

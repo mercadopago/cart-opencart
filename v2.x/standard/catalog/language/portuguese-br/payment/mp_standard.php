@@ -189,3 +189,5 @@ $_['S151'] = "Você não pode efetuar pagamentos.";
 $_['S160'] = "Não foi possível processar seu pagamento.";
 $_['S204'] = "Método de pagamento indisponível. Escolha outro cartão.";
 $_['S801'] = "Tente novamente em alguns minutos.";
+
+$_['text_total']	= 'Frete, descontos, impostos e taxas';

@@ -2,6 +2,9 @@ IMPORTANT: YOUR SERVER MUST HAVE SSL ENABLE, OTHERWISE THE API CALLS TO MERCADO 
 
 CHANGELOG:
 
+V1.4.1 - 30/12/2016
+- Fix where user add tax, shipment and discounts.
+
 V1.4.0 - 26/08/2016
 - Feature coupon
 - Fix when the user canceled the purchase at checkout standard and back to the store.

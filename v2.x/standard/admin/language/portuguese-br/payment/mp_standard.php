@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title'] = 'MercadoPago - Standard';
+$_['heading_title'] = 'Mercado Pago - Standard';
 
 // Text
 $_['text_payment'] = 'Pagamento';
@@ -14,7 +14,7 @@ $_['text_chile'] = 'Chile';
 // Entry
 $_['entry_notification_url'] = 'Sua URL de notificação é: ';
 $_['entry_notification_url_tooltip'] = '<span class="help"> Esta URL será utilizada para notificar automaticamente as alterações de status dos pagamentos. Copie a URL e clique' .
-	'<a href="https://www.mercadopago.com/mlb/ferramentas/notificacoes" target="_blank">aqui</a>para configurar esta opção na sua conta MercadoPago.</span>';
+	'<a href="https://www.mercadopago.com/mlb/ferramentas/notificacoes" target="_blank">aqui</a>para configurar esta opção na sua conta Mercado Pago.</span>';
 $_['entry_autoreturn'] = 'Auto Retorno';
 $_['entry_autoreturn_tooltip'] = '<span class="help"> Habilita o retorno automático para a sua loja depois do pagamento. </span>';
 $_['entry_client_id'] = 'Client ID : ';
@@ -69,7 +69,7 @@ $_['entry_access_token'] = 'Access Token:';
 $_['entry_access_token_tooltip'] = '<span class="help">Access Token para utilizar o checkout transparente. Para obtê-lo, clique <a target="_blank" href="https://www.mercadopago.com/mlb/account/credentials">aqui</a></span>';
 
 // Error
-$_['error_permission'] = 'Desculpe, você não possui permissão para modificar o módulo MercadoPago';
+$_['error_permission'] = 'Desculpe, você não possui permissão para modificar o módulo Mercado Pago';
 $_['error_client_id'] = 'Desculpe, o <b>Client Id</b> é obrigatório.';
 $_['error_client_secret'] = 'Desculpe, o <b>Client Secret</b> é obrigatório.';
 

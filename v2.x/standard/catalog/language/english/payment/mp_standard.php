@@ -191,3 +191,5 @@ $_['S151'] = "You can not make payments.";
 $_['S160'] = "We could not process your payment.";
 $_['S204'] = "Payment method is not available at this time. Choose another card or another payment method.";
 $_['S801'] = "Try again in a few minutes.";
+
+$_['text_total']	= 'Shipping, Handling, Discounts & Taxes';

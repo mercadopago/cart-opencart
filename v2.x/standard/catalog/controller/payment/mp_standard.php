@@ -50,6 +50,7 @@ class ControllerPaymentMPStandard extends Controller {
 		$products = '';
 		$all_products = $this->cart->getProducts();
 		$items = array();
+
 		foreach ($all_products as $product) {
 			$products .= $product['quantity'] . ' x ' . $product['name'] . ', ';
 			$items[] = array(
@@ -57,33 +58,74 @@ class ControllerPaymentMPStandard extends Controller {
 				"title" => $product['name'],
 				"description" => $product['quantity'] . ' x ' . $product['name'], // string
 				"quantity" => intval($product['quantity']),
-				"unit_price" => round(floatval($product['price']), 2) * $order_info['currency_value'], //decimal
+				"unit_price" => $this->currency->format($product['price'], $order_info['currency_code'], false, false), //decimal
 				"currency_id" => $currency,
 				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
 				"category_id" => $this->config->get('mp_standard_category_id'),
 			);
 		}
 
-		if (isset($this->session->data['coupon'])) {
-			$total_data = array(
-				'totals' => &$totals,
-				'taxes'  => &$taxes,
-				'total'  => &$total
-			);
-			$this->load->model('total/coupon');
-			$results = $this->model_extension_extension->getExtensions('total');
-			$this->model_total_coupon->getTotal($total_data);
+		// if (isset($this->session->data['coupon'])) {
+		// 	$total_data = array(
+		// 		'totals' => &$totals,
+		// 		'taxes'  => &$taxes,
+		// 		'total'  => &$total
+		// 	);
+		// 	$this->load->model('total/coupon');
+		// 	$results = $this->model_extension_extension->getExtensions('total');
+		// 	$this->model_total_coupon->getTotal($total_data);
 
+		// 	$items[] = array(
+		// 		"id" => $this->session->data['coupon'],
+		// 		"title" => 'coupon',
+		// 		"description" => 'coupon_code_by_seller',
+		// 		"quantity" => 1,
+		// 		"unit_price" => round(floatval($total_data['total']) * $order_info['currency_value'], 2),
+		// 		"currency_id" => $currency,
+		// 		"category_id" => $this->config->get('mp_standard_category_id')
+		// 	);
+		// }
+
+		$total = $this->currency->format($order_info['total'] - $this->cart->getSubTotal(), $order_info['currency_code'], false, false);
+
+		error_log("====total====".$total);
+		error_log("====text_total====".$this->language->get('text_total'));
+
+		if ($total > 0) {
+			// if (isset($this->session->data['shipping_method'])) {
+			// 	$total =- round(floatval($this->session->data['shipping_method']['cost']), 2) * $order_info['currency_value']
+			// }
 			$items[] = array(
-				"id" => $this->session->data['coupon'],
-				"title" => 'coupon',
-				"description" => 'coupon_code_by_seller',
+				"id" => 99,
+				"title" => '',
+				"description" => $this->language->get('text_total'),
 				"quantity" => 1,
-				"unit_price" => round(floatval($total_data['total']) * $order_info['currency_value'], 2),
+				"unit_price" => $total,
 				"currency_id" => $currency,
 				"category_id" => $this->config->get('mp_standard_category_id')
-			);
+			);			
 		}
+
+
+		// if (isset($this->session->data['shipping_method'])) {
+		// 	$shipments = array(
+		// 		"receiver_address" => array(
+		// 			"floor" => "-",
+		// 			"zip_code" => $order_info['shipping_postcode'],
+		// 			"street_name" => $order_info['shipping_address_1'] . " - " .
+		// 			$order_info['shipping_address_2'] . " - " .
+		// 			$order_info['shipping_city'] . " - " .
+		// 			$order_info['shipping_zone'] . " - " .
+		// 			$order_info['shipping_country'],
+		// 			"apartment" => "-",
+		// 			"street_number" => "-",
+		// 		),
+		// 		"cost" => round(floatval($this->session->data['shipping_method']['cost']), 2) * $order_info['currency_value'],
+		// 		"mode" => "custom",
+		// 	);
+		// }
+
+		error_log("=====data items=====".json_encode($items));
 
 		$this->id = 'payment';
 
@@ -94,24 +136,6 @@ class ControllerPaymentMPStandard extends Controller {
 		$client_secret = $this->config->get('mp_standard_client_secret');
 		$url = $order_info['store_url'];
 		$installments = (int) $this->config->get('mp_standard_installments');
-
-		if (isset($this->session->data['shipping_method'])) {
-			$shipments = array(
-				"receiver_address" => array(
-					"floor" => "-",
-					"zip_code" => $order_info['shipping_postcode'],
-					"street_name" => $order_info['shipping_address_1'] . " - " .
-					$order_info['shipping_address_2'] . " - " .
-					$order_info['shipping_city'] . " - " .
-					$order_info['shipping_zone'] . " - " .
-					$order_info['shipping_country'],
-					"apartment" => "-",
-					"street_number" => "-",
-				),
-				"cost" => round(floatval($this->session->data['shipping_method']['cost']), 2) * $order_info['currency_value'],
-				"mode" => "custom",
-			);
-		}
 
 		$cust = $this->db->query("SELECT * FROM `" .
 			DB_PREFIX . "customer` WHERE customer_id = " .
@@ -159,7 +183,6 @@ class ControllerPaymentMPStandard extends Controller {
 			$accepted_methods = preg_split("/[\s,]+/", $exclude);
 			$all_payment_methods = $this->getMethods($country_id);
 			$excluded_payments = array();
-			sleep(3);
 			foreach ($all_payment_methods as $method) {
 				if (!in_array($method['id'], $accepted_methods) && $method['id'] != 'account_money') {
 					$excluded_payments[] = array('id' => $method['id']);
@@ -186,9 +209,9 @@ class ControllerPaymentMPStandard extends Controller {
 		$pref['external_reference'] = $order_info['order_id'];
 		$pref['items'] = $items;
 
-		if (isset($this->session->data['shipping_method'])) {
-			$pref['shipments'] = $shipments;
-		}
+		// if (isset($this->session->data['shipping_method'])) {
+		// 	$pref['shipments'] = $shipments;
+		// }
 
 		$pref['auto_return'] = $this->config->get('mp_standard_enable_return');
 		$pref['back_urls'] = $back_urls;
