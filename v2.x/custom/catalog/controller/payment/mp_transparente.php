@@ -206,12 +206,9 @@ class ControllerPaymentMPTransparente extends Controller {
       }
 
       $mercadopago_coupon = isset($this->request->post['mercadopago_coupon']) ? $this->request->post['mercadopago_coupon'] : '';
-      error_log("===mercadopago_coupon====".$mercadopago_coupon );
-
       if ($mercadopago_coupon != '') {
           $coupon = $this->validCoupon($mercadopago_coupon);
-          error_log("=====coupon======".json_encode($coupon));
-
+      
           if ($coupon['status'] == 200) {
               $payment_data['campaign_id'] = $coupon['response']['id'];
               $payment_data['coupon_amount'] = (float) $coupon['response']['coupon_amount'];

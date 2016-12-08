@@ -75,11 +75,8 @@ class MP {
 				"access_token" => $this->get_access_token(),
 			)),
 		);
-		error_log("====request api======".json_encode($request));
 		$result = MPRestClient::get($request);
-		error_log("====result api======".json_encode($result));
-
-    return $result;
+	return $result;
   }
 
 	/**
@@ -398,6 +395,22 @@ class MP {
 		return $result;
 	}
 	/* **************************************************************************************** */
+
+	/*
+     * Save settings
+     */
+    public function saveSettings($params) {
+		$request = array(
+			"uri" => "/modules/tracking/settings",
+			"params" => array(
+				"access_token" => $this->get_access_token(),
+			),
+			"data" => $params,
+		);
+        $result_response = MPRestClient::post($request);
+        return $result_response;
+    }
+
 }
 /**
  * MercadoPago cURL RestClient
