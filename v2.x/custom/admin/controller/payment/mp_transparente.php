@@ -264,7 +264,7 @@ class ControllerPaymentMPTransparente extends Controller {
 
         $phpVersion = phpversion();
         $soServer = PHP_OS;
-        $modules = "OPENCART";
+        $modules = "OpenCart";
         $modulesVersion = "2.0";
         $statusCustom = "false";
         $custom_cupom = "false";
