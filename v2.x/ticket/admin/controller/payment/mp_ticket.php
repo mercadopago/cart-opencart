@@ -118,8 +118,9 @@ class ControllerPaymentMPTicket extends Controller {
 			$this->model_setting_setting->editSetting('mp_ticket', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
+			$this->setSettings($data);
 			$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
-
+			
 		}
 
 		$this->response->setOutput($this->load->view('payment/mp_ticket.tpl', $data));
@@ -198,4 +199,23 @@ class ControllerPaymentMPTicket extends Controller {
 		return count($this->_error) < 1;
 
 	}
+
+	public function setSettings($data) {
+		
+        $request = array(
+            "module_version" => "2.0",
+            "checkout_custom_ticket" => $data['mp_ticket_status'],
+            "code_version" => phpversion(),    
+            "platform" => "OpenCart",
+            "platform_version" => $this->version
+    	);
+    	
+        try {
+			$access_token = $this->config->get('mp_transparente_access_token');
+			$mp = new MP($access_token);        	
+			$userResponse = $mp->saveSettings($request);
+        } catch (Exception $e) {
+        	error_log($e);
+        }
+    }
 }
