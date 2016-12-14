@@ -68,11 +68,10 @@ class MP {
 	 * @return array(json)
 	 */
 	public function get_payment($id) {
-		//$uri_prefix = $this->sandbox ? "/sandbox" : "";
+		$uri_prefix = $this->sandbox ? "/sandbox" : "";
 
 		$request = array(
-			//"uri" => $uri_prefix . "/collections/notifications/{$id}",
-			"uri" => "/collections/notifications/{$id}",
+			"uri" => $uri_prefix . "/collections/notifications/{$id}",
 			"params" => array(
 				"access_token" => $this->get_access_token(),
 			),
@@ -190,7 +189,9 @@ class MP {
 			),
 			"data" => $payment,
 		);
+		error_log("ticket enviado: " . json_encode($request));
 		$result = MPRestClient::post($request);
+
 		return $result;
 	}
 /**
@@ -199,8 +200,7 @@ class MP {
  * @return array(json)
  */
 	public function create_preference($preference) {
-		$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
-
+		$$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
 		$request = array(
 			"uri" => "/checkout/preferences",
 			"params" => array(
@@ -378,6 +378,25 @@ class MP {
 		return $result;
 	}
 	/* **************************************************************************************** */
+
+	/*
+     * Save settings
+     */
+    public function saveSettings($params) {
+		$request = array(
+			"uri" => "/modules/tracking/settings",
+			"params" => array(
+				"access_token" => $this->get_access_token(),
+			),
+			"data" => $params,
+		);
+        $result_response = MPRestClient::post($request);
+
+        error_log("=====result_response======".json_encode($result_response));
+
+        return $result_response;
+    }
+
 }
 /**
  * MercadoPago cURL RestClient
@@ -418,7 +437,7 @@ class MPRestClient {
 		$connect = curl_init();
 		curl_setopt($connect, CURLOPT_USERAGENT, "MercadoPago PHP SDK v" . MP::version);
 		curl_setopt($connect, CURLOPT_RETURNTRANSFER, true);
-		//curl_setopt($connect, CURLOPT_SSL_VERIFYPEER, true);
+		curl_setopt($connect, CURLOPT_SSL_VERIFYPEER, true);
 		curl_setopt($connect, CURLOPT_CAINFO, $GLOBALS["LIB_LOCATION"] . "/cacert.pem");
 		curl_setopt($connect, CURLOPT_CUSTOMREQUEST, $request["method"]);
 		curl_setopt($connect, CURLOPT_HTTPHEADER, $headers);

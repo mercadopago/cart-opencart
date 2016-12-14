@@ -4,6 +4,8 @@ require_once '../catalog/controller/payment/mercadopago.php';
 
 class ControllerPaymentMPStandard extends Controller {
 	private $_error = array();
+	private $version = "2.0";
+	private $versionModule = "2.0";
 
 	public function index() {
 		$prefix = 'mp_standard_';
@@ -46,7 +48,7 @@ class ControllerPaymentMPStandard extends Controller {
 			$name = $text_prefix . $text;
 			$data[$name] = $this->language->get($name);
 		}
-
+		error_log("=====setSettings 1======");
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
 		$data['tab_general'] = $this->language->get('tab_general');
@@ -88,6 +90,7 @@ class ControllerPaymentMPStandard extends Controller {
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 
 		if ($_SERVER['REQUEST_METHOD'] == "POST") {
+			error_log("=====setSettings 1======");
 			foreach ($fields as $field) {
 				$fieldname = $prefix . $field;
 				$this->request->post[$fieldname] = str_replace(" ", "", $this->request->post[$fieldname]);
@@ -128,8 +131,8 @@ class ControllerPaymentMPStandard extends Controller {
 			$this->model_setting_setting->editSetting('mp_standard', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
+			$this->setSettings();
 			$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
-
 		}
 
 		$this->response->setOutput($this->load->view('payment/mp_standard.tpl', $data));
@@ -254,6 +257,42 @@ class ControllerPaymentMPStandard extends Controller {
 
 		return $installments;
 	}
+
+    public function setSettings()
+    {
+		error_log("=====setSettings 1======");
+		$client_id = $this->config->get('mp_standard_client_id');
+		$client_secret = $this->config->get('mp_standard_client_secret');
+		$mp = new MP($client_id, $client_secret);
+
+        $moduleVersion = $this->version;
+        $siteId = $this->config->get('mp_standard_country');
+        $dataCreated = date('Y-m-d H:i:s');
+
+        $phpVersion = phpversion();
+        $soServer = PHP_OS;
+        $modulesId = "OPENCART " . "2.0";
+
+        $standardStatus = "false";
+
+        if ($this->request->post['mp_standard_status'] == "1") {
+			$standardStatus = "true";
+        }
+
+        $request = array(
+            "module_version" => $this->versionModule,
+            "checkout_basic" => $standardStatus,
+            "code_version" => phpversion(),
+            "platform" => "OpenCart",
+            "platform_version" => $this->version
+    	);
+
+        try {
+			$mp->saveSettings($request);
+        } catch (Exception $e) {
+        	error_log($e);
+        }
+    }
 
 	private function validate() {
 		if (!$this->user->hasPermission('modify', 'payment/mp_standard')) {
