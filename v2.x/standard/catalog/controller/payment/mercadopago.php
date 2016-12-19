@@ -200,7 +200,7 @@ class MP {
  * @return array(json)
  */
 	public function create_preference($preference) {
-		$$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
+		$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
 		$request = array(
 			"uri" => "/checkout/preferences",
 			"params" => array(
@@ -391,9 +391,6 @@ class MP {
 			"data" => $params,
 		);
         $result_response = MPRestClient::post($request);
-
-        error_log("=====result_response======".json_encode($result_response));
-
         return $result_response;
     }
 

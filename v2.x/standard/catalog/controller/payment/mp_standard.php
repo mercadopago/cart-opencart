@@ -8,6 +8,8 @@ class ControllerPaymentMPStandard extends Controller {
 	public $sucess = true;
 	private $order_info;
 	private $message;
+	private $version = "2.0";
+	private $versionModule = "2.0";	
 	private $sponsors = array('MLB' => 204931135,
 		'MLM' => 204962951,
 		'MLA' => 204931029,
@@ -59,32 +61,12 @@ class ControllerPaymentMPStandard extends Controller {
 				"description" => $product['quantity'] . ' x ' . $product['name'], // string
 				"quantity" => intval($product['quantity']),
 				"unit_price" => $this->currency->format($product['price'], $order_info['currency_code'], false, false), //decimal
+				//"unit_price" => round(floatval($product['price']) * $order_info['currency_code'], 2), //decimal
 				"currency_id" => $currency,
 				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
 				"category_id" => $this->config->get('mp_standard_category_id'),
 			);
 		}
-
-		// if (isset($this->session->data['coupon'])) {
-		// 	$total_data = array(
-		// 		'totals' => &$totals,
-		// 		'taxes'  => &$taxes,
-		// 		'total'  => &$total
-		// 	);
-		// 	$this->load->model('total/coupon');
-		// 	$results = $this->model_extension_extension->getExtensions('total');
-		// 	$this->model_total_coupon->getTotal($total_data);
-
-		// 	$items[] = array(
-		// 		"id" => $this->session->data['coupon'],
-		// 		"title" => 'coupon',
-		// 		"description" => 'coupon_code_by_seller',
-		// 		"quantity" => 1,
-		// 		"unit_price" => round(floatval($total_data['total']) * $order_info['currency_value'], 2),
-		// 		"currency_id" => $currency,
-		// 		"category_id" => $this->config->get('mp_standard_category_id')
-		// 	);
-		// }
 
 		$total = $this->currency->format($order_info['total'] - $this->cart->getSubTotal(), $order_info['currency_code'], false, false);
 
@@ -92,9 +74,6 @@ class ControllerPaymentMPStandard extends Controller {
 		error_log("====text_total====".$this->language->get('text_total'));
 
 		if ($total > 0) {
-			// if (isset($this->session->data['shipping_method'])) {
-			// 	$total =- round(floatval($this->session->data['shipping_method']['cost']), 2) * $order_info['currency_value']
-			// }
 			$items[] = array(
 				"id" => 99,
 				"title" => '',
@@ -103,27 +82,9 @@ class ControllerPaymentMPStandard extends Controller {
 				"unit_price" => $total,
 				"currency_id" => $currency,
 				"category_id" => $this->config->get('mp_standard_category_id')
-			);			
+			);
 		}
 
-
-		// if (isset($this->session->data['shipping_method'])) {
-		// 	$shipments = array(
-		// 		"receiver_address" => array(
-		// 			"floor" => "-",
-		// 			"zip_code" => $order_info['shipping_postcode'],
-		// 			"street_name" => $order_info['shipping_address_1'] . " - " .
-		// 			$order_info['shipping_address_2'] . " - " .
-		// 			$order_info['shipping_city'] . " - " .
-		// 			$order_info['shipping_zone'] . " - " .
-		// 			$order_info['shipping_country'],
-		// 			"apartment" => "-",
-		// 			"street_number" => "-",
-		// 		),
-		// 		"cost" => round(floatval($this->session->data['shipping_method']['cost']), 2) * $order_info['currency_value'],
-		// 		"mode" => "custom",
-		// 	);
-		// }
 
 		error_log("=====data items=====".json_encode($items));
 
@@ -242,6 +203,9 @@ class ControllerPaymentMPStandard extends Controller {
 		endif;
 		$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('order_status_id_pending'), date('d/m/Y h:i'));
 		$view = floatval(VERSION) < 2.2 ? 'default/template/payment/mp_standard.tpl' : 'payment/mp_standard.tpl';
+
+		$data['analytics'] = $this->setPreModuleAnalytics();
+
 		return $this->load->view($view, $data);
 	}
 
@@ -269,8 +233,29 @@ class ControllerPaymentMPStandard extends Controller {
 			$this->load->model('checkout/order');
 			$order = $this->model_checkout_order->getOrder($order_id);
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago_order_status_id'), date('d/m/Y h:i'));
-			$this->retorno();
-			$this->response->redirect($this->url->link('checkout/success'));
+			$dados = $this->retorno();
+
+			$data['footer'] = array();
+			$data['continue'] = $this->url->link('checkout/success');
+
+			$data['column_left'] = $this->load->controller('common/column_left');
+			$data['column_right'] = $this->load->controller('common/column_right');
+			$data['content_top'] = $this->load->controller('common/content_top');
+			$data['content_bottom'] = $this->load->controller('common/content_bottom');
+			$data['footer'] = $this->load->controller('common/footer');
+			$data['header'] = $this->load->controller('common/header');
+
+			$data['token']  = $this->config->get('mp_standard_client_id');
+			$data['paymentId']  =  $dados['collection']['payment_type'];
+			$data['paymentType']  = $dados['collection']['payment_method_id'];
+			$data['checkoutType']  = "standard";
+
+			$this->response->setOutput($this->load->view('payment/mp_standard_success', $data));
+			//
+			//
+			//$this->load->view('checkout/success', $data);
+
+			//$this->response->redirect($this->url->link('checkout/success'));
 		}
 	}
 
@@ -303,12 +288,15 @@ class ControllerPaymentMPStandard extends Controller {
 			$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
 			$mp = new MP($client_id, $client_secret);
 			$mp->sandbox_mode($sandbox);
+			$dados = null;
 			foreach ($ids as $id) {
 				$resposta = $mp->get_payment_info($id);
 				$dados = $resposta['response'];
 
 				$order_id = $dados['collection']['external_reference'];
 				$order_status = $dados['collection']['status'];
+
+				error_log("===dados compra====" . json_encode($dados));
 
 				$this->load->model('checkout/order');
 				$order = $this->model_checkout_order->getOrder($order_id);
@@ -348,5 +336,35 @@ class ControllerPaymentMPStandard extends Controller {
 			error_log('id não setado na compra!!!');
 		}
 
+		return $dados;
 	}
+
+    function setPreModuleAnalytics() {
+
+		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
+
+        $resultModules = array();
+
+		foreach ($query->rows as $result) {
+			array_push($resultModules, $result['code']);
+		}
+
+        $return = array(
+            'publicKey'=> "",
+            'token'=> $this->config->get('mp_standard_client_id'),
+            'platform' => "Opencart",
+            'platformVersion' => $this->versionModule,
+            'moduleVersion' => $this->version,
+            'payerEmail' => $this->customer->getEmail(),
+            'userLogged' => $this->customer->isLogged() ? 1 : 0,
+            'installedModules' => implode(', ', $resultModules),
+            'additionalInfo' => ""
+        );
+
+        error_log("===setPreModuleAnalytics====" . json_encode($return));
+
+        return $return;
+    }
+
+
 }
