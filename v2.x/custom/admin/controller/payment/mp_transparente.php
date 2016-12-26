@@ -5,7 +5,10 @@ require_once '../catalog/controller/payment/mercadopago.php';
 class ControllerPaymentMPTransparente extends Controller {
 	private $_error = array();
 	private $payment_types = array('debvisa', 'debmaster', 'credit_card', 'debit_card');
+	private $version = "2.0";
+
 	public function index() {
+
 		$prefix = 'mp_transparente_';
 		$fields = array('public_key', 'access_token', 'status', 'category_id',
 			'debug', 'coupon', 'country', 'installments', 'order_status_id',
@@ -120,9 +123,12 @@ class ControllerPaymentMPTransparente extends Controller {
 			}
 			$this->model_setting_setting->editSetting('mp_transparente', $this->request->post);
 
+			$this->setSettings();
+
 			$this->session->data['success'] = $this->language->get('text_success');
 			$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
 
+			
 		}
 
 		$this->response->setOutput($this->load->view('payment/mp_transparente.tpl', $data));
@@ -250,4 +256,38 @@ class ControllerPaymentMPTransparente extends Controller {
 		return count($this->_error) < 1;
 
 	}
+
+	public function setSettings() {
+        $moduleVersion = $this->version;
+        $phpVersion = phpversion();
+        $modules = "OpenCart";
+        $modulesVersion = "2.0";
+        $statusCustom = "false";
+        $custom_cupom = "false";
+
+        if ($this->request->post['mp_transparente_coupon'] == "1") {
+            $custom_cupom = "true";
+        }
+
+    	if ($this->request->post['mp_transparente_status'] == "1") {
+            $statusCustom = "true";
+        }
+
+        $request = array(
+            "module_version" => $moduleVersion,
+            "checkout_custom_credit_card" => $statusCustom,
+            "code_version" => $phpVersion,
+            "checkout_custom_credit_card_coupon" => $custom_cupom,
+            "platform" => $modules,
+            "platform_version" => $modulesVersion
+        );
+
+        try {
+			$access_token = $this->config->get('mp_transparente_access_token');
+			$mp = new MP($access_token);        	
+            $userResponse = $mp->saveSettings($request);
+        } catch (Exception $e) {
+        	error_log($e);
+        }
+    }
 }

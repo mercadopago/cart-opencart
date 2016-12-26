@@ -211,7 +211,7 @@
                 }
                 function getValueTotal() {
                     var lbls = document.getElementsByClassName('text-right');
-                    var amount = parseFloat(lbls[lbls.length -1].textContent.split('$')[1].replace(',', '.'));
+                    var amount = parseFloat(lbls[lbls.length -1].textContent.split('$')[1].replace('.', '').replace(',', '.'));
                     return amount;
                 }
                 function getInstallments()

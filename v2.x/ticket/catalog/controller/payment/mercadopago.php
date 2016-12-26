@@ -378,6 +378,22 @@ class MP {
 		return $result;
 	}
 	/* **************************************************************************************** */
+
+	/*
+     * Save settings
+     */
+    public function saveSettings($params) {
+		$request = array(
+			"uri" => "/modules/tracking/settings",
+			"params" => array(
+				"access_token" => $this->get_access_token(),
+			),
+			"data" => $params,
+		);
+        $result_response = MPRestClient::post($request);
+        return $result_response;
+    }
+
 }
 /**
  * MercadoPago cURL RestClient
