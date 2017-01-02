@@ -3,6 +3,8 @@
 require_once "mercadopago.php";
 
 class ControllerPaymentMPTransparente extends Controller {
+	private $version = "2.0";
+	private $versionModule = "2.0";
 	private $error;
 	public $sucess = true;
 	private $order_info;
@@ -73,6 +75,9 @@ class ControllerPaymentMPTransparente extends Controller {
 		$view = floatval(VERSION) < 2.2 ? 'default/template/payment/' : 'payment/';
 		//$view = 'default/template/payment/';
 		$view_uri = $view . 'mp_transparente.tpl';
+
+		$data['analytics'] = $this->setPreModuleAnalytics();
+
 		if (strpos($this->config->get('config_url'), 'localhost:')) {
 			$partial = in_array($data['action'], $this->special_checkouts) ? $data['action'] : 'default';
 			$data['partial'] = $this->load->view($view . 'partials/mp_transparente_' . $partial . '.tpl', $data);
@@ -257,6 +262,12 @@ class ControllerPaymentMPTransparente extends Controller {
 			} else {
 				$json_response['status'] = $payment_response['response']['status_detail'];
 			}
+
+			$json_response['token'] = $this->_getClientId($this->config->get('mp_transparente_access_token'));
+			$json_response['paymentId'] = $payment_response['response']['payment_method_id'];
+			$json_response['paymentType'] = $payment_response['response']['payment_type_id'];
+			$json_response['checkoutType'] = "custom";
+
 			echo json_encode($json_response);
 		} catch (Exception $e) {
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
@@ -296,6 +307,7 @@ class ControllerPaymentMPTransparente extends Controller {
 	}
 
 	public function callback() {
+
 		$this->response->redirect($this->url->link('checkout/success'));
 	}
 
@@ -388,6 +400,11 @@ class ControllerPaymentMPTransparente extends Controller {
 
 			$json_response = array('status' => null, 'message' => null);
 
+			$json_response['token'] = $this->_getClientId($this->config->get('mp_transparente_access_token'));
+			$json_response['paymentId'] = $payment_return['response']['payment_method_id'];
+			$json_response['paymentType'] = $payment_return['response']['payment_type_id'];
+			$json_response['checkoutType'] = "custom";
+
 			if (in_array($payment_return['response']['status'], $accepted_status)) {
 				$json_response['status'] = $payment_return['response']['status'];
 			} else {
@@ -455,4 +472,39 @@ class ControllerPaymentMPTransparente extends Controller {
 			break;
 		}
 	}
+
+	function _getClientId($at){
+		$t = explode ( "-" , $at);
+		if(count($t) > 0){
+			return $t[1];
+		}
+		return "";
+	}
+
+    function setPreModuleAnalytics() {
+
+		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
+
+        $resultModules = array();
+
+		foreach ($query->rows as $result) {
+			array_push($resultModules, $result['code']);
+		}
+
+        $return = array(
+            'publicKey'=> "",
+            'token'=> $this->_getClientId($this->config->get('mp_transparente_access_token')),
+            'platform' => "Opencart",
+            'platformVersion' => $this->versionModule,
+            'moduleVersion' => $this->version,
+            'payerEmail' => $this->customer->getEmail(),
+            'userLogged' => $this->customer->isLogged() ? 1 : 0,
+            'installedModules' => implode(', ', $resultModules),
+            'additionalInfo' => ""
+        );
+
+        error_log("===setPreModuleAnalytics====" . json_encode($return));
+
+        return $return;
+    }		
 }

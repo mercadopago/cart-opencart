@@ -78,7 +78,16 @@ function buildAmount(amount)
 			//document.getElementById('formulario').style = 'margin-left: 22%';
 			var acceptable_status = ["approved", "in_process"];
 			if (acceptable_status.indexOf(response_payment.status) > -1)
-			{    
+			{
+
+                console.info("====ModuleAnalytics enviar=====");
+                ModuleAnalytics.setToken(response_payment.token);
+                ModuleAnalytics.setPaymentId(response_payment.paymentId);
+                ModuleAnalytics.setPaymentType(response_payment.paymentType);
+                ModuleAnalytics.setCheckoutType(response_payment.checkoutType);
+                console.info("====ModuleAnalytics=====");
+                ModuleAnalytics.put();
+
 				var url_site = window.location.href.split('index.php')[0];
 				var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
 				location += 'index.php?route=checkout/success';

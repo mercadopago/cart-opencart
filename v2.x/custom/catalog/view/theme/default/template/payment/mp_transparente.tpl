@@ -124,6 +124,7 @@
                     </div>
 
 
+<?php echo('<script defer src="https://secure.mlstatic.com/modules/javascript/analytics.js"></script>'); ?>
 <script type="text/javascript">
 
 <?php if ($mp_transparente_coupon) : ?>
@@ -394,4 +395,21 @@
         }
 
     }
+</script>
+
+<script type="text/javascript">
+
+    $.getScript("https://secure.mlstatic.com/modules/javascript/analytics.js", function(){
+
+        ModuleAnalytics.setToken("<?php echo $analytics['token'] ?>");
+        ModuleAnalytics.setPlatform("<?php echo $analytics['platform'] ?>");
+        ModuleAnalytics.setPlatformVersion("<?php echo $analytics['platformVersion'] ?>");
+        ModuleAnalytics.setModuleVersion("<?php echo $analytics['moduleVersion'] ?>");
+        ModuleAnalytics.setPayerEmail("<?php echo $analytics['payerEmail'] ?>");
+        ModuleAnalytics.setUserLogged(parseInt("<?php echo $analytics['userLogged'] ?>"));
+        ModuleAnalytics.setInstalledModules("<?php echo $analytics['installedModules'] ?>");
+        ModuleAnalytics.setAdditionalInfo("<?php echo $analytics['additionalInfo'] ?>");
+        ModuleAnalytics.post();
+
+     });
 </script>

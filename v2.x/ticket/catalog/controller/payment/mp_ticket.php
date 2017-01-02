@@ -4,6 +4,8 @@ require_once "mercadopago.php";
 
 class ControllerPaymentMPTicket extends Controller {
 
+	private $version = "2.0";
+	private $versionModule = "2.0";	
 	private $error;
 	public $sucess = true;
 	private $order_info;
@@ -19,6 +21,12 @@ class ControllerPaymentMPTicket extends Controller {
 	public function index() {
 		$this->language->load('payment/mp_ticket');
 		$data['payment_button'] = $this->language->get('payment_button');
+
+		error_log("====tradução payment=====".$this->language->get('payment_button'));
+		
+		$data['analytics'] = $this->setPreModuleAnalytics();		
+		$data['payment_button'] = $this->language->get('payment_button');
+
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/mp_ticket.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/template/payment/mp_ticket.tpl', $data);
 		} else {
@@ -63,13 +71,20 @@ class ControllerPaymentMPTicket extends Controller {
 			$value = floatval(number_format(floatval($order_info['total']) * floatval($order_info['currency_value']), 2));
 			$access_token = $this->config->get('mp_ticket_access_token');
 			$mp = new MP($access_token);
+
+
 			$payment_data = array("payer" => $payer,
 				"external_reference" => $order_info['order_id'],
 				"transaction_amount" => $value,
-				"notification_url" => $order_info['store_url'] . 'index.php?route=payment/mp_ticket/notifications',
 				//"token" => $this->request->post['token'],
 				"description" => 'Products',
 				"payment_method_id" => $this->request->get['payment_method_id']);
+
+			$url = $order_info['store_url'];
+		    if (!strrpos($url, 'localhost')) {
+		    	$payment_data['notification_url'] = $url . 'index.php?route=payment/mp_ticket/notifications';
+		    }
+
 			$payment_data['additional_info'] = array('shipments' => $shipments, 'items' => $items);
 			$is_test_user = strpos($order_info['email'], '@testuser.com');
 			if (!$is_test_user) {
@@ -78,8 +93,19 @@ class ControllerPaymentMPTicket extends Controller {
 
 			$payment_response = $mp->create_payment($payment_data);
 			error_log('payment response: ' . json_encode($payment_response));
+
+			error_log("=======payment_response========" . json_encode($payment_response));
+
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
-			echo json_encode(array("status" => $payment_response['status'], "url" => $payment_response['response']['transaction_details']['external_resource_url']));
+			echo json_encode(
+				array("status" => $payment_response['status'],
+					"url" => $payment_response['response']['transaction_details']['external_resource_url'],
+					"token" => $this->_getClientId($this->config->get('mp_ticket_access_token')),
+					"paymentId" =>  $payment_response['response']['payment_method_id'],
+					"paymentType" => $payment_response['response']['payment_type_id'],
+					"checkoutType" => "ticket"
+					)
+				);
 		} catch (Exception $e) {
 			error_log('deu erro: ' . $e);
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
@@ -200,4 +226,41 @@ class ControllerPaymentMPTicket extends Controller {
 		}
 
 	}
+
+	function _getClientId($at){
+		$t = explode ( "-" , $at);
+		if(count($t) > 0){
+			return $t[1];
+		}
+		return "";
+	}
+
+    function setPreModuleAnalytics() {
+
+		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
+
+        $resultModules = array();
+
+		foreach ($query->rows as $result) {
+			array_push($resultModules, $result['code']);
+		}
+
+
+
+        $return = array(
+            'publicKey'=> "",
+            'token'=> $this->_getClientId($this->config->get('mp_ticket_access_token')),
+            'platform' => "Opencart",
+            'platformVersion' => $this->versionModule,
+            'moduleVersion' => $this->version,
+            'payerEmail' => $this->customer->getEmail(),
+            'userLogged' => $this->customer->isLogged() ? 1 : 0,
+            'installedModules' => implode(', ', $resultModules),
+            'additionalInfo' => ""
+        );
+
+        error_log("===setPreModuleAnalytics====" . json_encode($return));
+
+        return $return;
+    }	
 }
