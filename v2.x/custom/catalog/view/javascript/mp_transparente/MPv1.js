@@ -4,7 +4,7 @@
 (function (){
 
   var MPv1 = {
-    debug: true,
+    debug: false,
     add_truncated_card: true,
     site_id: '',
     public_key: '',
@@ -83,8 +83,8 @@
       CustomerAndCard: '#CustomerAndCard',
 
       box_loading: "#mp-box-loading",
-      submit: "#submit",
-      form: '#mercadopago-form',
+      submit: "#btnSubmit",
+      form: '#mercadopago-formulario',
       formCoupon: '#mercadopago-form-coupon',
       formCustomerAndCard: '#mercadopago-form-customer-and-card',
       utilities_fields: "#mercadopago-utilities"
@@ -628,12 +628,14 @@
     }
 
     MPv1.sdkResponseHandler = function(status, response) {
-      //hide loading
+      
+      var $form = MPv1.getForm();
+
       document.querySelector(MPv1.selectors.box_loading).style.background = "";
 
       if (status != 200 && status != 201) {
         MPv1.showErrors(response);
-      }else{
+      } else {
         var token = document.querySelector(MPv1.selectors.token);
         token.value = response.id;
 
@@ -642,10 +644,10 @@
           document.querySelector(MPv1.selectors.cardTruncated).value=card;
         }
 
-        if(!MPv1.create_token_on.event){
+        if (!MPv1.create_token_on.event) {    
           doSubmit=true;
           btn = document.querySelector(MPv1.selectors.form);
-          btn.submit();
+          btn.submit();            
         }
       }
     }
