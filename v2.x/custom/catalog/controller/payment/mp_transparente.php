@@ -215,9 +215,8 @@ class ControllerPaymentMPTransparente extends Controller {
 		$payment_method = $payment['payment_method_id'];
 		$payment['metadata']['token'] = $params_mercadopago['token'];
 		$payment['metadata']['customer_id'] = $this->getCustomerId();
-		error_log("chegou aq");
 		$payment = $mercadopago->create_payment($payment);
-		error_log("chegou aq55555555");
+
 		if ($payment["status"] == 200 || $payment["status"] == 201) { 
 			
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' .
