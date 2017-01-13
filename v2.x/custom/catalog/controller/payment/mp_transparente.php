@@ -108,6 +108,7 @@ class ControllerPaymentMPTransparente extends Controller {
 
 	public function coupon() {
 		$coupon_id = $this->request->get['coupon_id'];
+
     if ($coupon_id != '') {
         $coupon_id = $coupon_id;
         $response = $this->validCoupon($coupon_id);
@@ -125,31 +126,38 @@ class ControllerPaymentMPTransparente extends Controller {
 		}
 	}
 
-  public function validCoupon($coupon_id)
-  {
+  	public function validCoupon($coupon_id) {
+  		$this->load->model('checkout/order');
+  		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$transaction_amount = floatval($order_info['total']) * floatval($order_info['currency_value']);
+		$transaction_amount = round($transaction_amount, 2);
+		$access_token = $this->config->get('mp_transparente_access_token');
+		$mercadopago = new MP($access_token);
+		$payer_email =  $order_info['email'];
 
-			$this->load->model('checkout/order');
-			$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-
-			$transaction_amount = floatval($order_info['total']) * floatval($order_info['currency_value']);
-			$transaction_amount = round($transaction_amount, 2);
-
-			$access_token = $this->config->get('mp_transparente_access_token');
-			$mp = new MP($access_token);
-
-      $params = array(
-          'transaction_amount' => $transaction_amount,
-          'payer_email' => $order_info['email'],
-          'coupon_code' => $coupon_id,
-      );
-
-      $details_discount = $mp->getDiscount($params);
-      // add value on return api discount
-      $details_discount['response']['transaction_amount'] = $params['transaction_amount'];
-      $details_discount['response']['params'] = $params;
-
-      return $details_discount;
-  }
+		if ($coupon_id != '') {
+		    $response = $mercadopago->check_discount_campaigns(
+		        $transaction_amount,
+		        $payer_email,
+		        $coupon_id
+		    );
+		    header( 'HTTP/1.1 200 OK' );
+		    header( 'Content-Type: application/json' );
+		    echo json_encode( $response );
+		} else {
+		    $obj = new stdClass();
+		    $obj->status = 404;
+		    $obj->response = array(
+		        'message' => 'a problem has occurred',
+		        'error' => 'a problem has occurred',
+		        'status' => 404,
+		        'cause' => array()
+		    );
+		    header( 'HTTP/1.1 200 OK' );
+		    header( 'Content-Type: application/json' );
+		    echo json_encode( $obj );
+		}
+	}
 
 	public function payment() {
 		
@@ -170,12 +178,11 @@ class ControllerPaymentMPTransparente extends Controller {
 		$payment['payment_method_id'] = $params_mercadopago['paymentMethodId'];
 		$payment['payer']['email'] = $order_info['email'];
 
-		// custom code for notification url
+		$notification_url = $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications';
 		$domain = $_SERVER['HTTP_HOST'];
-		if(strpos($domain, "localhost") === false){
-		  $route = str_replace("post.php", "", $_SERVER['REQUEST_URI']);
-		  $payment['notification_url'] = "http://" . $domain . $route . "notification.php?site_id=" . $params_mercadopago['site_id'];
-		}
+		if (strpos($domain, "localhost") === false) {
+    	  	$payment['notification_url'] = $notification_url;
+     	 }
 
 		if(isset($params_mercadopago['issuer']) && $params_mercadopago['issuer'] != "" && $params_mercadopago['issuer'] > -1){
 		  $payment['issuer_id'] = $params_mercadopago['issuer'];
@@ -197,8 +204,6 @@ class ControllerPaymentMPTransparente extends Controller {
 		}
 
 		$payment['additional_info']['items'][] = $items;
-
-		// Shipments Info
 		$payment['additional_info']['shipments']['receiver_address']['zip_code'] = $order_info['shipping_postcode'];
 		$payment['additional_info']['shipments']['receiver_address']['street_name'] = $order_info['shipping_address_1'];
 		$payment['additional_info']['shipments']['receiver_address']['street_number'] = "-";
@@ -210,8 +215,9 @@ class ControllerPaymentMPTransparente extends Controller {
 		$payment_method = $payment['payment_method_id'];
 		$payment['metadata']['token'] = $params_mercadopago['token'];
 		$payment['metadata']['customer_id'] = $this->getCustomerId();
+		error_log("chegou aq");
 		$payment = $mercadopago->create_payment($payment);
-		
+		error_log("chegou aq55555555");
 		if ($payment["status"] == 200 || $payment["status"] == 201) { 
 			
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' .
@@ -261,7 +267,6 @@ class ControllerPaymentMPTransparente extends Controller {
 	}
 
 	public function notifications() {
-		error_log("====Entrou aqui=====");
 		if (isset($this->request->get['topic'])) {
 			$this->request->get['collection_id'] = $this->request->get['id'];
 			$this->retornoTransparente();
@@ -271,6 +276,7 @@ class ControllerPaymentMPTransparente extends Controller {
 			echo json_encode(200);
 		}
 	}
+
 	public function getCustomerId() {
 		$access_token = $this->config->get('mp_transparente_access_token');
 		$this->load->model('checkout/order');

@@ -63,21 +63,31 @@ class MP {
 		return $this->access_data['access_token'];
 	}
 
-  public function getDiscount($params)
-  {
-    $access_token = $this->get_access_token();
-    $uri = "/discount_campaigns";
-    $uri_prefix = $this->sandbox ? "/sandbox" : "";
+    public function check_discount_campaigns($transaction_amount, $payer_email, $coupon_code) {
+        $request = array(
+            "uri" => "/discount_campaigns",
+            "params" => array(
+                "access_token" => $this->get_access_token(),
+                "transaction_amount" => $transaction_amount,
+                "payer_email" => $payer_email,
+                "coupon_code" => $coupon_code
+            )
+        );
+         
+         try {
+         	$discount_info = MPRestClient::get($request);
+         } catch (MercadoPagoException $e) {
+		    $discount_info = array(
+		    		"status" => "404",
+		    		"response" => array (
+		          	"message" => $e->getMessage(),
+		          	"error"=>"campaign-code-doesnt-match"
+		          	)
+				);
+         }   
 
-		$request = array(
-			"uri" => $uri_prefix . "/discount_campaigns",
-			"params" => array_merge($params, array(
-				"access_token" => $this->get_access_token(),
-			)),
-		);
-		$result = MPRestClient::get($request);
-	return $result;
-  }
+        return $discount_info;
+    }
 
 	/**
 	 * Get information for specific payment
@@ -207,6 +217,7 @@ class MP {
 			),
 			"data" => $payment,
 		);
+		error_log("acess token".json_encode($access_token));
 		$result = MPRestClient::post($request);
 		return $result;
 	}
@@ -455,7 +466,6 @@ class MPRestClient {
 		curl_setopt($connect, CURLOPT_CAINFO, $GLOBALS["LIB_LOCATION"] . "/cacert.pem");
 		curl_setopt($connect, CURLOPT_CUSTOMREQUEST, $request["method"]);
 		curl_setopt($connect, CURLOPT_HTTPHEADER, $headers);
-
 		// Set parameters and url
 		if (isset($request["params"]) && is_array($request["params"]) && count($request["params"]) > 0) {
 			$request["uri"] .= (strpos($request["uri"], "?") === false) ? "?" : "&";
@@ -483,6 +493,7 @@ class MPRestClient {
 		}
 		return $connect;
 	}
+
 	private static function exec($request) {
 		// private static function exec($method, $uri, $data, $content_type) {
 		$connect = self::build_request($request);
@@ -495,6 +506,7 @@ class MPRestClient {
 			"status" => $api_http_code,
 			"response" => json_decode($api_result, true),
 		);
+
 		if ($response['status'] >= 400) {
 			$message = $response['response']['message'];
 			if (isset($response['response']['cause'])) {
