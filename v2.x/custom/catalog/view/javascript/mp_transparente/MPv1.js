@@ -85,6 +85,7 @@
       box_loading: "#mp-box-loading",
       submit: "#btnSubmit",
       form: '#mercadopago-formulario',
+      formDiv: '#mercadopago-form',
       formCoupon: '#mercadopago-form-coupon',
       formCustomerAndCard: '#mercadopago-form-customer-and-card',
       utilities_fields: "#mercadopago-utilities"
@@ -668,11 +669,11 @@
 
     MPv1.setForm = function () {
       if(MPv1.customer_and_card.status){
-        document.querySelector(MPv1.selectors.form).style.display = 'none';
+        document.querySelector(MPv1.selectors.formDiv).style.display = 'none';
         document.querySelector(MPv1.selectors.mpSecurityCodeCustomerAndCard).removeAttribute('style');
       }else{
         document.querySelector(MPv1.selectors.mpSecurityCodeCustomerAndCard).style.display = 'none';
-        document.querySelector(MPv1.selectors.form).removeAttribute('style');
+        document.querySelector(MPv1.selectors.formDiv).removeAttribute('style');
       }
 
       Mercadopago.clearSession();

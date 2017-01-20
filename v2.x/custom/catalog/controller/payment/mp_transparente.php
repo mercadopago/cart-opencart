@@ -4,18 +4,10 @@ require_once "mercadopago.php";
 
 class ControllerPaymentMPTransparente extends Controller {
 	private $error;
-	public $sucess = true;
 	private $order_info;
 	private $message;
 	private $special_checkouts = array('MLM', 'MLB', "MPE");
-	private $sponsors = array('MLB' => 204931135,
-		'MLM' => 204962951,
-		'MLA' => 204931029,
-		'MCO' => 204964815,
-		'MLV' => 204964612,
-		'MPE' => 217176790,
-		'MLC' => 204927454);
-
+	
 	public function index() {
 		$data['customer_email'] = $this->customer->getEmail();
 		$data['button_confirm'] = $this->language->get('button_confirm');
@@ -30,7 +22,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['actionForm'] = $order_info['store_url'] . 'index.php?route=payment/mp_transparente/payment';
 		$data['mp_transparente_coupon'] = $this->config->get('mp_transparente_coupon');
 
-	  if ($this->config->get('mp_transparente_coupon')) {
+		if ($this->config->get('mp_transparente_coupon')) {
 			$data['mercadopago_coupon'] = $this->language->get('mercadopago_coupon');
 			$data['cupom_obrigatorio'] = $this->language->get('cupom_obrigatorio');
 			$data['campanha_nao_encontrado'] = $this->language->get('campanha_nao_encontrado');
@@ -68,7 +60,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		}
 
 
-	  if ($this->config->get('mp_transparente_coupon')) {
+		if ($this->config->get('mp_transparente_coupon')) {
 			$data['mercadopago_coupon'] = $this->language->get('mercadopago_coupon');
 		}
 
@@ -109,26 +101,26 @@ class ControllerPaymentMPTransparente extends Controller {
 	public function coupon() {
 		$coupon_id = $this->request->get['coupon_id'];
 
-    if ($coupon_id != '') {
-        $coupon_id = $coupon_id;
-        $response = $this->validCoupon($coupon_id);
-    } else {
-        $response = array(
-            'status' => 400,
-            'response' => array(
-                'error' => 'invalid_id',
-                'message' => 'invalid id'
-            )
-        );
-	    header('Content-Type: application/json');
+		if ($coupon_id != '') {
+			$coupon_id = $coupon_id;
+			$response = $this->validCoupon($coupon_id);
+		} else {
+			$response = array(
+				'status' => 400,
+				'response' => array(
+					'error' => 'invalid_id',
+					'message' => 'invalid id'
+					)
+				);
+			header('Content-Type: application/json');
 			echo json_encode($response);
 			exit();
 		}
 	}
 
-  	public function validCoupon($coupon_id) {
-  		$this->load->model('checkout/order');
-  		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+	public function validCoupon($coupon_id) {
+		$this->load->model('checkout/order');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		$transaction_amount = floatval($order_info['total']) * floatval($order_info['currency_value']);
 		$transaction_amount = round($transaction_amount, 2);
 		$access_token = $this->config->get('mp_transparente_access_token');
@@ -136,31 +128,30 @@ class ControllerPaymentMPTransparente extends Controller {
 		$payer_email =  $order_info['email'];
 
 		if ($coupon_id != '') {
-		    $response = $mercadopago->check_discount_campaigns(
-		        $transaction_amount,
-		        $payer_email,
-		        $coupon_id
-		    );
-		    header( 'HTTP/1.1 200 OK' );
-		    header( 'Content-Type: application/json' );
-		    echo json_encode( $response );
+			$response = $mercadopago->check_discount_campaigns(
+				$transaction_amount,
+				$payer_email,
+				$coupon_id
+				);
+			header( 'HTTP/1.1 200 OK' );
+			header( 'Content-Type: application/json' );
+			echo json_encode( $response );
 		} else {
-		    $obj = new stdClass();
-		    $obj->status = 404;
-		    $obj->response = array(
-		        'message' => 'a problem has occurred',
-		        'error' => 'a problem has occurred',
-		        'status' => 404,
-		        'cause' => array()
-		    );
-		    header( 'HTTP/1.1 200 OK' );
-		    header( 'Content-Type: application/json' );
-		    echo json_encode( $obj );
+			$obj = new stdClass();
+			$obj->status = 404;
+			$obj->response = array(
+				'message' => 'a problem has occurred',
+				'error' => 'a problem has occurred',
+				'status' => 404,
+				'cause' => array()
+				);
+			header( 'HTTP/1.1 200 OK' );
+			header( 'Content-Type: application/json' );
+			echo json_encode( $obj );
 		}
 	}
 
 	public function payment() {
-		
 		$params_mercadopago = $_REQUEST['mercadopago_custom'];
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -168,7 +159,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$mercadopago = new MP($access_token);
 
 		if($params_mercadopago['paymentMethodId'] == ""){
-		  $params_mercadopago['paymentMethodId'] = $params_mercadopago['paymentMethodSelector'];
+			$params_mercadopago['paymentMethodId'] = $params_mercadopago['paymentMethodSelector'];
 		}
 
 		$payment = array();
@@ -177,15 +168,15 @@ class ControllerPaymentMPTransparente extends Controller {
 		$payment['installments'] = (int) $params_mercadopago['installments'];
 		$payment['payment_method_id'] = $params_mercadopago['paymentMethodId'];
 		$payment['payer']['email'] = $order_info['email'];
-
+		$payment['external_reference'] = $this->session->data['order_id'];
 		$notification_url = $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications';
 		$domain = $_SERVER['HTTP_HOST'];
 		if (strpos($domain, "localhost") === false) {
-    	  	$payment['notification_url'] = $notification_url;
-     	 }
+			$payment['notification_url'] = $notification_url;
+		}
 
 		if(isset($params_mercadopago['issuer']) && $params_mercadopago['issuer'] != "" && $params_mercadopago['issuer'] > -1){
-		  $payment['issuer_id'] = $params_mercadopago['issuer'];
+			$payment['issuer_id'] = $params_mercadopago['issuer'];
 		}
 
 		$all_products = $this->cart->getProducts();
@@ -200,7 +191,7 @@ class ControllerPaymentMPTransparente extends Controller {
 				"unit_price" => $product_price, //decimal
 				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
 				"category_id" => $this->config->get('mp_transparente_category_id'),
-			);
+				);
 		}
 
 		$payment['additional_info']['items'][] = $items;
@@ -208,8 +199,10 @@ class ControllerPaymentMPTransparente extends Controller {
 		$payment['additional_info']['shipments']['receiver_address']['street_name'] = $order_info['shipping_address_1'];
 		$payment['additional_info']['shipments']['receiver_address']['street_number'] = "-";
 
+		$customerAndCard = false;
 		if($params_mercadopago['CustomerAndCard'] == 'true'){
-		  $payment['payer']['id'] = $this->getCustomerId();
+			$customerAndCard = true;
+			$payment['payer']['id'] = $this->getCustomerId();
 		}
 
 		$payment_method = $payment['payment_method_id'];
@@ -218,11 +211,10 @@ class ControllerPaymentMPTransparente extends Controller {
 		$payment = $mercadopago->create_payment($payment);
 
 		if ($payment["status"] == 200 || $payment["status"] == 201) { 
-			
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' .
 				$payment_method);
 
-			$this->updateOrder($payment['response']['id']);
+			$this->updateOrder($payment['response']['id'],$customerAndCard);
 			$this->response->redirect($this->url->link('checkout/success', '', true));
 		} else {
 			$this->response->redirect($this->url->link('checkout/checkout', '', true));
@@ -322,50 +314,6 @@ class ControllerPaymentMPTransparente extends Controller {
 		return $retorno;
 	}
 
-	public function paymentCustomersAndCards() {
-		try {
-			$access_token = $this->config->get('mp_transparente_access_token');
-
-			$payment = array(
-				"transaction_amount" => floatval($this->request->post['transaction_amount']),
-				"token" => $this->request->post['token'],
-				"description" => "Products",
-				"installments" => intval($this->request->post['installments']),
-				"payer" => array(
-					"id" => $this->getCustomerId(),
-				));
-			$payment["sponsor_id"] = strpos($this->customer->getEmail(), '@testuser.com') ? null :
-			$this->sponsors[$this->config->get('mp_transparente_country')];
-			error_log('sponsor_id:' . $payment["sponsor_id"]);
-
-			$this->load->model('checkout/order');
-			$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-			$this->model_checkout_order->addOrderHistory($order_info['order_id'],
-				$this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i'));
-			$mp = new MP($access_token);
-			$payment_return = $mp->post("/v1/payments", $payment);
-			$accepted_status = array('approved', "in_process", 200, 201);
-			$this->updateOrder($payment_return['response']['id']);
-
-			error_log("payment send:");
-			error_log(json_encode($payment));
-			error_log("payment received");
-			error_log(json_encode($payment_return));
-
-			$json_response = array('status' => null, 'message' => null);
-
-			if (in_array($payment_return['response']['status'], $accepted_status)) {
-				$json_response['status'] = $payment_return['response']['status'];
-			} else {
-				$json_response['status'] = $payment_return['response']['status_detail'];
-			}
-
-			echo json_encode($json_response);
-		} catch (Exception $e) {
-			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
-		}
-	}
-
 	private function createCard($token) {
 		$country = $this->config->get('mp_transparente_country');
 		if ($country != "MPE") {
@@ -382,41 +330,41 @@ class ControllerPaymentMPTransparente extends Controller {
 		$this->updateOrder($id);
 	}
 
-	private function updateOrder($id) {
+	private function updateOrder($id,$customerAndCard) {
 		$access_token = $this->config->get('mp_transparente_access_token');
-
 		$url = 'https://api.mercadopago.com/v1/payments/' . $id . '?access_token=' . $access_token;
 		$payment = $this->callJson($url);
 		$order_id = $payment['external_reference'];
 		$this->load->model('checkout/order');
-		$order = $this->model_checkout_order->getOrder($order_id);
+		//$order = $this->model_checkout_order->getOrder($order_id);
 		$order_status = $payment['status'];
+
 		switch ($order_status) {
-		case 'approved':
+			case 'approved':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-			if (isset($payment['metadata']['token']) && strlen($payment['metadata']['token']) > 0) {
+			if (isset($payment['metadata']['token']) && strlen($payment['metadata']['token']) > 0 && $customerAndCard == false) {
 				$this->createCard($payment['metadata']['token']);
 			}
 			break;
-		case 'pending':
+			case 'pending':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
 			break;
-		case 'in_process':
+			case 'in_process':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_process'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
 			break;
-		case 'reject':
+			case 'reject':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
 			break;
-		case 'refunded':
+			case 'refunded':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_refunded'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
 			break;
-		case 'cancelled':
+			case 'cancelled':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
 			break;
-		case 'in_mediation':
+			case 'in_mediation':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
 			break;
-		default:
+			default:
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
 			break;
 		}
