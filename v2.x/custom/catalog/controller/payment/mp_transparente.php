@@ -7,7 +7,15 @@ class ControllerPaymentMPTransparente extends Controller {
 	private $order_info;
 	private $message;
 	private $special_checkouts = array('MLM', 'MLB', "MPE");
-	
+	private $sponsors = array('MLB' => 204931135,
+		'MLM' => 204962951,
+		'MLA' => 204931029,
+		'MCO' => 204964815,
+		'MLV' => 204964612,
+		'MPE' => 217176790,
+		'MLC' => 204927454);
+
+
 	public function index() {
 		$data['customer_email'] = $this->customer->getEmail();
 		$data['button_confirm'] = $this->language->get('button_confirm');
@@ -192,6 +200,15 @@ class ControllerPaymentMPTransparente extends Controller {
 				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
 				"category_id" => $this->config->get('mp_transparente_category_id'),
 				);
+		}
+
+		$is_test_user = strpos($order_info['email'], '@testuser.com');
+		if (!$is_test_user) {
+			$sponsor_id = $this->sponsors[$this->config->get('mp_transparente_country')];
+			error_log('not test_user. sponsor_id will be sent: ' . $sponsor_id);
+			$payment["sponsor_id"] = $sponsor_id;
+		} else {
+			error_log('test_user. sponsor_id will not be sent');
 		}
 
 		$payment['additional_info']['items'][] = $items;
