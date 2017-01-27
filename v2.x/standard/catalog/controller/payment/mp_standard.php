@@ -16,7 +16,8 @@ class ControllerPaymentMPStandard extends Controller {
 		'MCO' => 204964815,
 		'MLV' => 204964612,
 		'MPE' => 217176790,
-		'MLC' => 204927454);
+		'MLC' => 204927454,
+		'MLU' => 241827790);
 
 	public function index() {
 		$data['customer_email'] = $this->customer->getEmail();
@@ -38,11 +39,11 @@ class ControllerPaymentMPStandard extends Controller {
 		//Cambio el código ISO-3 de la moneda por el que se les ocurrio poner a los de mp_standard!!!
 		$accepted_currencies = array('ARS' => 'ARS', 'ARG' => 'ARS', 'VEF' => 'VEF',
 			'BRA' => 'BRL', 'BRL' => 'BRL', 'REA' => 'BRL', 'MXN' => 'MEX',
-			'CLP' => 'CHI', 'COP' => 'COP', 'PEN' => 'PEN', 'US' => 'US', 'USD' => 'USD');
+			'CLP' => 'CHI', 'COP' => 'COP', 'PEN' => 'PEN', 'US' => 'US', 'USD' => 'USD', 'UYU' => 'UYU');
 
 		$currency = $accepted_currencies[$order_info['currency_code']];
-
-		$currencies = array('ARS', 'BRL', 'MEX', 'CHI', 'PEN', 'VEF', 'COP');
+		error_log("current".json_encode($order_info['currency_code']));
+		$currencies = array('ARS', 'BRL', 'MEX', 'CHI', 'PEN', 'VEF', 'COP', 'UYU');
 		if (!in_array($currency, $currencies)) {
 			$currency = '';
 			$data['error'] = $this->language->get('currency_no_support');
@@ -91,7 +92,8 @@ class ControllerPaymentMPStandard extends Controller {
 		$this->id = 'payment';
 
 		$data['server'] = $_SERVER;
-		$data['debug'] = $this->config->get('mp_standard_debug');
+		//$data['debug'] = $this->config->get('mp_standard_debug');
+		$data['debug'] = 1;
 
 		$client_id = $this->config->get('mp_standard_client_id');
 		$client_secret = $this->config->get('mp_standard_client_secret');
@@ -342,8 +344,7 @@ class ControllerPaymentMPStandard extends Controller {
     function setPreModuleAnalytics() {
 
 		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
-
-        $resultModules = array();
+		$resultModules = array();
 
 		foreach ($query->rows as $result) {
 			array_push($resultModules, $result['code']);
