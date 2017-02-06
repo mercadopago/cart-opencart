@@ -158,74 +158,80 @@
       document.querySelector(MPv1.selectors.mpCouponError).style.display = 'none';
       document.querySelector(MPv1.selectors.couponCode).style.background = "url("+MPv1.paths.loading+") 98% 50% no-repeat #fff";
       document.querySelector(MPv1.selectors.applyCoupon).disabled = true;
-      var request = new XMLHttpRequest();
-      request.open(
-        'GET',
-        MPv1.coupon_of_discounts.discount_action_url +
-          "?site_id=" + MPv1.site_id +
-          "&coupon_id=" + document.querySelector(MPv1.selectors.couponCode).value +
-          "&amount=" + document.querySelector(MPv1.selectors.amount).value +
-          "&payer=" + MPv1.coupon_of_discounts.payer_email,
-        true
-      );
-      request.onreadystatechange = function() {
-        if (request.readyState == 4) {
-          if (request.status == 200) {
-            var response = JSON.parse(request.responseText);
-            if (response.status == 200) {
-              document.querySelector(MPv1.selectors.mpCouponApplyed).style.display = 'block';
-              document.querySelector(MPv1.selectors.discount).value = response.response.coupon_amount;
-              document.querySelector(MPv1.selectors.mpCouponApplyed).innerHTML =
-                "<div style='border-style: solid; border-width:thin; border-color: #009EE3; padding: 8px 8px 8px 8px; margin-top: 4px;'>" +
-                MPv1.text.discount_info1 + " <strong>" + MPv1.currencyIdToCurrency(response.response.currency_id) + " " +
-                Math.round(response.response.coupon_amount*100)/100 + "</strong> " + MPv1.text.discount_info2 + " " + response.response.name + ".<br>" +
-                MPv1.text.discount_info3 + " <strong>" + MPv1.currencyIdToCurrency(response.response.currency_id) +
-                " " + Math.round(MPv1.getAmountWithoutDiscount()*100)/100 + "</strong><br>" +
-                MPv1.text.discount_info4 + " <strong>" + MPv1.currencyIdToCurrency(response.response.currency_id) +
-                " " + Math.round(MPv1.getAmount()*100)/100 + "*</strong><br>" +
-                "<i>" + MPv1.text.discount_info5 + "</i><br>" +
-                "<a href='https://api.mercadolibre.com/campaigns/" + response.response.id + "/terms_and_conditions?format_type=html' target='_blank'>" +
-                MPv1.text.discount_info6 + "</a></div>";
-              document.querySelector(MPv1.selectors.mpCouponError).style.display = 'none';
-              MPv1.coupon_of_discounts.status = true;
-              document.querySelector(MPv1.selectors.couponCode).style.background = null;
-              document.querySelector(MPv1.selectors.couponCode).style.background = "url("+MPv1.paths.check+") 98% 50% no-repeat #fff";
-              document.querySelector(MPv1.selectors.applyCoupon).value = MPv1.text.remove;
-              MPv1.cardsHandler();
-              document.querySelector(MPv1.selectors.campaign_id).value = response.response.id;
-              document.querySelector(MPv1.selectors.campaign).value = response.response.name;
-            } else if (response.status == 400 || response.status == 404) {
-              document.querySelector(MPv1.selectors.mpCouponApplyed).style.display = 'none';
-              document.querySelector(MPv1.selectors.mpCouponError).style.display = 'block';
-              document.querySelector(MPv1.selectors.mpCouponError).innerHTML = response.response.message;
-              MPv1.coupon_of_discounts.status = false;
-              document.querySelector(MPv1.selectors.couponCode).style.background = null;
-              document.querySelector(MPv1.selectors.couponCode).style.background = "url("+MPv1.paths.error+") 98% 50% no-repeat #fff";
-              document.querySelector(MPv1.selectors.applyCoupon).value = MPv1.text.apply;
-              document.querySelector(MPv1.selectors.discount).value = 0;
-              MPv1.cardsHandler();
-            }
-          } else {
-            // request failed
-            document.querySelector(MPv1.selectors.mpCouponApplyed).style.display = 'none';
+
+      var url = MPv1.coupon_of_discounts.discount_action_url
+      var sp = "?";
+
+      //check if there are params in the url
+      if (url.indexOf("?") >= 0){
+        sp = "&"
+      }
+
+      url += sp + "site_id=" + MPv1.site_id
+      url += "&coupon_id=" + document.querySelector(MPv1.selectors.couponCode).value
+      url += "&amount=" + document.querySelector(MPv1.selectors.amount).value
+      url += "&payer=" + MPv1.coupon_of_discounts.payer_email
+
+      MPv1.AJAX({
+        url: url,
+        method : "GET",
+        timeout : 5000,
+        error: function(){
+          // request failed
+          document.querySelector(MPv1.selectors.mpCouponApplyed).style.display = 'none';
+          document.querySelector(MPv1.selectors.mpCouponError).style.display = 'none';
+          MPv1.coupon_of_discounts.status = false;
+          document.querySelector(MPv1.selectors.applyCoupon).style.background = null;
+          document.querySelector(MPv1.selectors.applyCoupon).value = MPv1.text.apply;
+          document.querySelector(MPv1.selectors.couponCode).value = "";
+          document.querySelector(MPv1.selectors.couponCode).style.background = null;
+          document.querySelector(MPv1.selectors.discount).value = 0;
+          MPv1.cardsHandler();
+        },
+        success : function (status, response){
+
+          if (response.status == 200) {
+            document.querySelector(MPv1.selectors.mpCouponApplyed).style.display = 'block';
+            document.querySelector(MPv1.selectors.discount).value = response.response.coupon_amount;
+            document.querySelector(MPv1.selectors.mpCouponApplyed).innerHTML =
+              "<div style='border-style: solid; border-width:thin; border-color: #009EE3; padding: 8px 8px 8px 8px; margin-top: 4px;'>" +
+              MPv1.text.discount_info1 + " <strong>" + MPv1.currencyIdToCurrency(response.response.currency_id) + " " +
+              Math.round(response.response.coupon_amount*100)/100 + "</strong> " + MPv1.text.discount_info2 + " " + response.response.name + ".<br>" +
+              MPv1.text.discount_info3 + " <strong>" + MPv1.currencyIdToCurrency(response.response.currency_id) +
+              " " + Math.round(MPv1.getAmountWithoutDiscount()*100)/100 + "</strong><br>" +
+              MPv1.text.discount_info4 + " <strong>" + MPv1.currencyIdToCurrency(response.response.currency_id) +
+              " " + Math.round(MPv1.getAmount()*100)/100 + "*</strong><br>" +
+              "<i>" + MPv1.text.discount_info5 + "</i><br>" +
+              "<a href='https://api.mercadolibre.com/campaigns/" + response.response.id + "/terms_and_conditions?format_type=html' target='_blank'>" +
+              MPv1.text.discount_info6 + "</a></div>";
             document.querySelector(MPv1.selectors.mpCouponError).style.display = 'none';
-            MPv1.coupon_of_discounts.status = false;
-            document.querySelector(MPv1.selectors.applyCoupon).style.background = null;
-            document.querySelector(MPv1.selectors.applyCoupon).value = MPv1.text.apply;
-            document.querySelector(MPv1.selectors.couponCode).value = "";
+            MPv1.coupon_of_discounts.status = true;
             document.querySelector(MPv1.selectors.couponCode).style.background = null;
+            document.querySelector(MPv1.selectors.couponCode).style.background = "url("+MPv1.paths.check+") 98% 50% no-repeat #fff";
+            document.querySelector(MPv1.selectors.applyCoupon).value = MPv1.text.remove;
+            MPv1.cardsHandler();
+            document.querySelector(MPv1.selectors.campaign_id).value = response.response.id;
+            document.querySelector(MPv1.selectors.campaign).value = response.response.name;
+          } else if (response.status == 400 || response.status == 404) {
+            document.querySelector(MPv1.selectors.mpCouponApplyed).style.display = 'none';
+            document.querySelector(MPv1.selectors.mpCouponError).style.display = 'block';
+            document.querySelector(MPv1.selectors.mpCouponError).innerHTML = response.response.message;
+            MPv1.coupon_of_discounts.status = false;
+            document.querySelector(MPv1.selectors.couponCode).style.background = null;
+            document.querySelector(MPv1.selectors.couponCode).style.background = "url("+MPv1.paths.error+") 98% 50% no-repeat #fff";
+            document.querySelector(MPv1.selectors.applyCoupon).value = MPv1.text.apply;
             document.querySelector(MPv1.selectors.discount).value = 0;
             MPv1.cardsHandler();
           }
+
           document.querySelector(MPv1.selectors.applyCoupon).disabled = false;
+          
         }
-      };
-      request.send(null);
+      });
+
     }
   }
 
-  MPv1.applyCoupon = function () {
-  }
 
   MPv1.getBin = function () {
     var cardSelector = document.querySelector(MPv1.selectors.paymentMethodSelector);
@@ -629,7 +635,7 @@
     }
 
     MPv1.sdkResponseHandler = function(status, response) {
-      
+
       var $form = MPv1.getForm();
 
       document.querySelector(MPv1.selectors.box_loading).style.background = "";
@@ -645,10 +651,10 @@
           document.querySelector(MPv1.selectors.cardTruncated).value=card;
         }
 
-        if (!MPv1.create_token_on.event) {    
+        if (!MPv1.create_token_on.event) {
           doSubmit=true;
           btn = document.querySelector(MPv1.selectors.form);
-          btn.submit();            
+          btn.submit();
         }
       }
     }
@@ -799,6 +805,11 @@
     *
     */
 
+    MPv1.referer = (function () {
+      var referer = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+
+      return referer;
+    })();
 
     MPv1.AJAX = function(options) {
       var useXDomain = !!window.XDomainRequest;
@@ -806,7 +817,7 @@
       var req = useXDomain ? new XDomainRequest() : new XMLHttpRequest()
       var data;
 
-      options.url += (options.url.indexOf("?") >= 0 ? "&" : "?") + "referer="+escape(ModuleAnalytics.referer);
+      options.url += (options.url.indexOf("?") >= 0 ? "&" : "?") + "referer="+escape(MPv1.referer);
 
       options.requestedMethod = options.method;
 

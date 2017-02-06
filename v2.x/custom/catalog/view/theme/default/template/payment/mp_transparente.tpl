@@ -1,4 +1,3 @@
-<link rel="stylesheet" type="text/css" href="./catalog/view/css/mp_form.css">
 <link rel="stylesheet" type="text/css" href="./catalog/view/css/custom_checkout_mercadopago.css">
 <div id="mp_custom"></div>
 <input type="hidden" id="public_key" value="<?php echo $public_key;?>">
@@ -83,24 +82,28 @@
   );
   ?>
 
-  <?php if ($mp_transparente_coupon) : ?>
+  <!-- <div id="mercadopago-form" > -->
+  <form method="post" id="mercadopago-formulario" name="mercadopago-formulario" action="<?php echo $actionForm; ?>">
+
     <div class="mp-box-inputs mp-line" id="mercadopago-form-coupon">
       <label for="couponCodeLabel"><?php echo $form_labels['form']['coupon_of_discounts']; ?></label>
       <div class="mp-box-inputs mp-col-65">
         <input type="text" id="couponCode" name="mercadopago_custom[coupon_code]" autocomplete="off" maxlength="24" />
-        <span class="mp-discount" id="mpCouponApplyed" ></span>
-        <span class="mp-error" id="mpCouponError" ></span>
       </div>
+
       <div class="mp-box-inputs mp-col-10">
         <div id="mp-separete-date"></div>
       </div>
+
       <div class="mp-box-inputs mp-col-25">
         <input type="button" class="button" id="applyCoupon" value="<?php echo $form_labels['form']['apply']; ?>" >
       </div>
+
+      <div class="mp-box-inputs mp-col-100">
+        <span class="mp-discount" id="mpCouponApplyed" ></span>
+        <span class="mp-error" id="mpCouponError" ></span>
+      </div>
     </div>
-  <?php endif; ?>
-  <!-- <div id="mercadopago-form" > -->
-  <form method="post" id="mercadopago-formulario" name="mercadopago-formulario" action="<?php echo $actionForm; ?>">
 
     <div id="mercadopago-form-customer-and-card">
 
@@ -244,7 +247,7 @@
     </div>
     <div class="mp-box-inputs mp-col-100" id="mercadopago-utilities">
       <input type="text" id="site_id"  name="mercadopago_custom[site_id]"/>
-      <input type="text" id="amount" value="<?php echo $amount;?>" name="mercadopago_custom[amount]"/>
+      <input type="text" id="amount" value="<?php echo round($amount,2);?>" name="mercadopago_custom[amount]"/>
       <input type="hidden" id="campaign_id" name="mercadopago_custom[campaign_id]"/>
       <input type="hidden" id="campaign" name="mercadopago_custom[campaign]"/>
       <input type="hidden" id="discount" name="mercadopago_custom[discount]"/>
@@ -261,7 +264,7 @@
 <script>
 
   function async(u, c) {
-    var d = document; 
+    var d = document;
     var t = 'script';
     var o = d.createElement(t);
     var s = d.getElementsByTagName(t)[0];
@@ -289,16 +292,18 @@
     MPv1.text.apply = '<?php echo $form_labels["form"]["apply"]; ?>';
     MPv1.text.remove = '<?php echo $form_labels["form"]["remove"]; ?>';
     MPv1.text.coupon_empty = '<?php echo $form_labels["form"]["coupon_empty"]; ?>';
-    MPv1.paths.loading = "";
+
+    MPv1.paths.check = "./image/mercadopago/check.png";
+    MPv1.paths.error = "./image/mercadopago/error.png";
+    MPv1.paths.loading = "./image/mercadopago/loading.gif";
 
     var mercadopago_coupon = $("#mercadopago_coupon");
     var url_site = window.location.href.split('index.php')[0];
     var url_message = url_site.slice(-1) == '/' ? url_site : url_site + '/';
-    url_message += 'index.php?route=payment/mp_transparente/coupon&coupon_id=' + mercadopago_coupon.val();
+    url_message += 'index.php?route=payment/mp_transparente/coupon';
 
-    MPv1.Initialize(mercadopago_site_id, mercadopago_public_key, true, url_message, mercadopago_payer_email);
+    MPv1.Initialize(mercadopago_site_id, mercadopago_public_key, '<?php echo $mp_transparente_coupon == 0? false:true;?>', url_message, mercadopago_payer_email);
 
   });
 
 </script>
-
