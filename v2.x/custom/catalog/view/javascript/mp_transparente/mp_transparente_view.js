@@ -80,6 +80,9 @@
                 });
 
                 document.getElementById('button_pay').addEventListener('click', function doPayment () {
+
+                    alert("Entrou aqui");
+
                     var tries = localStorage.getItem('payment')? parseInt(localStorage.getItem('payment')):0;
                     var card_number = document.getElementById('cc_num');
                     if(tries)
@@ -349,6 +352,7 @@
 
             function pay(payment, url_backend, spinner)
             {
+                alert("teste");
                 var card_number = document.getElementById('cc_num');
                 payment.issuer_id = card_number.hasAttribute("data-card-issuer")?
                 card_number.getAttribute("data-card-issuer") : payment.issuer_id;
@@ -363,9 +367,19 @@
                     url: url_backend,
                     data: payment,
                     success: function success(data) {
+                        alert("teste 1");
+
                         console.log('payment data');
                         console.log(data);
                         response_payment = JSON.parse(data);
+                        console.info("====ModuleAnalytics enviar=====");
+                        ModuleAnalytics.setToken(response.token);
+                        ModuleAnalytics.setPaymentId(response.paymentId);
+                        ModuleAnalytics.setPaymentType(response.paymentType);
+                        ModuleAnalytics.setCheckoutType(response.checkoutType);
+                        console.info("====ModuleAnalytics=====");
+                        ModuleAnalytics.put();
+
                         document.getElementById('formulario').style = 'margin-left: 22%';
                         var acceptable_status = ["approved", "in_process"];
                         if (acceptable_status.indexOf(response_payment.status) > -1)

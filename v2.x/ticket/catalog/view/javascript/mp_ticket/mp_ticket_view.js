@@ -108,17 +108,25 @@
                     response = JSON.parse(data);
                     if((response.error || valid_status.indexOf(status) < 0) && response.url)
                     {
+                        ModuleAnalytics.setToken(response.token);
+                        ModuleAnalytics.setPaymentId(response.paymentId);
+                        ModuleAnalytics.setPaymentType(response.paymentType);
+                        ModuleAnalytics.setCheckoutType(response.checkoutType);
+                        ModuleAnalytics.put();
+
                         console.log('abrindo boleto: ' + response.url);
                         var paymentWindow = window.open(response.url);
                         if(!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed=='undefined') 
                         { 
                             //TODO: Trocar isso por um getMessage com o idioma nativo
                             alert('Please, disable your pop up blocker');
+                            spinner.stop();
                             return;
                         }
 
-                        var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
+                        var location = url_site.slice(-1) == '/' ? url_site : url_site + '/';
                         location += 'index.php?route=checkout/success';
+
                         window.location.href = location;
                     }
                     else

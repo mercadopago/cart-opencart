@@ -190,7 +190,6 @@ class MP {
 			"data" => $payment,
 		);
 
-		// error_log("ticket enviado: " . json_encode($request));
 		$result = MPRestClient::post($request);
 
 		return $result;

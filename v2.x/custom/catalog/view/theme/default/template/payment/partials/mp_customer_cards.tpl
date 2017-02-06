@@ -33,3 +33,28 @@
  		</div>
  	</div>
  	<script type="text/javascript" src="./catalog/view/javascript/mp_transparente/mp_transparente_cc.js"></script>
+	<?php echo('<script defer src="https://secure.mlstatic.com/modules/javascript/analytics.js"></script>'); ?>
+
+<script type="text/javascript">
+
+    $.getScript("https://secure.mlstatic.com/modules/javascript/analytics.js", function(){
+
+    	console.info("token ===== <?php echo $analytics['token'] ?>");
+    	console.info("platform ===== <?php echo $analytics['platform'] ?>");
+    	console.info("platformVersion ===== <?php echo $analytics['platformVersion'] ?>");
+    	console.info("moduleVersion ===== <?php echo $analytics['moduleVersion'] ?>");
+    	console.info("payerEmail ===== <?php echo $analytics['payerEmail'] ?>");    	
+
+
+        ModuleAnalytics.setToken("<?php echo $analytics['token'] ?>");
+        ModuleAnalytics.setPlatform("<?php echo $analytics['platform'] ?>");
+        ModuleAnalytics.setPlatformVersion("<?php echo $analytics['platformVersion'] ?>");
+        ModuleAnalytics.setModuleVersion("<?php echo $analytics['moduleVersion'] ?>");
+        ModuleAnalytics.setPayerEmail("<?php echo $analytics['payerEmail'] ?>");
+        ModuleAnalytics.setUserLogged(parseInt("<?php echo $analytics['userLogged'] ?>"));
+        ModuleAnalytics.setInstalledModules("<?php echo $analytics['installedModules'] ?>");
+        ModuleAnalytics.setAdditionalInfo("<?php echo $analytics['additionalInfo'] ?>");
+        ModuleAnalytics.post();
+
+     });
+</script>
