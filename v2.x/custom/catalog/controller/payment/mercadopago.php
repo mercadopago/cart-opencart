@@ -62,44 +62,16 @@ class MP {
 		$this->access_data = $access_data['response'];
 		return $this->access_data['access_token'];
 	}
-
-    public function check_discount_campaigns($transaction_amount, $payer_email, $coupon_code) {
-        $request = array(
-            "uri" => "/discount_campaigns",
-            "params" => array(
-                "access_token" => $this->get_access_token(),
-                "transaction_amount" => $transaction_amount,
-                "payer_email" => $payer_email,
-                "coupon_code" => $coupon_code
-            )
-        );
-         
-         try {
-         	$discount_info = MPRestClient::get($request);
-         } catch (MercadoPagoException $e) {
-		    $discount_info = array(
-		    		"status" => "404",
-		    		"response" => array (
-		          	"message" => $e->getMessage(),
-		          	"error"=>"campaign-code-doesnt-match"
-		          	)
-				);
-         }   
-
-        return $discount_info;
-    }
-
 	/**
 	 * Get information for specific payment
 	 * @param int $id
 	 * @return array(json)
 	 */
 	public function get_payment($id) {
-		//$uri_prefix = $this->sandbox ? "/sandbox" : "";
+		$uri_prefix = $this->sandbox ? "/sandbox" : "";
 
 		$request = array(
-			//"uri" => $uri_prefix . "/collections/notifications/{$id}",
-			"uri" => "/collections/notifications/{$id}",
+			"uri" => $uri_prefix . "/collections/notifications/{$id}",
 			"params" => array(
 				"access_token" => $this->get_access_token(),
 			),
@@ -217,8 +189,10 @@ class MP {
 			),
 			"data" => $payment,
 		);
-		
+
+		// error_log("ticket enviado: " . json_encode($request));
 		$result = MPRestClient::post($request);
+
 		return $result;
 	}
 /**
@@ -227,8 +201,7 @@ class MP {
  * @return array(json)
  */
 	public function create_preference($preference) {
-		$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
-
+		$$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
 		$request = array(
 			"uri" => "/checkout/preferences",
 			"params" => array(
@@ -320,6 +293,21 @@ class MP {
 		$preapproval_payment_result = MPRestClient::put($request);
 		return $preapproval_payment_result;
 	}
+
+	public function check_discount_campaigns($transaction_amount, $payer_email, $coupon_code) {
+		$request = array(
+			"uri" => "/discount_campaigns",
+			"params" => array(
+				"access_token" => $this->get_access_token(),
+				"transaction_amount" => $transaction_amount,
+				"payer_email" => $payer_email,
+				"coupon_code" => $coupon_code
+			)
+		);
+		$discount_info = MPRestClient::get($request);
+		return $discount_info;
+	}
+
 	/* Generic resource call methods */
 	/**
 	 * Generic resource get
@@ -462,10 +450,11 @@ class MPRestClient {
 		$connect = curl_init();
 		curl_setopt($connect, CURLOPT_USERAGENT, "MercadoPago PHP SDK v" . MP::version);
 		curl_setopt($connect, CURLOPT_RETURNTRANSFER, true);
-		//curl_setopt($connect, CURLOPT_SSL_VERIFYPEER, true);
+		curl_setopt($connect, CURLOPT_SSL_VERIFYPEER, true);
 		curl_setopt($connect, CURLOPT_CAINFO, $GLOBALS["LIB_LOCATION"] . "/cacert.pem");
 		curl_setopt($connect, CURLOPT_CUSTOMREQUEST, $request["method"]);
 		curl_setopt($connect, CURLOPT_HTTPHEADER, $headers);
+
 		// Set parameters and url
 		if (isset($request["params"]) && is_array($request["params"]) && count($request["params"]) > 0) {
 			$request["uri"] .= (strpos($request["uri"], "?") === false) ? "?" : "&";
@@ -493,8 +482,8 @@ class MPRestClient {
 		}
 		return $connect;
 	}
-
 	private static function exec($request) {
+		// private static function exec($method, $uri, $data, $content_type) {
 		$connect = self::build_request($request);
 		$api_result = curl_exec($connect);
 		$api_http_code = curl_getinfo($connect, CURLINFO_HTTP_CODE);
@@ -505,21 +494,19 @@ class MPRestClient {
 			"status" => $api_http_code,
 			"response" => json_decode($api_result, true),
 		);
-
-		if ($response['status'] >= 400) {
-			$message = $response['response']['message'];
-			if (isset($response['response']['cause'])) {
-				if (isset($response['response']['cause']['code']) && isset($response['response']['cause']['description'])) {
-					$message .= " - " . $response['response']['cause']['code'] . ': ' . $response['response']['cause']['description'];
-				} else if (is_array($response['response']['cause'])) {
-					foreach ($response['response']['cause'] as $cause) {
-						$message .= " - " . $cause['code'] . ': ' . $cause['description'];
-					}
-				}
-			}
-			throw new MercadoPagoException($message, $response['status']);
-		}
-
+		// if ($response['status'] >= 400) {
+		// 	$message = $response['response']['message'];
+		// 	if (isset($response['response']['cause'])) {
+		// 		if (isset($response['response']['cause']['code']) && isset($response['response']['cause']['description'])) {
+		// 			$message .= " - " . $response['response']['cause']['code'] . ': ' . $response['response']['cause']['description'];
+		// 		} else if (is_array($response['response']['cause'])) {
+		// 			foreach ($response['response']['cause'] as $cause) {
+		// 				$message .= " - " . $cause['code'] . ': ' . $cause['description'];
+		// 			}
+		// 		}
+		// 	}
+		// 	throw new MercadoPagoException($message, $response['status']);
+		// }
 		curl_close($connect);
 		return $response;
 	}
