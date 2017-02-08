@@ -189,7 +189,7 @@ class MP {
 			),
 			"data" => $payment,
 		);
-		error_log("ticket enviado: " . json_encode($request));
+
 		$result = MPRestClient::post($request);
 
 		return $result;
@@ -200,7 +200,7 @@ class MP {
  * @return array(json)
  */
 	public function create_preference($preference) {
-		$$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
+		$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
 		$request = array(
 			"uri" => "/checkout/preferences",
 			"params" => array(
@@ -292,6 +292,21 @@ class MP {
 		$preapproval_payment_result = MPRestClient::put($request);
 		return $preapproval_payment_result;
 	}
+
+	public function check_discount_campaigns($transaction_amount, $payer_email, $coupon_code) {
+		$request = array(
+			"uri" => "/discount_campaigns",
+			"params" => array(
+				"access_token" => $this->get_access_token(),
+				"transaction_amount" => $transaction_amount,
+				"payer_email" => $payer_email,
+				"coupon_code" => $coupon_code
+			)
+		);
+		$discount_info = MPRestClient::get($request);
+		return $discount_info;
+	}
+
 	/* Generic resource call methods */
 	/**
 	 * Generic resource get
@@ -478,19 +493,19 @@ class MPRestClient {
 			"status" => $api_http_code,
 			"response" => json_decode($api_result, true),
 		);
-		if ($response['status'] >= 400) {
-			$message = $response['response']['message'];
-			if (isset($response['response']['cause'])) {
-				if (isset($response['response']['cause']['code']) && isset($response['response']['cause']['description'])) {
-					$message .= " - " . $response['response']['cause']['code'] . ': ' . $response['response']['cause']['description'];
-				} else if (is_array($response['response']['cause'])) {
-					foreach ($response['response']['cause'] as $cause) {
-						$message .= " - " . $cause['code'] . ': ' . $cause['description'];
-					}
-				}
-			}
-			throw new MercadoPagoException($message, $response['status']);
-		}
+		// if ($response['status'] >= 400) {
+		// 	$message = $response['response']['message'];
+		// 	if (isset($response['response']['cause'])) {
+		// 		if (isset($response['response']['cause']['code']) && isset($response['response']['cause']['description'])) {
+		// 			$message .= " - " . $response['response']['cause']['code'] . ': ' . $response['response']['cause']['description'];
+		// 		} else if (is_array($response['response']['cause'])) {
+		// 			foreach ($response['response']['cause'] as $cause) {
+		// 				$message .= " - " . $cause['code'] . ': ' . $cause['description'];
+		// 			}
+		// 		}
+		// 	}
+		// 	throw new MercadoPagoException($message, $response['status']);
+		// }
 		curl_close($connect);
 		return $response;
 	}
