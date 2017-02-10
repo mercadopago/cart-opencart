@@ -3,7 +3,7 @@
 require_once "mercadopago.php";
 
 class ControllerPaymentMPTransparente extends Controller {
-	private $version = "2.1";
+	private $version = "2.1.1";
 	private $versionModule = "2.0";
 	private $error;
 	private $order_info;
@@ -24,6 +24,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['button_back'] = $this->language->get('button_back');
 		$data['terms'] = '';
 		$data['public_key'] = $this->config->get('mp_transparente_public_key');
+		$data['site_id'] = $this->config->get('mp_transparente_country');
 
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -437,5 +438,5 @@ class ControllerPaymentMPTransparente extends Controller {
         error_log("===setPreModuleAnalytics====" . json_encode($return));
 
         return $return;
-    }		
+    }
 }
