@@ -1,0 +1,53 @@
+IMPORTANT: YOUR SERVER MUST HAVE SSL ENABLE, OTHERWISE THE API CALLS TO MERCADO PAGO WILL NOT WORK
+
+CHANGELOG:
+
+V2.0 - 08/12/2016
+- Implements settings API (CUSTOM & TICKET)
+
+V1.4.1 - 30/12/2016
+- Fix where user add tax, shipment and discounts.
+
+V1.4.0 - 26/08/2016
+- Feature coupon
+- Fix when the user canceled the purchase at checkout standard and back to the store.
+- Fix issue about shipment and voucher
+- Apply improvements
+
+V1.3.1
+- Checkout Peru (Custom and Standard)
+- Tons of bug fixes
+- Tracking now working
+
+CHANGELOG:
+V1.2.1
+- Improved performance and stability on ticket, standard  and custom checkouts
+- Removed the need of SSL certificate for standard checkout
+- Fixed notification error bugs on custom checkout
+- Fixed card creation bug on custom checkout
+- Fixed data validation on configuration (standard, custom and ticket checkouts)
+- Fixed payment bug on ticket checkout
+
+
+V1.2
+- Customers & Cards now available for custom checkout
+
+V 1.1
+-  Splitted v2.x in 3 different modules (standard, ticket and custom)
+- Improved performance
+- Corrected the view and connection bugs
+
+V1.0.3 (11/03/2016)
+-  Splitted v2.x in two different modules (standard and custom)
+
+V1.0.2 (11/03/2016)
+- Added custom checkout (only cards)
+
+V1.0.1 (29/01/2016)
+- Fixed issues: 
+ https://github.com/mercadopago/cart-opencart/issues/31
+ https://github.com/mercadopago/cart-opencart/issues/30
+ https://github.com/mercadopago/cart-opencart/issues/33
+ https://github.com/mercadopago/cart-opencart/issues/17
+
+- Added functional tests (fill admin data and checkout)
