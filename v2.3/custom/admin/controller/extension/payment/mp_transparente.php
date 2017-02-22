@@ -71,7 +71,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		);
 
 		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_transparente&token=' . $this->session->data['token'];
-		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token'];
+		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token'];
 		$data['category_list'] = $this->getCategoryList();
 		$data['countries'] = $this->getCountries();
 		$data['installments'] = $this->getInstallments();
