@@ -2,53 +2,60 @@
 
 require_once '../catalog/controller/extension/payment/mercadopago.php';
 
-class ControllerExtensionPaymentMPTransparente extends Controller {
+class ControllerExtensionPaymentMPStandard extends Controller {
 	private $_error = array();
-	private $payment_types = array('debvisa', 'debmaster', 'credit_card', 'debit_card');
 	private $version = "2.3";
+	private $versionModule = "2.3";
 
 	public function index() {
-
-		$prefix = 'mp_transparente_';
-		$fields = array('public_key', 'access_token', 'status', 'category_id',
-			'debug', 'coupon', 'country', 'installments', 'order_status_id',
-			'order_status_id_completed', 'order_status_id_pending',
-			'order_status_id_canceled', 'order_status_id_in_process',
-			'order_status_id_rejected', 'order_status_id_refunded',
+		$prefix = 'mp_standard_';
+		$fields = array('client_id', 'client_secret', 'status', 'category_id',
+			'debug', 'sandbox', 'country', 'installments', 'order_status_id',
+			'order_status_id_completed', 'order_status_id_pending', 'order_status_id_canceled', 'type_checkout',
+			'order_status_id_in_process', 'order_status_id_rejected', 'order_status_id_refunded',
 			'order_status_id_in_mediation', 'order_status_chargeback');
 
-		$this->load->language('extension/payment/mp_transparente');
+		$entries_prefix = 'entry_';
+		$entries = array('autoreturn_tooltip', 'public_key_tooltip', 'access_token_tooltip',
+			'client_id_tooltip', 'client_secret_tooltip', 'url_tooltip',
+			'payments_not_accept_tooltip', 'debug_tooltip', 'sandbox_tooltip',
+			'category_tooltip', 'order_status_tooltip', 'order_status_completed_tooltip',
+			'order_status_pending_tooltip', 'order_status_canceled_tooltip',
+			'order_status_in_process_tooltip', 'order_status_rejected_tooltip',
+			'order_status_refunded_tooltip', 'order_status_in_mediation_tooltip',
+			'order_status_chargeback_tooltip', 'notification_url_tooltip', 'public_key',
+			'access_token', 'notification_url', 'autoreturn', 'client_id', 'client_secret',
+			'installments', 'payments_not_accept', 'status', 'geo_zone', 'country', 'sonda_key',
+			'order_status', 'ipn_status', 'url', 'debug', 'ipn', 'sandbox', 'type_checkout', 'category',
+			'order_status_general', 'order_status_completed', 'order_status_pending', 'order_status_canceled',
+			'order_status_in_process', 'order_status_rejected', 'order_status_refunded', 'order_status_in_mediation',
+			'order_status_chargeback');
+		$this->load->language('extension/payment/mp_standard');
+
+		foreach ($entries as $entry) {
+			$name = $entries_prefix . $entry;
+			$data[$name] = $this->language->get($name);
+		}
+
 		$data['heading_title'] = $this->language->get('heading_title');
 		$this->document->setTitle($data['heading_title']);
 		$this->load->model('setting/setting');
 
 		$text_prefix = 'text_';
 		$texts = array('enabled', 'disabled', 'all_zones', 'yes', 'no', 'mercadopago');
+
 		foreach ($texts as $text) {
 			$name = $text_prefix . $text;
 			$data[$name] = $this->language->get($name);
 		}
-
-		$entry_prefix = 'entry_';
-		$entries = array('public_key_tooltip', 'access_token_tooltip', 'access_token_tooltip',
-			'payments_not_accept_tooltip', 'payments_not_accept_tooltip', 'debug_tooltip', 'coupon_tooltip',
-			'category_tooltip', 'order_status_tooltip', 'order_status_completed_tooltip',
-			'order_status_pending_tooltip', 'order_status_canceled_tooltip', 'order_status_in_process_tooltip',
-			'order_status_rejected_tooltip', 'order_status_refunded_tooltip', 'order_status_in_mediation_tooltip',
-			'order_status_chargeback_tooltip', 'order_status_chargeback_tooltip', 'public_key', 'access_token',
-			'installments', 'payments_not_accept', 'status', 'geo_zone', 'country', 'sonda_key', 'order_status',
-			'ipn_status', 'debug', 'coupon','category', 'order_status_general', 'order_status_completed', 'order_status_pending',
-			'order_status_canceled', 'order_status_in_process', 'order_status_rejected', 'order_status_refunded',
-			'order_status_in_mediation', 'order_status_chargeback');
-
-		foreach ($entries as $entry) {
-			$name = $entry_prefix . $entry;
-			$data[$name] = $this->language->get($name);
-		}
-
+		error_log("=====setSettings 1======");
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
 		$data['tab_general'] = $this->language->get('tab_general');
+
+		$data['mp_standard_enable_return'] = isset($this->request->post['mp_standard_enable_return']) ?
+		$this->request->post['mp_standard_enable_return'] :
+		$this->config->get('mp_standard_enable_return');
 
 		$data['error_warning'] = isset($this->_error['warning']) ? $this->_error['warning'] : '';
 		$data['error_acc_id'] = isset($this->_error['acc_id']) ? $this->_error['acc_id'] : '';
@@ -67,12 +74,13 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/payment/mp_transparente', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('extension/payment/mp_standard', 'token=' . $this->session->data['token'], 'SSL'),
 		);
 
-		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_transparente&token=' . $this->session->data['token'];
+		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_standard&token=' . $this->session->data['token'];
 		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token'];
 		$data['category_list'] = $this->getCategoryList();
+		$data['type_checkout'] = array("Redirect", "Lightbox", "Iframe");
 		$data['countries'] = $this->getCountries();
 		$data['installments'] = $this->getInstallments();
 		$data['header'] = $this->load->controller('common/header');
@@ -82,6 +90,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 
 		if ($_SERVER['REQUEST_METHOD'] == "POST") {
+			error_log("=====setSettings 1======");
 			foreach ($fields as $field) {
 				$fieldname = $prefix . $field;
 				$this->request->post[$fieldname] = str_replace(" ", "", $this->request->post[$fieldname]);
@@ -96,17 +105,14 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			}
 		}
 
-		$country_id = $this->config->get('mp_transparente_country') == null ?
-		'MLA' : $this->config->get('mp_transparente_country');
+		$country_id = $this->config->get('mp_standard_country') == null ?
+		'MLA' : $this->config->get('mp_standard_country');
 
 		$methods_api = $this->getMethods($country_id);
 		$data['methods'] = array();
-		$data['mp_transparente_methods'] = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
-		sleep(3);
+		$data['mp_standard_methods'] = preg_split("/[\s,]+/", $this->config->get('mp_standard_methods'));
 		foreach ($methods_api as $method) {
-			if (in_array($method['payment_type_id'], $this->payment_types)) {
-				$data['methods'][] = $method;
-			}
+			$data['methods'][] = $method;
 		}
 
 		$data['payment_style'] = isset($data['methods']) && count($data['methods']) > 12 ?
@@ -115,25 +121,21 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
 			$this->load->model('setting/setting');
 
-			if (isset($this->request->post['mp_transparente_methods'])) {
-				$names = $this->request->post['mp_transparente_methods'];
-				$this->request->post['mp_transparente_methods'] = '';
+			if (isset($this->request->post['mp_standard_methods'])) {
+				$names = $this->request->post['mp_standard_methods'];
+				$this->request->post['mp_standard_methods'] = '';
 				foreach ($names as $name) {
-					$this->request->post['mp_transparente_methods'] .= $name . ',';
+					$this->request->post['mp_standard_methods'] .= $name . ',';
 				}
 			}
-			error_log("aq1");
-			$this->model_setting_setting->editSetting('mp_transparente', $this->request->post);
-
-			$this->setSettings();
+			$this->model_setting_setting->editSetting('mp_standard', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
+			$this->setSettings();
 			$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token']);
-
-			
 		}
 
-		$this->response->setOutput($this->load->view('extension/payment/mp_transparente.tpl', $data));
+		$this->response->setOutput($this->load->view('extension/payment/mp_standard.tpl', $data));
 
 	}
 
@@ -142,20 +144,18 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$payment_methods = $this->getMethods($country_id);
 
 		foreach ($payment_methods as $method) {
-			if (in_array($method['payment_type_id'], $this->payment_types)) {
-				$data['methods'][] = $method;
-			}
+			$data['methods'][] = $method;
 		}
 
-		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
+		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('mp_standard_methods'));
 		foreach ($methods_excludes as $exclude) {
-			$data['mp_transparente_methods'][] = $exclude;
+			$data['mp_standard_methods'][] = $exclude;
 
 		}
 
 		if (isset($data['methods'])) {
 			$data['payment_style'] = count($data['methods']) > 12 ? "float:left; margin-left:7%" : "float:left; margin-left:5%";
-			$this->response->setOutput($this->load->view('extension/payment/mp_transparente_payment_methods_partial.tpl', $data));
+			$this->response->setOutput($this->load->view('extension/payment/mp_standard_payment_methods_partial.tpl', $data));
 		}
 	}
 
@@ -176,13 +176,20 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //returns the transference value like a string
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded')); //sets the header
 		curl_setopt($ch, CURLOPT_URL, $url); //oauth API
-		if (isset($posts)) {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
+		try {
+			if (isset($posts)) {
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
+			}
+			$jsonresult = curl_exec($ch); //execute the conection
+			curl_close($ch);
+			$result = json_decode($jsonresult, true);
+			return $result;
+		} catch (Exception $e) {
+			$error = curl_error($ch);
+			error_log($error);
+			$this->_error['warning'] = $error;
 		}
-		$jsonresult = curl_exec($ch); //execute the conection
-		curl_close($ch);
-		$result = json_decode($jsonresult, true);
-		return $result;
+
 	}
 
 	private function getCategoryList() {
@@ -251,46 +258,55 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		return $installments;
 	}
 
-	private function validate() {
-		if (!$this->user->hasPermission('modify', 'extension/payment/mp_transparente')) {
-			$this->_error['warning'] = $this->language->get('error_permission');
-			
-		}
-		return count($this->_error) < 1;
+    public function setSettings()
+    {
+		error_log("=====setSettings 1======");
+		$client_id = $this->config->get('mp_standard_client_id');
+		$client_secret = $this->config->get('mp_standard_client_secret');
+		$mp = new MP($client_id, $client_secret);
 
-	}
-
-	public function setSettings() {
         $moduleVersion = $this->version;
+        $siteId = $this->config->get('mp_standard_country');
+        $dataCreated = date('Y-m-d H:i:s');
+
         $phpVersion = phpversion();
-        $modules = "OpenCart";
-        $modulesVersion = "2.0";
-        $statusCustom = "false";
-        $custom_cupom = "false";
+        $soServer = PHP_OS;
+        $modulesId = "OPENCART " . "2.0";
 
-        if ($this->request->post['mp_transparente_coupon'] == "1") {
-            $custom_cupom = "true";
-        }
+        $standardStatus = "false";
 
-    	if ($this->request->post['mp_transparente_status'] == "1") {
-            $statusCustom = "true";
+        if ($this->request->post['mp_standard_status'] == "1") {
+			$standardStatus = "true";
         }
 
         $request = array(
-            "module_version" => $moduleVersion,
-            "checkout_custom_credit_card" => $statusCustom,
-            "code_version" => $phpVersion,
-            "checkout_custom_credit_card_coupon" => $custom_cupom,
-            "platform" => $modules,
-            "platform_version" => $modulesVersion
-        );
+            "module_version" => $this->versionModule,
+            "checkout_basic" => $standardStatus,
+            "code_version" => phpversion(),
+            "platform" => "OpenCart",
+            "platform_version" => $this->version
+    	);
 
         try {
-			$access_token = $this->config->get('mp_transparente_access_token');
-			$mp = new MP($access_token);        	
-            $userResponse = $mp->saveSettings($request);
+			$mp->saveSettings($request);
         } catch (Exception $e) {
         	error_log($e);
         }
     }
+
+	private function validate() {
+		if (!$this->user->hasPermission('modify', 'extension/payment/mp_standard')) {
+			$this->_error['warning'] = $this->language->get('error_permission');
+		}
+		if (!$this->request->post['mp_standard_client_id']) {
+			$this->_error['error_client_id'] = $this->language->get('error_client_id');
+		}
+
+		if (!$this->request->post['mp_standard_client_secret']) {
+			$this->_error['error_client_secret'] = $this->language->get('error_client_secret');
+		}
+
+		return count($this->_error) < 1;
+
+	}
 }

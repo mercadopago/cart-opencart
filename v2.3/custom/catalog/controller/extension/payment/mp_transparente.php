@@ -3,8 +3,8 @@
 require_once "mercadopago.php";
 
 class ControllerExtensionPaymentMPTransparente extends Controller {
-	private $version = "2.1";
-	private $versionModule = "2.0";
+	private $version = "2.3";
+	private $versionModule = "2.3";
 	private $error;
 	private $order_info;
 	private $message;
