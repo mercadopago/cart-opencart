@@ -227,9 +227,7 @@ class MP {
  * @return array(json)
  */
 	public function create_preference($preference) {
-
 		$header = array("user-agent" => "platform:desktop,type:OpenCart2,so:1.0");
-
 		$request = array(
 			"uri" => "/checkout/preferences",
 			"params" => array(
