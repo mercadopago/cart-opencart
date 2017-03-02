@@ -82,9 +82,16 @@
       site_id: "#site_id",
       CustomerAndCard: '#CustomerAndCard',
 
+      boxInstallments: '#mp-box-installments',
+      boxInstallmentsSelector: '#mp-box-installments-selector',
+      taxCFT: '#mp-box-input-tax-cft',
+      taxTEA: '#mp-box-input-tax-tea',
+      taxTextCFT: '#mp-tax-cft-text',
+      taxTextTEA: '#mp-tax-tea-text',
+
       box_loading: "#mp-box-loading",
       submit: "#btnSubmit",
-      form: '#mercadopago-formulario',
+      form: '#mercadopago-form',
       formDiv: '#mercadopago-form',
       formCoupon: '#mercadopago-form-coupon',
       formCustomerAndCard: '#mercadopago-form-customer-and-card',
@@ -194,7 +201,6 @@
             document.querySelector(MPv1.selectors.mpCouponApplyed).style.display = 'block';
             document.querySelector(MPv1.selectors.discount).value = response.response.coupon_amount;
             document.querySelector(MPv1.selectors.mpCouponApplyed).innerHTML =
-              "<div style='border-style: solid; border-width:thin; border-color: #009EE3; padding: 8px 8px 8px 8px; margin-top: 4px;'>" +
               MPv1.text.discount_info1 + " <strong>" + MPv1.currencyIdToCurrency(response.response.currency_id) + " " +
               Math.round(response.response.coupon_amount*100)/100 + "</strong> " + MPv1.text.discount_info2 + " " + response.response.name + ".<br>" +
               MPv1.text.discount_info3 + " <strong>" + MPv1.currencyIdToCurrency(response.response.currency_id) +
@@ -203,7 +209,7 @@
               " " + Math.round(MPv1.getAmount()*100)/100 + "*</strong><br>" +
               "<i>" + MPv1.text.discount_info5 + "</i><br>" +
               "<a href='https://api.mercadolibre.com/campaigns/" + response.response.id + "/terms_and_conditions?format_type=html' target='_blank'>" +
-              MPv1.text.discount_info6 + "</a></div>";
+              MPv1.text.discount_info6 + "</a>";
             document.querySelector(MPv1.selectors.mpCouponError).style.display = 'none';
             MPv1.coupon_of_discounts.status = true;
             document.querySelector(MPv1.selectors.couponCode).style.background = null;
@@ -225,7 +231,7 @@
           }
 
           document.querySelector(MPv1.selectors.applyCoupon).disabled = false;
-          
+
         }
       });
 
@@ -437,7 +443,21 @@
 
       // fragment.appendChild(option);
       for (var i = 0; i < payerCosts.length; i++) {
-        html_option += '<option value="'+ payerCosts[i].installments +'">' + (payerCosts[i].recommended_message || payerCosts[i].installments) + '</option>';
+
+        // Resolution 51/2017
+        var dataInput = "";
+        if(MPv1.site_id == 'MLA'){
+          var tax = payerCosts[i].labels;
+          if(tax.length > 0){
+            for (var l = 0; l < tax.length; l++) {
+              if (tax[l].indexOf('CFT_') !== -1){
+                dataInput = 'data-tax="' + tax[l] + '"'
+              }
+            }
+          }
+        }
+
+        html_option += '<option value="'+ payerCosts[i].installments +'" '+ dataInput +'>' + (payerCosts[i].recommended_message || payerCosts[i].installments) + '</option>';
       }
 
       // not take the user's selection if equal
@@ -446,6 +466,8 @@
       }
 
       selectorInstallments.removeAttribute('disabled');
+
+      MPv1.showTaxes();
     }
   }
 
@@ -552,8 +574,6 @@
 
       var $inputs = MPv1.getForm().querySelectorAll('[data-checkout]');
       var $inputs_to_create_token = MPv1.getInputsToCreateToken();
-
-      console.log("createTokenByEvent", $inputs_to_create_token);
 
       for(var x = 0; x < $inputs.length; x++){
         var element = $inputs[x];
@@ -798,6 +818,29 @@
 
     // MPv1.cardsHandler();
 
+    MPv1.showTaxes = function(){
+      var selectorIsntallments = document.querySelector(MPv1.selectors.installments);
+      var tax = selectorIsntallments.options[selectorIsntallments.selectedIndex].getAttribute('data-tax');
+
+      var cft = ""
+      var tea = ""
+
+      if(tax != null){
+        var tax_split = tax.split('|');
+        cft = tax_split[0].replace('_', ' ');
+        tea = tax_split[1].replace('_', ' ');
+
+        if(cft == "CFT 0,00%" && tea == "TEA 0,00%"){
+          cft = ""
+          tea = ""
+        }
+
+      }
+
+      document.querySelector(MPv1.selectors.taxTextCFT).innerHTML = cft;
+      document.querySelector(MPv1.selectors.taxTextTEA).innerHTML = tea;
+
+    }
 
     /*
     *
@@ -959,6 +1002,17 @@
 
       } else if (MPv1.site_id == "MCO") {
         document.querySelector(MPv1.selectors.mpIssuer).style.display = 'none';
+      } else if (MPv1.site_id == "MLA") {
+
+
+        document.querySelector(MPv1.selectors.boxInstallmentsSelector).classList.remove("mp-col-100");
+        document.querySelector(MPv1.selectors.boxInstallmentsSelector).classList.add("mp-col-70");
+
+        document.querySelector(MPv1.selectors.taxCFT).style.display = 'block';
+        document.querySelector(MPv1.selectors.taxTEA).style.display = 'block';
+
+        MPv1.addListenerEvent(document.querySelector(MPv1.selectors.installments), 'change', MPv1.showTaxes);
+
       }
 
       if (MPv1.debug) {

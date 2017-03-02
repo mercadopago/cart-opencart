@@ -4,14 +4,10 @@ body{
   margin: 0;
 }
 
-.banner{
-  text-align: center;
-}
-
 #mp-box-form{
   padding: 15px 10px;
   margin: 30px auto;
-  width: 400px;
+  width: 420px;
   background-color: #fff;
   overflow: auto;
   border-radius: 5px;
@@ -160,14 +156,17 @@ body{
   border-color: #204d74;
 }
 
-
-/*
- *
- *
- * Error
- *
- *
- */
+#mpCouponApplyed{
+  display: none;
+  border-style: solid;
+  border-width: thin;
+  border-color: #009EE3;
+  padding: 8px 8px 8px 8px;
+}
+ 
+  #mercadopago-form-coupon .mp-box-message{
+  margin: -5px 0 5px;
+}
 
  .mp-error{
    text-transform: uppercase;
@@ -177,5 +176,24 @@ body{
    display: none;
    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
    clear: both;
+   float: left;
+ }
+
+ #mp-box-input-tax-tea{
+   color: #666;
+   font-weight: 300;
+   font-size: 9px;
+   display: none;
+ }
+ 
+ #mp-box-input-tax-cft{
+   font-weight: 300;
+   color: #666;
+   font-size: 21px;
+   display: none;
+ }
+ 
+ #mp-box-input-tax-cft #mp-tax-cft-text{
+   padding: 30px 0 0 10px;
    float: left;
  }

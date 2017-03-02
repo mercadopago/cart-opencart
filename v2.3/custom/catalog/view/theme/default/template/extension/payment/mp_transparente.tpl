@@ -1,16 +1,12 @@
 <link rel="stylesheet" type="text/css" href="./catalog/view/css/custom_checkout_mercadopago.css">
-<div id="mp_custom"></div>
-<input type="hidden" id="public_key" value="<?php echo $public_key;?>">
-<input type="hidden" id="customer_email" value="<?php echo $customer_email;?>">
-<input type="hidden" id="country" value="<?php echo $action;?>">
-<input type="hidden" id="paymentType"/>
-<div class="form-group" style="margin-left: 10%;">
-  <div class="form-group">
-    <div class="banner">
-      <!-- <img src="./image/banners/<?php echo $action;?>/credit_card.png" /> -->
-    </div>
+<link rel="stylesheet" type="text/css" href="./catalog/view/css/mp_form.css">
+
+<div class="form-group">
+  <div class="banner">
+    <img src="./image/banners/<?php echo $action;?>/credit_card.png" />
   </div>
 </div>
+
 <div class="clearfix"></div>
 <div id="mp-box-form">
   <?php
@@ -225,15 +221,30 @@
 
       <div class="mp-box-inputs mp-col-100 mp-issuer">
         <label for="issuer"><?php echo $form_labels['form']['issuer']; ?> <em>*</em></label>
-        <select id="issuer" data-checkout="issuer" name="mercadopago_custom[issuer]"></select>
+          <select id="issuer" data-checkout="issuer" name="mercadopago_custom[issuer]">
+            <option value="-1"><?php echo $form_labels["form"]["label_choose"]; ?> ...</option>
+          </select>
 
         <span class="mp-error" id="mp-error-220" data-main="#issuer"> <?php echo $form_labels['error']['220']; ?> </span>
       </div>
 
     </div>  <!-- end #mercadopago-form -->
-    <div class="mp-box-inputs mp-col-100">
-      <label for="installments"><?php echo $form_labels['form']['installments']; ?> <em>*</em></label>
-      <select id="installments" data-checkout="installments" name="mercadopago_custom[installments]"></select>
+    
+<div id="mp-box-installments">
+       <div class="mp-box-inputs mp-col-100" id="mp-box-installments-selector">
+         <label for="installments"><?php echo $form_labels['form']['installments']; ?> <em>*</em></label>
+         <select id="installments" data-checkout="installments" name="mercadopago_custom[installments]">
+           <option value="-1"><?php echo $form_labels["form"]["label_choose"]; ?> ...</option>
+         </select>
+       </div>
+ 
+       <div class="mp-box-inputs mp-col-30" id="mp-box-input-tax-cft">
+         <div id="mp-tax-cft-text"></div>
+       </div>
+ 
+       <div class="mp-box-inputs mp-col-100" id="mp-box-input-tax-tea">
+          <div id="mp-tax-tea-text"></div>
+      </div>
     </div>
     <div class="mp-box-inputs mp-line">
       <div class="mp-box-inputs mp-col-50">
@@ -276,10 +287,13 @@
 
   async('https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js', function() {
 
-    var mercadopago_site_id = 'MLB';
+    var mercadopago_site_id = '<?php echo $site_id;?>';
     var mercadopago_public_key = '<?php echo $public_key;?>';
     var mercadopago_payer_email = '<?php echo $customer_email;?>';
     MPv1.create_token_on.event = false;
+
+    //form
+    MPv1.selectors.form = '#mercadopago-formulario';
 
     MPv1.text.choose = '<?php echo $form_labels["form"]["label_choose"]; ?>';
     MPv1.text.other_bank = '<?php echo $form_labels["form"]["label_other_bank"]; ?>';

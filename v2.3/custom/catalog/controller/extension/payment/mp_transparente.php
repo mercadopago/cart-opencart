@@ -24,6 +24,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$data['button_back'] = $this->language->get('button_back');
 		$data['terms'] = '';
 		$data['public_key'] = $this->config->get('mp_transparente_public_key');
+		$data['site_id'] = $this->config->get('mp_transparente_country');
 
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
