@@ -8,7 +8,7 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	public $sucess = true;
 	private $order_info;
 	private $message;
-	private $version = "2.3";
+	private $version = "1.0";
 	private $versionModule = "2.3";	
 	private $sponsors = array('MLB' => 204931135,
 		'MLM' => 204962951,
