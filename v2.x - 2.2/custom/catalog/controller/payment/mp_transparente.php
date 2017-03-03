@@ -438,5 +438,5 @@ class ControllerPaymentMPTransparente extends Controller {
         error_log("===setPreModuleAnalytics====" . json_encode($return));
 
         return $return;
-    }		
+    }
 }

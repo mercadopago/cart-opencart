@@ -221,9 +221,11 @@
 
       <div class="mp-box-inputs mp-col-100 mp-issuer">
         <label for="issuer"><?php echo $form_labels['form']['issuer']; ?> <em>*</em></label>
+
           <select id="issuer" data-checkout="issuer" name="mercadopago_custom[issuer]">
             <option value="-1"><?php echo $form_labels["form"]["label_choose"]; ?> ...</option>
           </select>
+
 
         <span class="mp-error" id="mp-error-220" data-main="#issuer"> <?php echo $form_labels['error']['220']; ?> </span>
       </div>
@@ -246,6 +248,7 @@
           <div id="mp-tax-tea-text"></div>
       </div>
     </div>
+
     <div class="mp-box-inputs mp-line">
       <div class="mp-box-inputs mp-col-50">
         <input type="submit" id="btnSubmit" name="btnSubmit" value="Pay">
