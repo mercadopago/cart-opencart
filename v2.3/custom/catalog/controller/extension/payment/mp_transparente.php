@@ -1,174 +1,262 @@
 <?php
 
-require_once '../catalog/controller/extension/payment/mercadopago.php';
+require_once "mercadopago.php";
 
 class ControllerExtensionPaymentMPTransparente extends Controller {
-	private $_error = array();
-	private $payment_types = array('debvisa', 'debmaster', 'credit_card', 'debit_card');
-	private $version = "2.3";
+	private $version = "1.0";
+	private $versionModule = "2.3";
+	private $error;
+	private $order_info;
+	private $message;
+	private $special_checkouts = array('MLM', 'MLB', "MPE");
+	private $sponsors = array('MLB' => 204931135,
+		'MLM' => 204962951,
+		'MLA' => 204931029,
+		'MCO' => 204964815,
+		'MLV' => 204964612,
+		'MPE' => 217176790,
+		'MLC' => 204927454);
+
 
 	public function index() {
+		$data['customer_email'] = $this->customer->getEmail();
+		$data['button_confirm'] = $this->language->get('button_confirm');
+		$data['button_back'] = $this->language->get('button_back');
+		$data['terms'] = '';
+		$data['public_key'] = $this->config->get('mp_transparente_public_key');
 
-		$prefix = 'mp_transparente_';
-		$fields = array('public_key', 'access_token', 'status', 'category_id',
-			'debug', 'coupon', 'country', 'installments', 'order_status_id',
-			'order_status_id_completed', 'order_status_id_pending',
-			'order_status_id_canceled', 'order_status_id_in_process',
-			'order_status_id_rejected', 'order_status_id_refunded',
-			'order_status_id_in_mediation', 'order_status_chargeback');
+		$this->load->model('checkout/order');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$transaction_amount = floatval($order_info['total']) * floatval($order_info['currency_value']);
+		$data['amount'] = $transaction_amount;
+		$data['actionForm'] = $order_info['store_url'] . 'index.php?route=extension/payment/mp_transparente/payment';
+		$data['mp_transparente_coupon'] = $this->config->get('mp_transparente_coupon');
 
-		$this->load->language('extension/payment/mp_transparente');
-		$data['heading_title'] = $this->language->get('heading_title');
-		$this->document->setTitle($data['heading_title']);
-		$this->load->model('setting/setting');
+		if ($this->config->get('mp_transparente_coupon')) {
+			$data['mercadopago_coupon'] = $this->language->get('mercadopago_coupon');
+			$data['cupom_obrigatorio'] = $this->language->get('cupom_obrigatorio');
+			$data['campanha_nao_encontrado'] = $this->language->get('campanha_nao_encontrado');
+			$data['cupom_nao_pode_ser_aplicado'] = $this->language->get('cupom_nao_pode_ser_aplicado');
 
-		$text_prefix = 'text_';
-		$texts = array('enabled', 'disabled', 'all_zones', 'yes', 'no', 'mercadopago');
-		foreach ($texts as $text) {
-			$name = $text_prefix . $text;
-			$data[$name] = $this->language->get($name);
+			$data['cupom_invalido'] = $this->language->get('cupom_invalido');
+			$data['valor_minimo_invalido'] = $this->language->get('valor_minimo_invalido');
+			$data['erro_validacao_cupom'] = $this->language->get('erro_validacao_cupom');
+			$data['aguarde'] = $this->language->get('aguarde');
+			$data['you_save'] = $this->language->get('you_save');
+			$data['desconto_exclusivo'] = $this->language->get('desconto_exclusivo');
+			$data['total_compra'] = $this->language->get('total_compra');
+			$data['total_desconto'] = $this->language->get('total_desconto');
+			$data['upon_aproval'] = $this->language->get('upon_aproval');
+			$data['see_conditions'] = $this->language->get('see_conditions');
+			$data['aplicar'] = $this->language->get('aplicar');
+			$data['remover'] = $this->language->get('remover');
+
 		}
 
-		$entry_prefix = 'entry_';
-		$entries = array('public_key_tooltip', 'access_token_tooltip', 'access_token_tooltip',
-			'payments_not_accept_tooltip', 'payments_not_accept_tooltip', 'debug_tooltip', 'coupon_tooltip',
-			'category_tooltip', 'order_status_tooltip', 'order_status_completed_tooltip',
-			'order_status_pending_tooltip', 'order_status_canceled_tooltip', 'order_status_in_process_tooltip',
-			'order_status_rejected_tooltip', 'order_status_refunded_tooltip', 'order_status_in_mediation_tooltip',
-			'order_status_chargeback_tooltip', 'order_status_chargeback_tooltip', 'public_key', 'access_token',
-			'installments', 'payments_not_accept', 'status', 'geo_zone', 'country', 'sonda_key', 'order_status',
-			'ipn_status', 'debug', 'coupon','category', 'order_status_general', 'order_status_completed', 'order_status_pending',
-			'order_status_canceled', 'order_status_in_process', 'order_status_rejected', 'order_status_refunded',
-			'order_status_in_mediation', 'order_status_chargeback');
-
-		foreach ($entries as $entry) {
-			$name = $entry_prefix . $entry;
-			$data[$name] = $this->language->get($name);
+		if ($this->config->get('mp_transparente_country')) {
+			$data['action'] = $this->config->get('mp_transparente_country');
 		}
 
-		$data['button_save'] = $this->language->get('button_save');
-		$data['button_cancel'] = $this->language->get('button_cancel');
-		$data['tab_general'] = $this->language->get('tab_general');
+		$this->load->model('checkout/order');
+		$this->language->load('extension/payment/mp_transparente');
 
-		$data['error_warning'] = isset($this->_error['warning']) ? $this->_error['warning'] : '';
-		$data['error_acc_id'] = isset($this->_error['acc_id']) ? $this->_error['acc_id'] : '';
-		$data['error_token'] = isset($this->_error['token']) ? $this->_error['token'] : '';
-		$data['breadcrumbs'] = array();
+		//populate labels
+		$labels = array('ccnum_placeholder', 'expiration_month_placeholder', 'expiration_year_placeholder',
+			'name_placeholder', 'doctype_placeholder', 'docnumber_placeholder', 'installments_placeholder',
+			'cardType_placeholder', 'payment_button', 'payment_title', 'payment_processing', 'other_card_option');
 
-		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL'),
-		);
+		foreach ($labels as $label) {
+			$data[$label] = $this->language->get($label);
+		}
 
-		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_payment'),
-			'href' => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
-		);
 
-		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/payment/mp_transparente', 'token=' . $this->session->data['token'], 'SSL'),
-		);
+		if ($this->config->get('mp_transparente_coupon')) {
+			$data['mercadopago_coupon'] = $this->language->get('mercadopago_coupon');
+		}
 
-		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_transparente&token=' . $this->session->data['token'];
-		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token'];
-		$data['category_list'] = $this->getCategoryList();
-		$data['countries'] = $this->getCountries();
-		$data['installments'] = $this->getInstallments();
-		$data['header'] = $this->load->controller('common/header');
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['footer'] = $this->load->controller('common/footer');
-		$this->load->model('localisation/order_status');
-		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+		$data['server'] = $_SERVER;
+		$data['debug'] = $this->config->get('mp_transparente_debug');
+		$data['cards'] = $this->getCards();
+		$data['user_logged'] = $this->customer->isLogged();
+		$view = floatval(VERSION) < 2.2 ? 'default/template/payment/' : 'extension/payment/';
+		//$view = 'default/template/payment/';
 
-		if ($_SERVER['REQUEST_METHOD'] == "POST") {
-			foreach ($fields as $field) {
-				$fieldname = $prefix . $field;
-				$this->request->post[$fieldname] = str_replace(" ", "", $this->request->post[$fieldname]);
-				$data[$fieldname] = $this->request->post[$fieldname];
-			}
+		$data['analytics'] = $this->setPreModuleAnalytics();
 
+		$view_uri = $view . 'mp_transparente.tpl';
+
+		return $this->load->view($view_uri, $data);
+	}
+
+	public function getCardIssuers() {
+		$method = $this->request->get['payment_method_id'];
+		$token = $this->config->get('mp_transparente_access_token');
+		$url = 'https://api.mercadopago.com/v1/payment_methods/card_issuers?payment_method_id=' . $method . '&access_token=' . $token;
+		$issuers = $this->callJson($url);
+		echo json_encode($issuers);
+	}
+
+	public function coupon() {
+		$coupon_id = $this->request->get['coupon_id'];
+
+		if ($coupon_id != '') {
+			$coupon_id = $coupon_id;
+			$response = $this->validCoupon($coupon_id);
 		} else {
-			foreach ($fields as $field) {
-				$fieldname = $prefix . $field;
-				$value = $this->config->get($fieldname);
-				$data[$fieldname] = $value;
-			}
-		}
-
-		$country_id = $this->config->get('mp_transparente_country') == null ?
-		'MLA' : $this->config->get('mp_transparente_country');
-
-		$methods_api = $this->getMethods($country_id);
-		$data['methods'] = array();
-		$data['mp_transparente_methods'] = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
-		sleep(3);
-		foreach ($methods_api as $method) {
-			if (in_array($method['payment_type_id'], $this->payment_types)) {
-				$data['methods'][] = $method;
-			}
-		}
-
-		$data['payment_style'] = isset($data['methods']) && count($data['methods']) > 12 ?
-		"float:left; margin-left:2%" : "float:left; margin-left:5%";
-
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
-			$this->load->model('setting/setting');
-
-			if (isset($this->request->post['mp_transparente_methods'])) {
-				$names = $this->request->post['mp_transparente_methods'];
-				$this->request->post['mp_transparente_methods'] = '';
-				foreach ($names as $name) {
-					$this->request->post['mp_transparente_methods'] .= $name . ',';
-				}
-			}
-			
-			$this->model_setting_setting->editSetting('mp_transparente', $this->request->post);
-
-			$this->setSettings();
-
-			$this->session->data['success'] = $this->language->get('text_success');
-			$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token']);
-
-			
-		}
-
-		$this->response->setOutput($this->load->view('extension/payment/mp_transparente.tpl', $data));
-
-	}
-
-	public function getPaymentMethodsByCountry() {
-		$country_id = $this->request->get['country_id'];
-		$payment_methods = $this->getMethods($country_id);
-
-		foreach ($payment_methods as $method) {
-			if (in_array($method['payment_type_id'], $this->payment_types)) {
-				$data['methods'][] = $method;
-			}
-		}
-
-		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
-		foreach ($methods_excludes as $exclude) {
-			$data['mp_transparente_methods'][] = $exclude;
-
-		}
-
-		if (isset($data['methods'])) {
-			$data['payment_style'] = count($data['methods']) > 12 ? "float:left; margin-left:7%" : "float:left; margin-left:5%";
-			$this->response->setOutput($this->load->view('extension/payment/mp_transparente_payment_methods_partial.tpl', $data));
+			$response = array(
+				'status' => 400,
+				'response' => array(
+					'error' => 'invalid_id',
+					'message' => 'invalid id'
+					)
+				);
+			header('Content-Type: application/json');
+			echo json_encode($response);
+			exit();
 		}
 	}
 
-	private function getCountries() {
-		$url = 'https://api.mercadolibre.com/sites/';
-		$countries = $this->callJson($url);
-		return $countries;
+	public function validCoupon($coupon_id) {
+		$this->load->model('checkout/order');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$transaction_amount = floatval($order_info['total']) * floatval($order_info['currency_value']);
+		$transaction_amount = round($transaction_amount, 2);
+		$access_token = $this->config->get('mp_transparente_access_token');
+		$mercadopago = new MP($access_token);
+		$payer_email =  $order_info['email'];
+
+		if ($coupon_id != '') {
+			$response = $mercadopago->check_discount_campaigns(
+				$transaction_amount,
+				$payer_email,
+				$coupon_id
+				);
+			header( 'HTTP/1.1 200 OK' );
+			header( 'Content-Type: application/json' );
+			echo json_encode( $response );
+		} else {
+			$obj = new stdClass();
+			$obj->status = 404;
+			$obj->response = array(
+				'message' => 'a problem has occurred',
+				'error' => 'a problem has occurred',
+				'status' => 404,
+				'cause' => array()
+				);
+			header( 'HTTP/1.1 200 OK' );
+			header( 'Content-Type: application/json' );
+			echo json_encode( $obj );
+		}
+	}
+
+	public function payment() {
+		
+		$params_mercadopago = $_REQUEST['mercadopago_custom'];
+		$this->load->model('checkout/order');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$access_token = $this->config->get('mp_transparente_access_token');
+		$mercadopago = new MP($access_token);
+
+		if($params_mercadopago['paymentMethodId'] == ""){
+			$params_mercadopago['paymentMethodId'] = $params_mercadopago['paymentMethodSelector'];
+		}
+
+		$payment = array();
+		$payment['transaction_amount'] = round($params_mercadopago['amount'], 2);
+		$payment['token'] = $params_mercadopago['token'];
+		$payment['installments'] = (int) $params_mercadopago['installments'];
+		$payment['payment_method_id'] = $params_mercadopago['paymentMethodId'];
+		$payment['payer']['email'] = $order_info['email'];
+		$payment['external_reference'] = $this->session->data['order_id'];
+		$notification_url = $order_info['store_url'] . 'index.php?route=extension/payment/mp_transparente/notifications';
+		$domain = $_SERVER['HTTP_HOST'];
+		if (strpos($domain, "localhost") === false) {
+			$payment['notification_url'] = $notification_url;
+		}
+
+		if(isset($params_mercadopago['issuer']) && $params_mercadopago['issuer'] != "" && $params_mercadopago['issuer'] > -1){
+			$payment['issuer_id'] = $params_mercadopago['issuer'];
+		}
+
+		$all_products = $this->cart->getProducts();
+		$items = array();
+		foreach ($all_products as $product) {
+			$product_price = floatval(number_format(floatval($product['price']) * floatval($order_info['currency_value']), 2));
+			$items[] = array(
+				"id" => $product['product_id'],
+				"title" => $product['name'],
+				"description" => $product['quantity'] . ' x ' . $product['name'], // string
+				"quantity" => intval($product['quantity']),
+				"unit_price" => $product_price, //decimal
+				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
+				"category_id" => $this->config->get('mp_transparente_category_id'),
+				);
+		}
+
+		$is_test_user = strpos($order_info['email'], '@testuser.com');
+		if (!$is_test_user) {
+			$sponsor_id = $this->sponsors[$this->config->get('mp_transparente_country')];
+			error_log('not test_user. sponsor_id will be sent: ' . $sponsor_id);
+			$payment["sponsor_id"] = $sponsor_id;
+		} else {
+			error_log('test_user. sponsor_id will not be sent');
+		}
+
+		$payment['additional_info']['items'][] = $items;
+		$payment['additional_info']['shipments']['receiver_address']['zip_code'] = $order_info['shipping_postcode'];
+		$payment['additional_info']['shipments']['receiver_address']['street_name'] = $order_info['shipping_address_1'];
+		$payment['additional_info']['shipments']['receiver_address']['street_number'] = "-";
+
+		$customerAndCard = false;
+		if($params_mercadopago['CustomerAndCard'] == 'true'){
+			$customerAndCard = true;
+			$payment['payer']['id'] = $this->getCustomerId();
+		}
+
+		$payment_method = $payment['payment_method_id'];
+		$payment['metadata']['token'] = $params_mercadopago['token'];
+		$payment['metadata']['customer_id'] = $this->getCustomerId();
+
+		if(isset($params_mercadopago['campaign_id']) && $params_mercadopago['campaign_id'] != ""){
+			$payment['coupon_amount'] = round($params_mercadopago['discount'],2);
+			$payment['coupon_code'] = $params_mercadopago['coupon_code'];
+			$payment['campaign_id'] = (int) $params_mercadopago['campaign_id'];
+		}
+
+		error_log("Data sent on create Payment: " . json_encode($payment));
+
+		$payment = $mercadopago->create_payment($payment);
+		error_log("Response Payment: " . json_encode($payment));
+
+
+		if ($payment["status"] == 200 || $payment["status"] == 201) {
+			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' .
+			$payment_method);
+
+			$this->updateOrder($payment['response']['id'],$customerAndCard);
+			$this->response->redirect($this->url->link('checkout/success', '', true));
+		} else {
+			$this->response->redirect($this->url->link('checkout/checkout', '', true));
+
+		}
 	}
 
 	private function getMethods($country_id) {
 		$url = "https://api.mercadolibre.com/sites/" . $country_id . "/payment_methods";
 		$methods = $this->callJson($url);
 		return $methods;
+	}
+
+	public function getPaymentStatus() {
+		$this->load->language('payment/mp_transparente');
+		$request_type = isset($this->request->get['request_type']) ? (string) $this->request->get['request_type'] : "";
+		$status = (string) $this->request->get['status'];
+		if ($request_type) {
+			$status = $request_type == "token" ? 'T' . $status : 'S' . $status;
+		}
+
+		$message = $this->language->get($status);
+		echo json_encode(array('message' => $message));
 	}
 
 	private function callJson($url, $posts = null) {
@@ -185,112 +273,179 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		return $result;
 	}
 
-	private function getCategoryList() {
-		$url = "https://api.mercadolibre.com/item_categories";
-		$category = $this->callJson($url);
-		return $category;
+	public function callback() {
+
+		$this->response->redirect($this->url->link('checkout/success'));
 	}
 
-	private function getInstallments() {
-		$installments = array();
+	public function notifications() {
+		// $this->log->write();
 
-		$installments[] = array(
-			'value' => '24',
-			'id' => '24');
+		if (isset($this->request->get['topic']) && $this->request->get['topic'] == 'payment') {
+			$this->request->get['collection_id'] = $this->request->get['id'];
 
-		$installments[] = array(
-			'value' => '18',
-			'id' => '18');
-		$installments[] = array(
-			'value' => '15',
-			'id' => '15');
+			$id = $this->request->get['id'];
+			$this->updateOrder($id);
 
-		$installments[] = array(
-			'value' => '12',
-			'id' => '12');
+			echo json_encode(200);
+		} elseif(isset($this->request->get['type']) && $this->request->get['type'] == 'payment') {
 
-		$installments[] = array(
-			'value' => '11',
-			'id' => '11');
+			$id = $this->request->get['data_id'];
+			$this->updateOrder($id);
 
-		$installments[] = array(
-			'value' => '10',
-			'id' => '10');
-
-		$installments[] = array(
-			'value' => '9',
-			'id' => '9');
-
-		$installments[] = array(
-			'value' => '7',
-			'id' => '7');
-
-		$installments[] = array(
-			'value' => '6',
-			'id' => '6');
-
-		$installments[] = array(
-			'value' => '5',
-			'id' => '5');
-
-		$installments[] = array(
-			'value' => '4',
-			'id' => '4');
-
-		$installments[] = array(
-			'value' => '3',
-			'id' => '3');
-		$installments[] = array(
-			'value' => '2',
-			'id' => '2');
-
-		$installments[] = array(
-			'value' => '1',
-			'id' => '1');
-
-		return $installments;
-	}
-
-	private function validate() {
-		if (!$this->user->hasPermission('modify', 'extension/payment/mp_transparente')) {
-			$this->_error['warning'] = $this->language->get('error_permission');
-			
+			echo json_encode(200);
 		}
-		return count($this->_error) < 1;
-
 	}
 
-	public function setSettings() {
-        $moduleVersion = $this->version;
-        $phpVersion = phpversion();
-        $modules = "OpenCart";
-        $modulesVersion = "2.0";
-        $statusCustom = "false";
-        $custom_cupom = "false";
+	public function getCustomerId() {
 
-        if ($this->request->post['mp_transparente_coupon'] == "1") {
-            $custom_cupom = "true";
-        }
+		$access_token = $this->config->get('mp_transparente_access_token');
 
-    	if ($this->request->post['mp_transparente_status'] == "1") {
-            $statusCustom = "true";
-        }
+		$this->load->model('checkout/order');
 
-        $request = array(
-            "module_version" => $moduleVersion,
-            "checkout_custom_credit_card" => $statusCustom,
-            "code_version" => $phpVersion,
-            "checkout_custom_credit_card_coupon" => $custom_cupom,
-            "platform" => $modules,
-            "platform_version" => $modulesVersion
+
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
+		$customer = array('email' => $order_info['email']);
+
+		$search_uri = "/v1/customers/search";
+		$mp = new MP($access_token);
+		$response = $mp->get($search_uri, $customer);
+		$response_has_results_key = array_key_exists("results", $response["response"]);
+		$response_has_at_least_one_item = sizeof($response["response"]["results"]) > 0;
+
+		if ($response_has_results_key && $response_has_at_least_one_item) {
+			$customer_id = $response["response"]["results"][0]["id"];
+					
+		} else {
+
+			$new_customer = $this->createCustomer();
+			$customer_id = $new_customer["response"]["id"];
+
+		}
+		return $customer_id;
+	}
+
+	private function createCustomer() {
+		$access_token = $this->config->get('mp_transparente_access_token');
+		$this->load->model('checkout/order');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$customer = array('email' => $order_info['email']);
+		$uri = '/v1/customers/';
+		$mp = new MP($access_token);
+		$response = $mp->post($uri, $customer);
+		return $response;
+	}
+
+	private function getCards() {
+		$id = $this->getCustomerId();
+		$retorno = null;
+		$access_token = $this->config->get('mp_transparente_access_token');
+		$mp = new MP($access_token);
+		$cards = $mp->get("/v1/customers/" . $id . "/cards");
+		if (array_key_exists("response", $cards) && sizeof($cards["response"]) > 0) {
+			$this->session->data['cards'] = $cards["response"];
+			$retorno = $cards["response"];
+		}
+		return $retorno;
+	}
+
+	private function createCard($payment) {
+		$country = $this->config->get('mp_transparente_country');
+		if ($country != "MPE") {
+			$id = $this->getCustomerId();
+			$access_token = $this->config->get('mp_transparente_access_token');
+			$mp = new MP($access_token);
+
+			$issuerId = isset($payment['issuer_id']) ? intval($payment['issuer_id']) : "";
+			$paymentMethodId = isset($payment['payment_method_id']) ? $payment['payment_method_id'] : "";
+
+			$card = $mp-> post("/v1/customers/" . $id . "/cards", 
+				array(
+					"token" => $payment['metadata']['token'],
+					"issuer_id" => $issuerId,
+					"payment_method_id" => $paymentMethodId
+				)
+			);
+			return $card;
+		}
+	}
+
+	private function updateOrder($id) {
+		$access_token = $this->config->get('mp_transparente_access_token');
+		$url = 'https://api.mercadopago.com/v1/payments/' . $id . '?access_token=' . $access_token;
+		$payment = $this->callJson($url);
+		$order_id = $payment['external_reference'];
+		$this->load->model('checkout/order');
+		//$order = $this->model_checkout_order->getOrder($order_id);
+		$order_status = $payment['status'];
+
+		switch ($order_status) {
+			case 'approved':
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
+
+			//Create card when card not exist/used
+			if(isset($payment['card']) && $payment['card']['id'] == null){
+				$this->createCard($payment);
+			}
+
+			break;
+			case 'pending':
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
+			break;
+			case 'in_process':
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_process'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
+			break;
+			case 'reject':
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
+			break;
+			case 'refunded':
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_refunded'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
+			break;
+			case 'cancelled':
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
+			break;
+			case 'in_mediation':
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
+			break;
+			default:
+			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
+			break;
+		}
+	}
+
+	function _getClientId($at){
+		$t = explode ( "-" , $at);
+		if(count($t) > 0){
+			return $t[1];
+		}
+		return "";
+	}
+
+    function setPreModuleAnalytics() {
+
+		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
+
+        $resultModules = array();
+
+		foreach ($query->rows as $result) {
+			array_push($resultModules, $result['code']);
+		}
+
+        $return = array(
+            'publicKey'=> "",
+            'token'=> $this->_getClientId($this->config->get('mp_transparente_access_token')),
+            'platform' => "Opencart",
+            'platformVersion' => $this->versionModule,
+            'moduleVersion' => $this->version,
+            'payerEmail' => $this->customer->getEmail(),
+            'userLogged' => $this->customer->isLogged() ? 1 : 0,
+            'installedModules' => implode(', ', $resultModules),
+            'additionalInfo' => ""
         );
 
-        try {
-			$access_token = $this->config->get('mp_transparente_access_token');
-			$mp = new MP($access_token);        	
-            $userResponse = $mp->saveSettings($request);
-        } catch (Exception $e) {
-        	error_log($e);
-        }
-    }
+        //error_log("===setPreModuleAnalytics====" . json_encode($return));
+
+        return $return;
+    }		
 }
