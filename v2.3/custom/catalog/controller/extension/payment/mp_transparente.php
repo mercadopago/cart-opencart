@@ -122,7 +122,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 					$this->request->post['mp_transparente_methods'] .= $name . ',';
 				}
 			}
-			error_log("aq1");
+			
 			$this->model_setting_setting->editSetting('mp_transparente', $this->request->post);
 
 			$this->setSettings();
