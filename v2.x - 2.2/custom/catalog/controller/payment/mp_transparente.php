@@ -3,7 +3,7 @@
 require_once "mercadopago.php";
 
 class ControllerPaymentMPTransparente extends Controller {
-	private $version = "2.1.1";
+	private $version = "2.1.2";
 	private $versionModule = "2.0";
 	private $error;
 	private $order_info;
@@ -161,8 +161,13 @@ class ControllerPaymentMPTransparente extends Controller {
 			$params_mercadopago['paymentMethodId'] = $params_mercadopago['paymentMethodSelector'];
 		}
 
+		$total_price = round($order_info['total'] * $order_info['currency_value'], 2);
+		if($this->config->get('mp_transparente_country') == 'MCO'){
+			$total_price = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
+		}
+
 		$payment = array();
-		$payment['transaction_amount'] = round($params_mercadopago['amount'], 2);
+		$payment['transaction_amount'] = $total_price;
 		$payment['token'] = $params_mercadopago['token'];
 		$payment['installments'] = (int) $params_mercadopago['installments'];
 		$payment['payment_method_id'] = $params_mercadopago['paymentMethodId'];
