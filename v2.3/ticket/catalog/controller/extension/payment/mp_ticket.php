@@ -4,8 +4,8 @@ require_once "mercadopago.php";
 
 class ControllerExtensionPaymentMPTicket extends Controller {
 
-	private $version = "1.0";
-	private $versionModule = "2.3";	
+	private $version = "1.0.1";
+	private $versionModule = "2.3";
 	private $error;
 	public $sucess = true;
 	private $order_info;
@@ -23,8 +23,8 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		$data['payment_button'] = $this->language->get('payment_button');
 
 		error_log("====tradução payment=====".$this->language->get('payment_button'));
-		
-		$data['analytics'] = $this->setPreModuleAnalytics();		
+
+		$data['analytics'] = $this->setPreModuleAnalytics();
 		$data['payment_button'] = $this->language->get('payment_button');
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/mp_ticket.tpl')) {
@@ -42,6 +42,8 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 			$all_products = $this->cart->getProducts();
 			$items = array();
+			$site_id = $this->getCountry();
+
 			foreach ($all_products as $product) {
 				$items[] = array(
 					"id" => $product['product_id'],
@@ -68,14 +70,17 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 					"apartment" => "-",
 					"street_number" => "-"));
 
-			$value = floatval(number_format(floatval($order_info['total']) * floatval($order_info['currency_value']), 2));
 			$access_token = $this->config->get('mp_ticket_access_token');
 			$mp = new MP($access_token);
 
+			$total_price = round($order_info['total'] * $order_info['currency_value'], 2);
+			if($site_id == 'MCO'){
+				$total_price = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
+			}
 
 			$payment_data = array("payer" => $payer,
 				"external_reference" => $order_info['order_id'],
-				"transaction_amount" => $value,
+				"transaction_amount" => $total_price,
 				//"token" => $this->request->post['token'],
 				"description" => 'Products',
 				"payment_method_id" => $this->request->get['payment_method_id']);
@@ -88,13 +93,10 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			$payment_data['additional_info'] = array('shipments' => $shipments, 'items' => $items);
 			$is_test_user = strpos($order_info['email'], '@testuser.com');
 			if (!$is_test_user) {
-				$payment_data["sponsor_id"] = $this->sponsors[$this->getCountry()];
+				$payment_data["sponsor_id"] = $this->sponsors[$site_id];
 			}
 
 			$payment_response = $mp->create_payment($payment_data);
-			error_log('payment response: ' . json_encode($payment_response));
-
-			error_log("=======payment_response========" . json_encode($payment_response));
 
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
 			echo json_encode(
@@ -262,5 +264,5 @@ class ControllerExtensionPaymentMPTicket extends Controller {
         error_log("===setPreModuleAnalytics====" . json_encode($return));
 
         return $return;
-    }	
+    }
 }

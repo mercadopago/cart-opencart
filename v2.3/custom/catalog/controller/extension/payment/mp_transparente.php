@@ -3,19 +3,21 @@
 require_once "mercadopago.php";
 
 class ControllerExtensionPaymentMPTransparente extends Controller {
-	private $version = "1.0";
+	private $version = "1.0.1";
 	private $versionModule = "2.3";
 	private $error;
 	private $order_info;
 	private $message;
 	private $special_checkouts = array('MLM', 'MLB', "MPE");
-	private $sponsors = array('MLB' => 204931135,
+	private $sponsors = array(
+		'MLB' => 204931135,
 		'MLM' => 204962951,
 		'MLA' => 204931029,
 		'MCO' => 204964815,
 		'MLV' => 204964612,
 		'MPE' => 217176790,
-		'MLC' => 204927454);
+		'MLC' => 204927454
+	);
 
 
 	public function index() {
@@ -24,6 +26,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$data['button_back'] = $this->language->get('button_back');
 		$data['terms'] = '';
 		$data['public_key'] = $this->config->get('mp_transparente_public_key');
+		$data['site_id'] = $this->config->get('mp_transparente_country');
 
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -150,7 +153,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	}
 
 	public function payment() {
-		
+
 		$params_mercadopago = $_REQUEST['mercadopago_custom'];
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -161,8 +164,13 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			$params_mercadopago['paymentMethodId'] = $params_mercadopago['paymentMethodSelector'];
 		}
 
+		$total_price = round($order_info['total'] * $order_info['currency_value'], 2);
+		if($this->config->get('mp_transparente_country') == 'MCO'){
+			$total_price = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
+		}
+
 		$payment = array();
-		$payment['transaction_amount'] = round($params_mercadopago['amount'], 2);
+		$payment['transaction_amount'] = $total_price;
 		$payment['token'] = $params_mercadopago['token'];
 		$payment['installments'] = (int) $params_mercadopago['installments'];
 		$payment['payment_method_id'] = $params_mercadopago['paymentMethodId'];
@@ -316,7 +324,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		if ($response_has_results_key && $response_has_at_least_one_item) {
 			$customer_id = $response["response"]["results"][0]["id"];
-					
+
 		} else {
 
 			$new_customer = $this->createCustomer();
@@ -360,7 +368,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			$issuerId = isset($payment['issuer_id']) ? intval($payment['issuer_id']) : "";
 			$paymentMethodId = isset($payment['payment_method_id']) ? $payment['payment_method_id'] : "";
 
-			$card = $mp-> post("/v1/customers/" . $id . "/cards", 
+			$card = $mp-> post("/v1/customers/" . $id . "/cards",
 				array(
 					"token" => $payment['metadata']['token'],
 					"issuer_id" => $issuerId,
@@ -447,5 +455,5 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
         //error_log("===setPreModuleAnalytics====" . json_encode($return));
 
         return $return;
-    }		
+    }
 }

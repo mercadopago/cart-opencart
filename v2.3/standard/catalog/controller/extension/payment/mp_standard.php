@@ -8,8 +8,8 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	public $sucess = true;
 	private $order_info;
 	private $message;
-	private $version = "1.0";
-	private $versionModule = "2.3";	
+	private $version = "1.0.1";
+	private $versionModule = "2.3";
 	private $sponsors = array('MLB' => 204931135,
 		'MLM' => 204962951,
 		'MLA' => 204931029,
@@ -55,13 +55,18 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		$items = array();
 
 		foreach ($all_products as $product) {
+			$product_price = round($product['price'] * $order_info['currency_value'], 2);
+			if($this->config->get('mp_standard_country') == 'MCO'){
+				$product_price = $this->currency->format($product['price'], $order_info['currency_code'], false, false);
+			}
+
 			$products .= $product['quantity'] . ' x ' . $product['name'] . ', ';
 			$items[] = array(
 				"id" => $product['product_id'],
 				"title" => $product['name'],
 				"description" => $product['quantity'] . ' x ' . $product['name'], // string
 				"quantity" => intval($product['quantity']),
-				"unit_price" => $this->currency->format($product['price'], $order_info['currency_code'], false, false), //decimal
+				"unit_price" => $product_price,
 				//"unit_price" => round(floatval($product['price']) * $order_info['currency_code'], 2), //decimal
 				"currency_id" => $currency,
 				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
@@ -70,9 +75,6 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		}
 
 		$total = $this->currency->format($order_info['total'] - $this->cart->getSubTotal(), $order_info['currency_code'], false, false);
-
-		error_log("====total====".$total);
-		error_log("====text_total====".$this->language->get('text_total'));
 
 		if ($total > 0) {
 			$items[] = array(
