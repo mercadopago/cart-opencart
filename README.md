@@ -36,7 +36,7 @@ Great for merchants who want to get going quickly and easily.
 * Accept tickets, bank transfer and account money in addition to cards.
 * Accept Mercado Pago's discount coupons.
 
-*Available for Argentina, Brazil, Chile, Colombia, Mexico, Peru and Venezuela*
+*Available for Argentina, Brazil, Chile, Colombia, Mexico, Peru, Uruguay and Venezuela*
 
 <a name="requirements"></a>
 ## Requirements:
@@ -87,10 +87,15 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
       <td>OpenCart v1.5.x</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v2.x">v2.x</a></td>
+      <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v2.x%20-%202.2">v2.x - v2.2</a></td>
       <td>Stable (Current Version)</td>
-      <td>OpenCart v2.x</td>
-     </tr>
+      <td>OpenCart v2.x - v2.2</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v2.3">v2.3</a></td>
+      <td>Stable (Current Version)</td>
+      <td>OpenCart v2.3</td>
+    </tr>
   </tbody>
 </table>
 
@@ -100,7 +105,8 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
 1. Download MercadoPago module:
     * OpenCart 1.4.9
     * OpenCart 1.5.x
-    * OpenCart 2.x
+    * OpenCart 2.x - 2.2
+    * OpenCart 2.3
 
 2. Copy the folders **admin**, **catalog** and **image** to your OpenCart ROOT installation. Make sure to keep the OpenCart folders structure intact.
 
@@ -131,6 +137,7 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
   * Colombia: [https://www.mercadopago.com/mco/account/credentials](https://www.mercadopago.com/mco/account/credentials)
   * Mexico: [https://www.mercadopago.com/mlm/account/credentials](https://www.mercadopago.com/mlm/account/credentials)
   * Peru: [https://www.mercadopago.com/mpe/account/credentials](https://www.mercadopago.com/mpe/account/credentials)
+  * Uruguay: [https://www.mercadopago.com/mlu/account/credentials](https://www.mercadopago.com/mlu/account/credentials)
   * Venezuela: [https://www.mercadopago.com/mlv/account/credentials](https://www.mercadopago.com/mlv/account/credentials)
 4. If you're using **Custom Checkout** or **Standard Checkout**, select the country related to your **Mercado Pago** account. If you're using **Ticket Checkout**, there is no need to configure the country.
 
