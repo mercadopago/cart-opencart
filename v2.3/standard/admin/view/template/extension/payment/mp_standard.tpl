@@ -52,6 +52,7 @@
  <option id="MLM" value="MLM">Mexico</option>
  <option id="MLM" value="MPE">Peru</option>
  <option id="MLV" value="MLV">Venezuela</option>
+ <option id="MLU" value="MLU">Uruguai</option>
 </select>
 </div>
 </div>
