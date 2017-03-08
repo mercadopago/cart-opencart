@@ -1,4 +1,4 @@
-# OpenCart - Mercado Pago Module (v1.4.9, 1.5.x, 2.x)
+# OpenCart - Mercado Pago Module (v1.4.9, 1.5.x, 2.x - 2.2, 2.3)
 
 * [Features](#features)
 * [Available Versions](#versions)
