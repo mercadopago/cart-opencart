@@ -408,12 +408,13 @@ class MP {
         $result_response = MPRestClient::post($request);
         return $result_response;
     }
-
 }
+
 /**
  * MercadoPago cURL RestClient
  */
 class MPRestClient {
+	static $check_loop = 0;
 	const API_BASE_URL = "https://api.mercadopago.com";
 	private static function build_request($request) {
 		if (!extension_loaded("curl")) {
@@ -481,9 +482,9 @@ class MPRestClient {
 		}
 		return $connect;
 	}
+
 	private static function exec($request) {
-		// private static function exec($method, $uri, $data, $content_type) {
-		
+				
 		$connect = self::build_request($request);
 		$api_result = curl_exec($connect);
 		$api_http_code = curl_getinfo($connect, CURLINFO_HTTP_CODE);
@@ -494,22 +495,42 @@ class MPRestClient {
 			"status" => $api_http_code,
 			"response" => json_decode($api_result, true),
 		);
-		// if ($response['status'] >= 400) {
-		// 	$message = $response['response']['message'];
-		// 	if (isset($response['response']['cause'])) {
-		// 		if (isset($response['response']['cause']['code']) && isset($response['response']['cause']['description'])) {
-		// 			$message .= " - " . $response['response']['cause']['code'] . ': ' . $response['response']['cause']['description'];
-		// 		} else if (is_array($response['response']['cause'])) {
-		// 			foreach ($response['response']['cause'] as $cause) {
-		// 				$message .= " - " . $cause['code'] . ': ' . $cause['description'];
-		// 			}
-		// 		}
-		// 	}
-		// 	throw new MercadoPagoException($message, $response['status']);
-		// }
+
+		if ($response['status'] >= 400 && self::$check_loop == 0) {
+
+			try {
+				self::$check_loop = 1;
+				$message = $response['response']['message'];
+				if (isset($response['response']['cause'])) {
+			 		if (isset($response['response']['cause']['code']) && isset($response['response']['cause']['description'])) {
+			 			$message .= " - " . $response['response']['cause']['code'] . ': ' . $response['response']['cause']['description'];
+			 		} else if (is_array($response['response']['cause'])) {
+			 			foreach ($response['response']['cause'] as $cause) {
+			 				$message .= " - " . $cause['code'] . ': ' . $cause['description'];
+			 			}
+			 		}
+			 	}
+			 	
+			 	$payloads = json_encode($request["data"]);
+				$errors = array();
+				$errors[] = array(
+					"endpoint" => $request["uri"],
+					"message" => $message,
+					"payloads" => $payloads
+				);
+
+				self::sendErrorLog($response['status'], $errors);
+
+		  	} catch (Exception $e) {
+			   throw new MercadoPagoException("error to call API LOGS".$e);
+			}
+		 }
+
+		self::$check_loop = 0;
 		curl_close($connect);
 		return $response;
 	}
+
 	private static function build_query($params) {
 		if (function_exists("http_build_query")) {
 			return http_build_query($params, "", "&");
@@ -536,6 +557,26 @@ class MPRestClient {
 		$request["method"] = "DELETE";
 		return self::exec($request);
 	}
+
+	public static function sendErrorLog($code, $errors) {
+
+		$data = array(
+		 	"code" => $code,
+		 	"module" => "Opencart",
+		 	"module_version" => "2.3",
+		 	"url_store" => $_SERVER['HTTP_HOST'],
+		 	"errors" => $errors
+		);
+
+		$request = array(
+			"uri" => "/modules/log",
+			"data" => $data
+		);
+
+		$result_response = MPRestClient::post($request);
+
+        return $result_response;
+    }
 }
 class MercadoPagoException extends Exception {
 	public function __construct($message, $code = 500, Exception $previous = null) {
