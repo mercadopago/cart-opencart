@@ -4,7 +4,7 @@ require_once '../catalog/controller/extension/payment/mercadopago.php';
 
 class ControllerExtensionPaymentMPTicket extends Controller {
 	private $_error = array();
-	private $version = "2.3";
+	private $version = "2.3.1";
 
 	public function index() {
 		$prefix = 'mp_ticket_';
