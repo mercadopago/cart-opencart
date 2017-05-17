@@ -4,7 +4,7 @@ require_once "mercadopago.php";
 
 class ControllerPaymentMPTransparente extends Controller {
 	private $version = "2.1.2";
-	private $versionModule = "2.0";
+	private $versionModule = "2.0.1";
 	private $error;
 	private $order_info;
 	private $message;
@@ -207,6 +207,14 @@ class ControllerPaymentMPTransparente extends Controller {
 			error_log('test_user. sponsor_id will not be sent');
 		}
 
+		// Payer Info
+		$payment['additional_info']['payer']['first_name'] = $order_info['firstname'];
+		$payment['additional_info']['payer']['last_name'] = $order_info['lastname'];
+		$payment['additional_info']['payer']['phone']['number'] = $order_info['telephone'];
+		$payment['additional_info']['payer']['address']['street_name'] = $order_info['shipping_address_1'];
+		$payment['additional_info']['payer']['address']['zip_code'] = $order_info['shipping_postcode'];
+
+		// Shipments Info
 		$payment['additional_info']['items'][] = $items;
 		$payment['additional_info']['shipments']['receiver_address']['zip_code'] = $order_info['shipping_postcode'];
 		$payment['additional_info']['shipments']['receiver_address']['street_name'] = $order_info['shipping_address_1'];

@@ -5,7 +5,7 @@ require_once "mercadopago.php";
 class ControllerExtensionPaymentMPTicket extends Controller {
 
 	private $version = "1.0.1";
-	private $versionModule = "2.3.1";
+	private $versionModule = "2.3.2";
 	private $error;
 	public $sucess = true;
 	private $order_info;
@@ -90,7 +90,19 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		    	$payment_data['notification_url'] = $url . 'index.php?route=extension/payment/mp_ticket/notifications';
 		    }
 
-			$payment_data['additional_info'] = array('shipments' => $shipments, 'items' => $items);
+			// Payer Info
+			$payment_data['additional_info']['payer']['first_name'] = $order_info['firstname'];
+			$payment_data['additional_info']['payer']['last_name'] = $order_info['lastname'];
+			$payment_data['additional_info']['payer']['phone']['number'] = $order_info['telephone'];
+			$payment_data['additional_info']['payer']['address']['street_name'] = $order_info['shipping_address_1'];
+			$payment_data['additional_info']['payer']['address']['zip_code'] = $order_info['shipping_postcode'];
+
+			// Shipments Info
+			$payment_data['additional_info']['items'][] = $items;
+			$payment_data['additional_info']['shipments']['receiver_address']['zip_code'] = $order_info['shipping_postcode'];
+			$payment_data['additional_info']['shipments']['receiver_address']['street_name'] = $order_info['shipping_address_1'];
+			$payment_data['additional_info']['shipments']['receiver_address']['street_number'] = "-";
+
 			$is_test_user = strpos($order_info['email'], '@testuser.com');
 			if (!$is_test_user) {
 				$payment_data["sponsor_id"] = $this->sponsors[$site_id];
