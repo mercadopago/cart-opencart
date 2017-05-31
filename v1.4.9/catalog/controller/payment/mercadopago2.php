@@ -175,7 +175,7 @@ class ControllerPaymentMercadopago2 extends Controller {
              case 'in_process':
              $this->model_checkout_order->update($order_id, $this->config->get('mercadopago2_order_status_id_process'));       
              break;    
-             case 'reject':
+             case 'rejected':
              $this->model_checkout_order->update($order_id, $this->config->get('mercadopago2_order_status_id_rejected'));      
              break;    
              case 'refunded':
