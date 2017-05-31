@@ -223,7 +223,7 @@ class ControllerPaymentMPTicket extends Controller {
 		case 'in_process':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_ticket_order_status_id_process'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
 			break;
-		case 'reject':
+		case 'rejected':
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_ticket_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
 			break;
 		case 'refunded':
