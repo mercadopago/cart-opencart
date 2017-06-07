@@ -10,71 +10,62 @@
 <div class="clearfix"></div>
 <div id="mp-box-form">
   <?php
+
   $form_labels = array(
   "form" => array(
-  "coupon_empty" => "Please, inform your coupon code",
-  'apply' => "Apply",
-  'remove' => "Remove",
-  'discount_info1' => "You will save",
-  'discount_info2' => "with discount from",
-  'discount_info3' => "Total of your purchase:",
-  'discount_info4' => "Total of your purchase with discount:",
-  'discount_info5' => "*Uppon payment approval",
-  'discount_info6' => "Terms and Conditions of Use",
-  'coupon_of_discounts' => "Discount Coupon",
-  'label_other_bank' => "Other Bank",
-  'label_choose' => "Choose",
-  "payment_method" => "Payment Method",
-  "credit_card_number" => "Credit card number",
-  "expiration_month" => "Expiration month",
-  "expiration_year" => "Expiration year",
-  "year" => "Year",
-  "month" => "Month",
-  "card_holder_name" => "Card holder name",
-  "security_code" => "Security code",
-  "document_type" => "Document Type",
-  "document_number" => "Document number",
-  "issuer" => "Issuer",
-  "installments" => "Installments",
-  "your_card" => "Your Card",
-  "other_cards" => "Other Cards",
-  "other_card" => "Other Card",
-  "ended_in" => "ended in"
+    "coupon_empty" => $cucoupon_empty,
+    'apply' => $cuapply,
+    'remove' => $curemove,
+    'discount_info1' => $cudiscount_info1,
+    'discount_info2' => $cudiscount_info2,
+    'discount_info3' => $cudiscount_info3,
+    'discount_info4' => $cudiscount_info4,
+    'discount_info5' => $cudiscount_info5,
+    'discount_info6' => $cudiscount_info6,
+    'coupon_of_discounts' => $cucoupon_of_discounts,
+    'label_other_bank' => $culabel_other_bank,
+    'label_choose' => $culabel_choose,
+    "payment_method" => $cupayment_method,
+    "credit_card_number" => $cucredit_card_number,
+    "expiration_month" => $cuexpiration_month,
+    "expiration_year" => $cuexpiration_year,
+    "year" => $cuyear,
+    "month" => $cumonth,
+    "card_holder_name" => $cucard_holder_name,
+    "security_code" => $cusecurity_code,
+    "document_type" => $cudocument_type,
+    "document_number" => $cudocument_number,
+    "issuer" => $cuissuer,
+    "installments" => $cuinstallments,
+    "your_card" => $cuyour_card,
+    "other_cards" => $cuother_cards,
+    "other_card" => $cuother_card,
+    "ended_in" => $cuended_in,
+    "btn_pay" => $cubtn_pay
   ),
-  "error" => array(
-
-  //card number
-  "205" => "Parameter cardNumber can not be null/empty",
-  "E301" => "Invalid Card Number",
-  //expiration date
-  "208" => "Invalid Expiration Date",
-  "209" => "Invalid Expiration Date",
-  "325" => "Invalid Expiration Date",
-  "326" => "Invalid Expiration Date",
-  //card holder name
-  "221" => "Parameter cardholderName can not be null/empty",
-  "316" => "Invalid Card Holder Name",
-
-  //security code
-  "224" => "Parameter securityCode can not be null/empty",
-  "E302" => "Invalid Security Code",
-  "E203" => "Invalid Security Code",
-
-  //doc type
-  "212" => "Parameter docType can not be null/empty",
-  "322" => "Invalid Document Type",
-  //doc number
-  "214" => "Parameter docNumber can not be null/empty",
-  "324" => "Invalid Document Number",
-  //doc sub type
-  "213" => "The parameter cardholder.document.subtype can not be null or empty",
-  "323" => "Invalid Document Sub Type",
-  //issuer
-  "220" => "Parameter cardIssuerId can not be null/empty",
-  ),
-  "coupon_error" => array(
-  "EMPTY" => "Please, inform your coupon code"
-  )
+    "error" => array(
+      "205" => $cue205,
+      "E301" => $cueE301,
+      "208" => $cue208,
+      "209" => $cue209,
+      "325" => $cue325,
+      "326" => $cue326,
+      "221" => $cue221,
+      "316" => $cue316,
+      "224" => $cue224,
+      "E302" => $cueE302,
+      "E203" => $cueE203,
+      "212" => $cue212,
+      "322" => $cue322,
+      "214" => $cue214,
+      "324" => $cue324,
+      "213" => $cue213,
+      "323" => $cue323,
+      "220" => $cue220,
+    ),
+    "coupon_error" => array(
+      "EMPTY" => $cueEMPTY
+    )
   );
   ?>
 
@@ -248,7 +239,7 @@
     </div>
     <div class="mp-box-inputs mp-line">
       <div class="mp-box-inputs mp-col-50">
-        <input type="submit" id="btnSubmit" name="btnSubmit" value="Pay">
+        <input type="submit" id="btnSubmit" name="btnSubmit" value=<?php echo $form_labels['form']['btn_pay']; ?> >
       </div>
       <!-- NOT DELETE LOADING-->
       <div class="mp-box-inputs mp-col-25">
@@ -315,6 +306,31 @@
     var url_site = window.location.href.split('index.php')[0];
     var url_message = url_site.slice(-1) == '/' ? url_site : url_site + '/';
     url_message += 'index.php?route=extension/payment/mp_transparente/coupon';
+
+    // MPv1.sdkResponseHandler = function(status, response) {
+
+    //   var $form = MPv1.getForm();
+
+    //   document.querySelector(MPv1.selectors.box_loading).style.background = "";
+
+    //   if (status != 200 && status != 201) {
+    //     MPv1.showErrors(response);
+    //   } else {
+    //     var token = document.querySelector(MPv1.selectors.token);
+    //     token.value = response.id;
+
+    //     if(MPv1.add_truncated_card){
+    //       var card = MPv1.truncateCard(response);
+    //       document.querySelector(MPv1.selectors.cardTruncated).value=card;
+    //     }
+
+    //     if (!MPv1.create_token_on.event) {
+    //       doSubmit=true;
+    //       btn = document.querySelector(MPv1.selectors.form);
+    //       btn.submit();
+    //     }
+    //   }
+    // }
 
     MPv1.Initialize(mercadopago_site_id, mercadopago_public_key, '<?php echo $mp_transparente_coupon == 0? false:true;?>', url_message, mercadopago_payer_email);
 

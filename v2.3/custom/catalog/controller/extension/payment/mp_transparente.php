@@ -64,9 +64,11 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$this->language->load('extension/payment/mp_transparente');
 
 		//populate labels
-		$labels = array('ccnum_placeholder', 'expiration_month_placeholder', 'expiration_year_placeholder',
-			'name_placeholder', 'doctype_placeholder', 'docnumber_placeholder', 'installments_placeholder',
-			'cardType_placeholder', 'payment_button', 'payment_title', 'payment_processing', 'other_card_option');
+		$labels = array('cucoupon_empty','cuapply','curemove','cudiscount_info1','cudiscount_info2','cudiscount_info3','cudiscount_info4','cudiscount_info5',
+			'cudiscount_info6','cucoupon_of_discounts','culabel_other_bank','culabel_choose','cupayment_method','cucredit_card_number','cuexpiration_month',
+			'cuexpiration_year','cuyear','cumonth','cucard_holder_name','cusecurity_code','cudocument_type','cudocument_number','cuissuer','cucard_holder_name',
+			'cucard_holder_name','cuinstallments','cuyour_card','cuother_cards','cuother_card','cuended_in','cubtn_pay', 'cue205','cueE301','cue208','cue209','cue325',
+			'cue326','cue221','cue316','cue224','cueE302','cueE203','cue212','cue322','cue214','cue324','cue213','cue323','cue220','cueEMPTY');
 
 		foreach ($labels as $label) {
 			$data[$label] = $this->language->get($label);
