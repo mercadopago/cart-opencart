@@ -23,6 +23,7 @@ $_['cupom_obrigatorio'] = 'Cupom é obrigatório.';
 $_['campanha_nao_encontrado'] = 'Não foi encontrado uma campanha com o cupom informado.';
 $_['cupom_nao_pode_ser_aplicado'] = 'O cupom não pode ser aplicado para esse valor.';
 $_['remover'] = 'Remover';
+$_['abcd'] = 'Remover';
 
 $_['cupom_utilizado'] = 'Cupom já utilizado.';
 $_['cupom_invalido'] = 'Por favor entre com um cupom válido.';
@@ -221,3 +222,60 @@ $_['cc_rejected_insufficient_amount'] = "Seu cartão não possui saldo suficient
 $_['cc_rejected_invalid_installments'] = "Esta bandeira de cartão não permite parcelamento na quantidade de vezes escolhida.";
 $_['cc_rejected_max_attempts'] = "Você atingiu o limite de tentativas. Escolha outro cartão.";
 $_['cc_rejected_other_reason'] = "Sua operadora de cartão não processou o pagamento.";
+
+//Checkout único
+$_['cucoupon_empty'] = "Por favor, informe o código de seu cupom";
+$_['cuapply'] = "Aplicar";
+$_['curemove'] = "Remover";
+$_['cudiscount_info1'] = "Você poupou";
+$_['cudiscount_info2'] = "Com desconto de";
+$_['cudiscount_info3'] = "Total de sua compra:";
+$_['cudiscount_info4'] = "Total de sua compra com desconto:";
+$_['cudiscount_info5'] = "Após a aprovação do pagamento";
+$_['cudiscount_info6'] = "Termos e condições de uso";
+$_['cucoupon_of_discounts'] = "Cupom de desconto";
+$_['culabel_other_bank'] = "Outro banco";
+$_['culabel_choose'] = "Escolha";
+$_['cupayment_method'] = "Método de pagamento";
+$_['cucredit_card_number'] = "Número do cartão de crédito";
+$_['cuexpiration_month'] = "Mês de expiração";
+$_['cuexpiration_year'] = "Ano de expiração";
+$_['cuyear'] = "Ano";
+$_['cumonth'] = "Mês";
+$_['cucard_holder_name'] = "Titular do cartão";
+$_['cusecurity_code'] = "Código de segurança";
+$_['cudocument_type'] = "Tipo de documento";
+$_['cudocument_number'] = "Número do documento";
+$_['cuissuer'] = "Emissor";
+$_['cucard_holder_name'] = "Titular do cartão";
+$_['cucard_holder_name'] = "Titular do cartão";
+$_['cuinstallments'] = "Parcelas";
+$_['cuyour_card'] = "Seu cartão";
+$_['cuother_cards'] = "Outros cartões";
+$_['cuother_card'] = "Outro cartão";
+$_['cuended_in'] = "Terminou em";
+$_['cubtn_pay'] = "Pagar";
+
+//Checkout único erros
+$_['cue205'] = "Número do cartão não pode ser nulo";
+$_['cueE301'] = "Número do cartão inválido";
+$_['cue208'] = "Data de expiração inválida";
+$_['cue209'] = "Data de expiração inválida";
+$_['cue325'] = "Data de expiração inválida";
+$_['cue326'] = "Data de expiração inválida";
+$_['cue221'] = "Titular do cartão não pode ser nulo";
+$_['cue316'] = "Titular do cartão inválido";
+$_['cue224'] = "Código de segurança não pode ser nulo";
+$_['cueE302'] = "Código de segurança inválido";
+$_['cueE203'] = "Código de segurança inválido";
+$_['cue212'] = "Tipo do documento não pode ser nulo";
+$_['cue322'] = "Tipo do documento inválido";
+$_['cue214'] = "Tipo do documento não pode ser nulo";
+$_['cue324'] = "Tipo do documento inválido";
+$_['cue213'] = "Titular do cartão não pode ser nulo";
+$_['cue323'] = "Sub tipo inválido";
+$_['cue220'] = "Emissor do cartão não pode ser nulo";
+$_['cueEMPTY'] = "Por favor, informe o código do cupom";
+  
+
+
