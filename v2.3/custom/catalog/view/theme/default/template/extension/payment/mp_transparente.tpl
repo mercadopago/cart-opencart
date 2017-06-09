@@ -216,7 +216,7 @@
             <option value="-1"><?php echo $form_labels["form"]["label_choose"]; ?> ...</option>
           </select>
 
-        <span class="mp-error" id="mp-error-220" data-main="#issuer"> <?php echo $form_labels['error']['220']; ?> </span>
+        <span class="mp-error" id="mp-error-2201" data-main="#issuer"> <?php echo $form_labels['error']['220']; ?> </span>
       </div>
 
     </div>  <!-- end #mercadopago-form -->
@@ -227,6 +227,7 @@
          <select id="installments" data-checkout="installments" name="mercadopago_custom[installments]">
            <option value="-1"><?php echo $form_labels["form"]["label_choose"]; ?> ...</option>
          </select>
+         <span class="mp-error" id="mp-error-2202" data-main="#issuer"> <?php echo $form_labels['error']['220']; ?> </span>
        </div>
  
        <div class="mp-box-inputs mp-col-30" id="mp-box-input-tax-cft">
@@ -307,30 +308,44 @@
     var url_message = url_site.slice(-1) == '/' ? url_site : url_site + '/';
     url_message += 'index.php?route=extension/payment/mp_transparente/coupon';
 
-    // MPv1.sdkResponseHandler = function(status, response) {
+    MPv1.sdkResponseHandler = function(status, response) {
 
-    //   var $form = MPv1.getForm();
+      var secCode = jQuery('#customer-and-card-securityCode').val();
+      var secCode2 = jQuery('#securityCode').val();
+      var inst = jQuery('#installments').val();
+      var $form = MPv1.getForm();
 
-    //   document.querySelector(MPv1.selectors.box_loading).style.background = "";
+      document.querySelector(MPv1.selectors.box_loading).style.background = "";
 
-    //   if (status != 200 && status != 201) {
-    //     MPv1.showErrors(response);
-    //   } else {
-    //     var token = document.querySelector(MPv1.selectors.token);
-    //     token.value = response.id;
+      if (inst < 0) {
+        jQuery("#mp-error-2201").css("display", "block");
+        jQuery("#mp-error-2202").css("display", "block");
+        return;
+      }
 
-    //     if(MPv1.add_truncated_card){
-    //       var card = MPv1.truncateCard(response);
-    //       document.querySelector(MPv1.selectors.cardTruncated).value=card;
-    //     }
+      if (secCode == "" && secCode2 == "") {
+        response = {cause : [{code:"E302"}]};
+        MPv1.showErrors(response);
 
-    //     if (!MPv1.create_token_on.event) {
-    //       doSubmit=true;
-    //       btn = document.querySelector(MPv1.selectors.form);
-    //       btn.submit();
-    //     }
-    //   }
-    // }
+      } else if (status != 200 && status != 201) { 
+        MPv1.showErrors(response);
+      
+      } else {
+        var token = document.querySelector(MPv1.selectors.token);
+        token.value = response.id;
+
+        if(MPv1.add_truncated_card){
+          var card = MPv1.truncateCard(response);
+          document.querySelector(MPv1.selectors.cardTruncated).value=card;
+        }
+
+        if (!MPv1.create_token_on.event) {
+          doSubmit=true;
+          btn = document.querySelector(MPv1.selectors.form);
+          btn.submit();
+        }
+      }
+    }
 
     MPv1.Initialize(mercadopago_site_id, mercadopago_public_key, '<?php echo $mp_transparente_coupon == 0? false:true;?>', url_message, mercadopago_payer_email);
 
