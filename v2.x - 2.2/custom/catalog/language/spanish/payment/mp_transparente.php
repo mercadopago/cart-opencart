@@ -232,3 +232,59 @@ $_['cc_rejected_insufficient_amount'] = "Seu cartão não possui saldo suficient
 $_['cc_rejected_invalid_installments'] = "Esta bandeira de cartão não permite parcelamento na quantidade de vezes escolhida.";
 $_['cc_rejected_max_attempts'] = "Você atingiu o limite de tentativas. Escolha outro cartão.";
 $_['cc_rejected_other_reason'] = "Sua operadora de cartão não processou o pagamento.";
+
+//Checkout único
+$_['cucoupon_empty'] = "Por favor, informe su código de cupón";
+$_['cuapply'] = "Aplicar";
+$_['curemove'] = "Remover";
+$_['cudiscount_info1'] = "Usted ahorró";
+$_['cudiscount_info2'] = "Con descuento de descuento";
+$_['cudiscount_info3'] = "Total de su compra:";
+$_['cudiscount_info4'] = "Total de su compra con descuento:";
+$_['cudiscount_info5'] = "Tras la aprobación del pago";
+$_['cudiscount_info6'] = "Términos y condiciones de uso";
+$_['cucoupon_of_discounts'] = "Cupón de descuento";
+$_['culabel_other_bank'] = "Otro banco";
+$_['culabel_choose'] = "Escoger";
+$_['cupayment_method'] = "Método de pago";
+$_['cucredit_card_number'] = "Número de tarjeta de crédito";
+$_['cuexpiration_month'] = "Mes de vencimiento";
+$_['cuexpiration_year'] = "Año de vencimiento";
+$_['cuyear'] = "Año";
+$_['cumonth'] = "Mes";
+$_['cucard_holder_name'] = "Nombre del titular de la tarjeta";
+$_['cusecurity_code'] = "Código de seguridad";
+$_['cudocument_type'] = "Tipo de Documento";
+$_['cudocument_number'] = "Número del Documento";
+$_['cuissuer'] = "Editor";
+$_['cuinstallments'] = "Parcelas";
+$_['cuyour_card'] = "Tu tarjeta";
+$_['cuother_cards'] = "Otros Tarjetas";
+$_['cuother_card'] = "Otra Tarjeta";
+$_['cuended_in'] = "Terminó en";
+$_['cubtn_pay'] = "Pagar";
+
+//Checkout único erros
+$_['cue205'] = "Número de tarjeta no puede ser nulo";
+$_['cueE301'] = "Numero de tarjeta invalido";
+$_['cue208'] = "Fecha de vencimiento no válida";
+$_['cue209'] = "Fecha de vencimiento no válida";
+$_['cue325'] = "Fecha de vencimiento no válida";
+$_['cue326'] = "Fecha de vencimiento no válida";
+$_['cue221'] = "Titular de la tarjeta no puede ser nulo";
+$_['cue316'] = "Nombre del titular de la tarjeta no válido";
+$_['cue224'] = "Código de seguridad no puede ser nulo";
+$_['cueE302'] = "Código de seguridad invalido";
+$_['cueE203'] = "Código de seguridad invalido";
+$_['cue212'] = "El tipo de documento no puede ser nulo";
+$_['cue322'] = "Tipo de documento no válido";
+$_['cue214'] = "Documento no puede ser nulo";
+$_['cue324'] = "Número de documento no válido";
+$_['cue213'] = "Titular de la tarjeta no puede ser nulo";
+$_['cue323'] = "Subtipo de documento no válido";
+$_['cue220'] = "El parámetro parcelas no puede ser nulo / vacío";
+$_['cueEMPTY'] = "Por favor, informe el código de cupón";
+
+
+
+

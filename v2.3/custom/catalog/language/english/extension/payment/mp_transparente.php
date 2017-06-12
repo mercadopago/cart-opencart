@@ -286,6 +286,6 @@ $_['cue214'] = "Parameter docNumber can not be null/empty";
 $_['cue324'] = "Invalid Document Number";
 $_['cue213'] = "The parameter cardholder.document.subtype can not be null or empty";
 $_['cue323'] = "Invalid Document Sub Type";
-$_['cue220'] = "Parameter cardIssuerId can not be null/empty";
+$_['cue220'] = "Parameter installments can not be null/empty";
 $_['cueEMPTY'] = "Please, inform the coupon code";
 

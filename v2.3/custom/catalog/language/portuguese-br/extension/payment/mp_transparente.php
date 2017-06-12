@@ -270,11 +270,11 @@ $_['cueE302'] = "Código de segurança inválido";
 $_['cueE203'] = "Código de segurança inválido";
 $_['cue212'] = "Tipo do documento não pode ser nulo";
 $_['cue322'] = "Tipo do documento inválido";
-$_['cue214'] = "Tipo do documento não pode ser nulo";
-$_['cue324'] = "Tipo do documento inválido";
+$_['cue214'] = "Documento não pode ser nulo";
+$_['cue324'] = "Documento inválido";
 $_['cue213'] = "Titular do cartão não pode ser nulo";
 $_['cue323'] = "Sub tipo inválido";
-$_['cue220'] = "Emissor do cartão não pode ser nulo";
+$_['cue220'] = "O parametro parcelas deve ser selecionado";
 $_['cueEMPTY'] = "Por favor, informe o código do cupom";
   
 

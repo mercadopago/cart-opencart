@@ -1,5 +1,8 @@
-// MPv1
-// Handlers Form Mercado Pago v1
+/*
+ * MPv1
+ * Handlers Form Mercado Pago v1
+ * @version     1.0.4
+ */
 
 (function (){
 
@@ -252,7 +255,7 @@
   MPv1.clearOptions = function () {
     var bin = MPv1.getBin();
 
-    if (bin.length == 0) {
+    if (bin != null && bin.length == 0) {
       MPv1.hideIssuer();
 
       var selectorInstallments = document.querySelector(MPv1.selectors.installments),
@@ -716,7 +719,7 @@
       if(MPv1.customer_and_card.status){
         return document.querySelector(MPv1.selectors.formCustomerAndCard);
       }else{
-        return document.querySelector(MPv1.selectors.form);
+        return document.querySelector(MPv1.selectors.formDiv);
       }
     }
 
@@ -978,6 +981,10 @@
         //hide documento for mex
         document.querySelector(MPv1.selectors.mpDoc).style.display = 'none';
         // document.querySelector(MPv1.selectors.mpPaymentMethodSelector).removeAttribute('style');
+
+        if(!MPv1.customer_and_card.status){
+          document.querySelector(MPv1.selectors.mpSecurityCodeCustomerAndCard).style.display = 'none';
+        }
 
         document.querySelector(MPv1.selectors.formCustomerAndCard).removeAttribute('style');
 
