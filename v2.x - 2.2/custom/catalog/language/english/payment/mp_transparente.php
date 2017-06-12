@@ -235,3 +235,57 @@ $_['cc_rejected_insufficient_amount'] = "Your card do not have sufficient funds.
 $_['cc_rejected_invalid_installments'] = "payment_method_id does not process payments in installments installments.";
 $_['cc_rejected_max_attempts'] = "You have reached the limit of allowed attempts. Choose another card or another payment method.";
 $_['cc_rejected_other_reason'] = "Your credit card company did not process the payment.";
+
+//Checkout único
+$_['cucoupon_empty'] = "Please, inform your coupon code";
+$_['cuapply'] = "Apply";
+$_['curemove'] = "Remove";
+$_['cudiscount_info1'] = "You will save";
+$_['cudiscount_info2'] = "with discount from";
+$_['cudiscount_info3'] = "Total of your purchase:";
+$_['cudiscount_info4'] = "Total of your purchase with discount:";
+$_['cudiscount_info5'] = "*Upon payment approval";
+$_['cudiscount_info6'] = "Terms and Conditions of Use";
+$_['cucoupon_of_discounts'] = "Discount Coupon";
+$_['culabel_other_bank'] = "Other Bank";
+$_['culabel_choose'] = "Choose";
+$_['cupayment_method'] = "Payment Method";
+$_['cucredit_card_number'] = "Credit card number";
+$_['cuexpiration_month'] = "Expiration month";
+$_['cuexpiration_year'] = "Expiration year";
+$_['cuyear'] = "Year";
+$_['cumonth'] = "Month";
+$_['cucard_holder_name'] = "Card holder name";
+$_['cusecurity_code'] = "Security code";
+$_['cudocument_type'] = "Document Type";
+$_['cudocument_number'] = "Document number";
+$_['cuissuer'] = "Issuer";
+$_['cuinstallments'] = "Installments";
+$_['cuyour_card'] = "Your Card";
+$_['cuother_cards'] = "Other Cards";
+$_['cuother_card'] = "Other Card";
+$_['cuended_in'] = "ended in";
+$_['cubtn_pay'] = "Pay";
+
+//Checkout único erros
+$_['cue205'] = "Parameter cardNumber can not be null/empty";
+$_['cueE301'] = "Invalid Card Number";
+$_['cue208'] = "Invalid Expiration Date";
+$_['cue209'] = "Invalid Expiration Date";
+$_['cue325'] = "Invalid Expiration Date";
+$_['cue326'] = "Invalid Expiration Date";
+$_['cue221'] = "Parameter cardholderName can not be null/empty";
+$_['cue316'] = "Invalid Card Holder Name";
+$_['cue224'] = "Parameter securityCode can not be null/empty";
+
+$_['cueE302'] = "Invalid Security Code";
+$_['cueE203'] = "Invalid Security Code";
+$_['cue212'] = "Parameter docType can not be null/empty";
+$_['cue322'] = "Invalid Document Type";
+$_['cue214'] = "Parameter docNumber can not be null/empty";
+$_['cue324'] = "Invalid Document Number";
+$_['cue213'] = "The parameter cardholder.document.subtype can not be null or empty";
+$_['cue323'] = "Invalid Document Sub Type";
+$_['cue220'] = "Parameter installments can not be null/empty";
+$_['cueEMPTY'] = "Please, inform the coupon code";
+

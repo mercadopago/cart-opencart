@@ -278,11 +278,11 @@ $_['cueE302'] = "Código de seguridad invalido";
 $_['cueE203'] = "Código de seguridad invalido";
 $_['cue212'] = "El tipo de documento no puede ser nulo";
 $_['cue322'] = "Tipo de documento no válido";
-$_['cue214'] = "El tipo de documento no puede ser nulo";
+$_['cue214'] = "Documento no puede ser nulo";
 $_['cue324'] = "Número de documento no válido";
 $_['cue213'] = "Titular de la tarjeta no puede ser nulo";
 $_['cue323'] = "Subtipo de documento no válido";
-$_['cue220'] = "El parámetro cardIssuerId no puede ser nulo / vacío";
+$_['cue220'] = "El parámetro parcelas no puede ser nulo / vacío";
 $_['cueEMPTY'] = "Por favor, informe el código de cupón";
 
 
