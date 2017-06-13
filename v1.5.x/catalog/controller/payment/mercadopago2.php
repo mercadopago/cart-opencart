@@ -6,9 +6,17 @@ include_once "mercadopago.php";
 class ControllerPaymentMercadopago2 extends Controller {
 
 	private $error;
-        public  $sucess = true;
+    public  $sucess = true;
 	private $order_info;
-        private $message;
+    private $message;
+	private $sponsors = array('MLB' => 204931135,
+		'MLM' => 204962951,
+		'MLA' => 204931029,
+		'MCO' => 204964815,
+		'MLV' => 204964612,
+		'MPE' => 217176790,
+		'MLC' => 204927454,
+		'MLU' => 241827790);
 
 	protected function index() {
 
@@ -200,7 +208,12 @@ class ControllerPaymentMercadopago2 extends Controller {
 		$pref['items'] = $items;
 		$pref['back_urls'] = $back_urls;
 		$pref['payment_methods'] = $payment_methods;
-		    
+		
+		$is_test_user = strpos($order_info['email'], '@testuser.com');
+
+		if (!$is_test_user) {
+			$pref["sponsor_id"] = $this->sponsors[$this->config->get('mercadopago2_country')];
+		}
 
 		$mp = new MP ($client_id, $client_secret);
 		$preferenceResult = $mp->create_preference($pref);

@@ -7,7 +7,8 @@ $_['text_ipn']						        = 'Configure your <b>Instant Payment Motification</b
                                                                   <a href="https://www.mercadopago.com/mla/herramientas/notificaciones" target="_blank">Arg</a> or
                                                                   <a href="https://www.mercadopago.com/mlm/herramientas/notificaciones" target="_blank">Mex</a> or
                                                                   <a href="https://www.mercadopago.com/mlv/herramientas/notificaciones" target="_blank">Ven</a> or
-                                                                  <a href="https://www.mercadopago.com/mlb/ferramentas/notificacoes" target="_blank">Bra</a><br />
+                                                                  <a href="https://www.mercadopago.com/mlb/ferramentas/notificacoes" target="_blank">Bra</a> or 
+                                                                  <a href="https://www.mercadopago.com/mlu/ferramentas/notificacoes" target="_blank">Uru</a><br />
                                                                   Set your url follwing this exemple: http//www.your_store_address_root.com/index.php?route=payment/mercadopago2/retorno/&';
 $_['text_payment']						= 'Payment';
 $_['text_success']						= 'Sucess, your modifications are done!';
@@ -20,10 +21,10 @@ $_['text_chile']						= 'Chile';
 // Entry
 
 
-$_['entry_client_id']						= 'Cliente ID :  <span class="help">To get this fild, follow:<a href="https://www.mercadopago.com/mla/herramientas/aplicaciones" target="_blank">Arg</a> or <a href="https://www.mercadopago.com/mlm/herramientas/aplicaciones" target="_blank">Mex</a> or
-                                                                     <a href="https://www.mercadopago.com/mlv/herramientas/aplicaciones" target="_blank">Ven</a> or <a href="https://www.mercadopago.com/mlb/ferramentas/aplicacoes" target="_blank">Bra</a></span>';
-$_['entry_client_secret']					= 'Client Secret : <span class="help">To get this fild, follow:<a href="https://www.mercadopago.com/mla/herramientas/aplicaciones" target="_blank">Arg</a> or <a href="https://www.mercadopago.com/mlm/herramientas/aplicaciones" target="_blank">Mex</a> or
-                                                                    <a href="https://www.mercadopago.com/mlv/herramientas/aplicaciones" target="_blank">Ven</a> or <a href="https://www.mercadopago.com/mlb/ferramentas/aplicacoes" target="_blank">Bra</a></span>';
+$_['entry_client_id']						= 'Cliente ID :  <span class="help">To get this fild, follow:<a href="Argentina: https://www.mercadopago.com/mla/account/credentials?type=basic" target="_blank">Arg</a> or <a href="https://www.mercadopago.com/mlm/account/credentials?type=basic" target="_blank">Mex</a> or
+                                                                     <a href="https://www.mercadopago.com/mlv/account/credentials?type=basic" target="_blank">Ven</a> or <a href="https://www.mercadopago.com/mlb/account/credentials?type=basic" target="_blank">Bra</a> or <a href="https://www.mercadopago.com/mlu/account/credentials?type=basic" target="_blank">Uru</a></span>';
+$_['entry_client_secret']					= 'Client Secret : <span class="help">To get this fild, follow:<a href="Argentina: https://www.mercadopago.com/mla/account/credentials?type=basic" target="_blank">Arg</a> or <a href="https://www.mercadopago.com/mlm/account/credentials?type=basic" target="_blank">Mex</a> or
+                                                                     <a href="https://www.mercadopago.com/mlv/account/credentials?type=basic" target="_blank">Ven</a> or <a href="https://www.mercadopago.com/mlb/account/credentials?type=basic" target="_blank">Bra</a> or <a href="https://www.mercadopago.com/mlu/account/credentials?type=basic" target="_blank">Uru</a></span>';
 
 $_['entry_installments']					= 'Maximum accepted payments';
 $_['entry_payments_not_accept']					= 'Check the payments methods that you <b>don´t want</b> to accept:<br /><br /><span class="help"><b>Important</b> If you change the Sales Country, save the page and only after that select the methods that you dont´t want to accept.</span>';
