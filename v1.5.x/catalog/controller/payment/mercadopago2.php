@@ -50,6 +50,9 @@ class ControllerPaymentMercadopago2 extends Controller {
 			case"CLP":
 				$currency = 'CHI';
 				break;
+			case"UYU":
+				$currency = 'UYU';
+				break;
 			default:
 				$currency = 'USD';
 				break;
@@ -57,7 +60,7 @@ class ControllerPaymentMercadopago2 extends Controller {
                 
                  
             
-		$currencies = array('ARS','BRL','MEX','CHI','VEF');
+		$currencies = array('ARS','BRL','MEX','CHI','VEF', 'UYU');
 		if (!in_array($currency, $currencies)) {
 			$currency = '';
 			$this->data['error'] = $this->language->get('currency_no_support');
