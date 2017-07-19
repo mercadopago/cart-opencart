@@ -20,12 +20,25 @@ class ControllerPaymentMPTicket extends Controller {
 
 	public function index() {
 		$this->language->load('payment/mp_ticket');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
 		$data['payment_button'] = $this->language->get('payment_button');
-
-		error_log("====tradução payment=====".$this->language->get('payment_button'));
-
 		$data['analytics'] = $this->setPreModuleAnalytics();
-		$data['payment_button'] = $this->language->get('payment_button');
+		$data['firstname'] = $order_info['firstname'];
+		$data['lastname'] = $order_info['lastname'];
+		$data['address'] = $order_info['shipping_address_1'];
+		$data['zipcode'] = $order_info['shipping_postcode'];
+		$data['shipping_city'] = $order_info['shipping_city'];
+		$data["countryType"] = $this->getCountry();
+
+		if ($order_info["payment_zone_code"] != null && $order_info['payment_zone'] != null) {
+			$data['payment_zone_code'] = $order_info["payment_zone_code"];
+			$data['payment_zone'] = $order_info["payment_zone"];
+		} else {
+			$data['payment_zone_code'] = "";
+			$data['payment_zone'] = "Selecione";	
+		}
+
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/mp_ticket.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/template/payment/mp_ticket.tpl', $data);
@@ -58,6 +71,22 @@ class ControllerPaymentMPTicket extends Controller {
 
 			$payer = array("email" => $order_info['email']);
 
+			if ($site_id == "MLB") {
+				$mercadopago_ticket = $this->request->post['mercadopago_ticket'];
+				$docNumber = preg_replace('/[^-9]/', '', $mercadopago_ticket['docNumber']);
+
+				$order_info['firstname'] = $mercadopago_ticket['firstname'];
+				$order_info['lastname'] = $mercadopago_ticket['lastname'];
+				$order_info['shipping_address_1'] = $mercadopago_ticket['address'];
+				$order_info['shipping_postcode'] = $mercadopago_ticket['zipcode'];
+				$order_info['shipping_city'] = $mercadopago_ticket['city'];
+				$order_info['shipping_zone'] = $mercadopago_ticket['state'];
+				$order_info['street_number'] = $mercadopago_ticket['number'];
+				$order_info['cpf'] = $docNumber;
+			} else {
+				$order_info['street_number'] = "-";
+			}
+
 			$shipments = array(
 				"receiver_address" => array(
 					"floor" => "-",
@@ -68,7 +97,7 @@ class ControllerPaymentMPTicket extends Controller {
 					$order_info['shipping_zone'] . " - " .
 					$order_info['shipping_country'],
 					"apartment" => "-",
-					"street_number" => "-"));
+					$order_info['street_number']));
 
 			$access_token = $this->config->get('mp_ticket_access_token');
 			$mp = new MP($access_token);
@@ -97,6 +126,11 @@ class ControllerPaymentMPTicket extends Controller {
 			$payment_data['additional_info']['payer']['address']['street_name'] = $order_info['shipping_address_1'];
 			$payment_data['additional_info']['payer']['address']['zip_code'] = $order_info['shipping_postcode'];
 
+			if ($site_id == "MLB") {
+				$payment_data['payer']['identification']['type'] = "CPF";
+				$payment_data['payer']['identification']['number'] = $order_info['cpf'];
+			}
+
 			// Shipments Info
 			$payment_data['additional_info']['items'][] = $items;
 			$payment_data['additional_info']['shipments']['receiver_address']['zip_code'] = $order_info['shipping_postcode'];
@@ -109,7 +143,6 @@ class ControllerPaymentMPTicket extends Controller {
 			}
 
 			$payment_response = $mp->create_payment($payment_data);
-			error_log('payment response: ' . json_encode($payment_response));
 
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
 			echo json_encode(
