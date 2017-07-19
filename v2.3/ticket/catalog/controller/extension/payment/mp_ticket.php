@@ -129,15 +129,23 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			$payment_data['additional_info']['payer']['address']['zip_code'] = $order_info['shipping_postcode'];
 			
 			if ($site_id == "MLB") {
+				$payment_data['payer']['first_name'] = $order_info['firstname'];
+				$payment_data['payer']['last_name'] = $order_info['lastname'];
 				$payment_data['payer']['identification']['type'] = "CPF";
 				$payment_data['payer']['identification']['number'] = $order_info['cpf'];
+				$payment_data['payer']['address']['zip_code'] = $order_info['shipping_postcode'];
+				$payment_data['payer']['address']['street_name'] = $order_info['shipping_address_1'];
+				$payment_data['payer']['address']['street_number'] = $order_info['street_number'];
+				$payment_data['payer']['address']["neighborhood"] = $order_info['shipping_city'];
+				$payment_data['payer']['address']["city"] = $order_info['shipping_city'];
+				$payment_data['payer']['address']["federal_unit"] = $order_info['shipping_zone'];
 			}
 
 			// Shipments Info
 			$payment_data['additional_info']['items'][] = $items;
 			$payment_data['additional_info']['shipments']['receiver_address']['zip_code'] = $order_info['shipping_postcode'];
 			$payment_data['additional_info']['shipments']['receiver_address']['street_name'] = $order_info['shipping_address_1'];
-			$payment_data['additional_info']['shipments']['receiver_address']['street_number'] = "-";
+			$payment_data['additional_info']['shipments']['receiver_address']['street_number'] = $order_info['street_number'];
 
 			$is_test_user = strpos($order_info['email'], '@testuser.com');
 			if (!$is_test_user) {
