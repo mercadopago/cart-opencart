@@ -3,7 +3,8 @@
             var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
             url_backend += '/index.php?route=extension/payment/mp_ticket/getAcceptedMethods';  
             var spinner = new Spinner().spin(document.getElementById('spinner'));
-            
+            var country = $('#contryType').val();
+
             $.ajax({
                 type: "POST",
                 url: url_backend,
@@ -11,15 +12,11 @@
                    response = JSON.parse(data);
                    var div = document.getElementById('div_payment_methods');
                    var i = response.methods.length;
-           
                    var br = document.createElement('br');
-                   var label = document.createElement('label');
+                   var label = document.createElement('label');             
 
                    label.innerHTML = "Selecione um meio de pagamento";
                    label.setAttribute('style','float:none; margin-left: auto; margin-right: auto; ');
-
-                   div.appendChild(label);
-                   div.appendChild(br);
                    while(i--)
                    {                    
                        var new_div = document.createElement('div');
@@ -29,20 +26,30 @@
                        chk.setAttribute('type', 'radio');
                        chk.setAttribute('name', 'rd_payment');
                        chk.setAttribute('value', response.methods[i].method);
-
+                       
                        img.setAttribute('src', response.methods[i].secure_thumbnail);
                        new_div.appendChild(img);
                        new_div.appendChild(document.createElement('br'));
                        new_div.appendChild(chk);
-
 
                        new_div.setAttribute('style','margin-left: 5%; display: inline-block;');
                        new_div.addEventListener('click', function(){
                         document.getElementById('payment_method_id').value = this.childNodes[2].value;
                         console.log('valor selecionado: ' + this.childNodes[2].value);
                     })
-                       div.appendChild(new_div);
-                       spinner.stop();
+
+                    div.appendChild(label);
+                    div.appendChild(br);
+                    div.appendChild(new_div);
+
+                    if (country == "MLB" && i < 2) {
+                        chk.click();
+                        div.removeChild(label);
+                        div.removeChild(br);
+                        div.removeChild(new_div);
+                    }
+
+                      spinner.stop();
                    }
                
 
@@ -86,28 +93,128 @@
 
         }
 
-        function validate(){
+        function validaCpf(val) {
+
+          if (val.match(/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/) != null) {
+              var val1 = val.substring(0, 3);
+              var val2 = val.substring(4, 7);
+              var val3 = val.substring(8, 11);
+              var val4 = val.substring(12, 14);
+
+              var i;
+              var number;
+              var result = true;
+
+              number = (val1 + val2 + val3 + val4);
+
+              s = number;
+              c = s.substr(0, 9);
+              var dv = s.substr(9, 2);
+              var d1 = 0;
+
+              for (i = 0; i < 9; i++) {
+                  d1 += c.charAt(i) * (10 - i);
+              }
+
+              if (d1 == 0)
+                  result = false;
+
+              d1 = 11 - (d1 % 11);
+              if (d1 > 9) d1 = 0;
+
+              if (dv.charAt(0) != d1)
+                  result = false;
+
+              d1 *= 2;
+              for (i = 0; i < 9; i++) {
+                  d1 += c.charAt(i) * (11 - i);
+              }
+
+              d1 = 11 - (d1 % 11);
+              if (d1 > 9) d1 = 0;
+
+              if (dv.charAt(1) != d1)
+                  result = false;
+
+              if (result)
+                return number;
+
+              return "";
+          }
+
+          return;
+      }
+
+        function validate(firstname, lastname, docNumber, zipcode, address, number, city, state, country) {
+
+          var retorno = true;
+
+          $('#erro_name').hide();
+          $('#erro_address').hide();
+          $('#erro_state').hide();
+
+          if (country == "MLB") {
+            if(firstname == "" || lastname == "" || docNumber == "" || validaCpf(docNumber) == ""){
+              $('#erro_name').show();
+              retorno = false;
+            }
+
+            if(address == "" || number == ""){
+              $('#erro_address').show(); 
+              retorno = false;
+            }
+
+            if(city == "" || state == "" || zipcode == "" ) {
+              $('#erro_state').show();
+              retorno = false;
+            }
+
+          } else {
             return Array.prototype.slice.call(document.getElementsByName('rd_payment'))
-            .filter(function(item){
-                return item.checked;
-            }).length > 0 ;
+             .filter(function(item){
+               return item.checked;
+             }).length > 0 ;
+          }
+
+          return retorno;
         }
 
         function pay(){
-           if(validate()){
+
+          var firstname = $('#firstname').val();
+          var lastname = $('#lastname').val();  
+          var docNumber = $('#docNumber').val();
+          var zipcode = $('#zipcode').val();    
+          var address = $('#address').val();
+          var number = $('#number').val();
+          var city = $('#city').val();
+          var state = $('#state').val();
+          var country = $('#contryType').val();
+
+          var retorno = validate(firstname, lastname, docNumber, zipcode, address, number, city, state, country);
+
+           if(retorno){
             this.disabled = true;
+            var valid_status = [200, 201];
             var spinner = new Spinner().spin(document.getElementById('spinner'));
             var url_site = window.location.href.split('index.php')[0];
-            var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';        
-            url_backend += 'index.php?route=extension/payment/mp_ticket/payment/&payment_method_id=' + document.getElementById('payment_method_id').value;         
-            var valid_status = [200, 201];
+            var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';       
+            url_backend += 'index.php?route=extension/payment/mp_ticket/payment/&payment_method_id=' + document.getElementById('payment_method_id').value;
+
             $.ajax({type: "POST",
                 url: url_backend,
-                success: function success(data) 
-                {
+                data: { mercadopago_ticket : {
+                  firstname : firstname,
+                  lastname : lastname,
+                  docNumber : docNumber,
+                  zipcode : zipcode,
+                  address : address,
+                  number : number,
+                  city : city,
+                  state : state
+                }}, success: function success(data) {
                     response = JSON.parse(data);
-                    if((response.error || valid_status.indexOf(status) < 0) && response.url)
-                    {
+                    if((response.error || valid_status.indexOf(status) < 0) && response.url) {
                         ModuleAnalytics.setToken(response.token);
                         ModuleAnalytics.setPaymentId(response.paymentId);
                         ModuleAnalytics.setPaymentType(response.paymentType);
@@ -116,8 +223,7 @@
 
                         console.log('abrindo boleto: ' + response.url);
                         var paymentWindow = window.open(response.url);
-                        if(!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed=='undefined') 
-                        { 
+                        if(!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed=='undefined') { 
                             //TODO: Trocar isso por um getMessage com o idioma nativo
                             alert('Please, disable your pop up blocker');
                             spinner.stop();
@@ -128,9 +234,7 @@
                         location += 'index.php?route=checkout/success';
 
                         window.location.href = location;
-                    }
-                    else
-                    {
+                    } else {
                         spinner.stop();
                         getMessage(data);
                     }

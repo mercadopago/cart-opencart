@@ -4,7 +4,7 @@ require_once "mercadopago.php";
 
 class ControllerExtensionPaymentMPTicket extends Controller {
 
-	private $version = "1.0.1";
+	private $version = "1.0.2";
 	private $versionModule = "2.3.2";
 	private $error;
 	public $sucess = true;
@@ -20,12 +20,25 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 	public function index() {
 		$this->language->load('extension/payment/mp_ticket');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
 		$data['payment_button'] = $this->language->get('payment_button');
-
-		error_log("====tradução payment=====".$this->language->get('payment_button'));
-
 		$data['analytics'] = $this->setPreModuleAnalytics();
 		$data['payment_button'] = $this->language->get('payment_button');
+		$data['firstname'] = $order_info['firstname'];
+		$data['lastname'] = $order_info['lastname'];
+		$data['address'] = $order_info['shipping_address_1'];
+		$data['zipcode'] = $order_info['shipping_postcode'];
+		$data['shipping_city'] = $order_info['shipping_city'];
+		$data["countryType"] = $this->getCountry();
+
+		if ($order_info["payment_zone_code"] != null && $order_info['payment_zone'] != null) {
+			$data['payment_zone_code'] = $order_info["payment_zone_code"];
+			$data['payment_zone'] = $order_info["payment_zone"];
+		} else {
+			$data['payment_zone_code'] = "";
+			$data['payment_zone'] = "Selecione";	
+		}
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/mp_ticket.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/template/extension/payment/mp_ticket.tpl', $data);
@@ -36,6 +49,8 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 	public function payment() {
 		$this->language->load('extension/payment/mp_ticket');
+		
+
 		try
 		{
 			$this->load->model('checkout/order');
@@ -58,6 +73,22 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 			$payer = array("email" => $order_info['email']);
 
+			if ($site_id == "MLB") {
+				$mercadopago_ticket = $this->request->post['mercadopago_ticket'];
+				$docNumber = preg_replace('/[^-9]/', '', $mercadopago_ticket['docNumber']);
+
+				$order_info['firstname'] = $mercadopago_ticket['firstname'];
+				$order_info['lastname'] = $mercadopago_ticket['lastname'];
+				$order_info['shipping_address_1'] = $mercadopago_ticket['address'];
+				$order_info['shipping_postcode'] = $mercadopago_ticket['zipcode'];
+				$order_info['shipping_city'] = $mercadopago_ticket['city'];
+				$order_info['shipping_zone'] = $mercadopago_ticket['state'];
+				$order_info['street_number'] = $mercadopago_ticket['number'];
+				$order_info['cpf'] = $docNumber;
+			} else {
+				$order_info['street_number'] = "-";
+			}
+
 			$shipments = array(
 				"receiver_address" => array(
 					"floor" => "-",
@@ -68,7 +99,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 					$order_info['shipping_zone'] . " - " .
 					$order_info['shipping_country'],
 					"apartment" => "-",
-					"street_number" => "-"));
+					$order_info['street_number']));
 
 			$access_token = $this->config->get('mp_ticket_access_token');
 			$mp = new MP($access_token);
@@ -96,12 +127,25 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			$payment_data['additional_info']['payer']['phone']['number'] = $order_info['telephone'];
 			$payment_data['additional_info']['payer']['address']['street_name'] = $order_info['shipping_address_1'];
 			$payment_data['additional_info']['payer']['address']['zip_code'] = $order_info['shipping_postcode'];
+			
+			if ($site_id == "MLB") {
+				$payment_data['payer']['first_name'] = $order_info['firstname'];
+				$payment_data['payer']['last_name'] = $order_info['lastname'];
+				$payment_data['payer']['identification']['type'] = "CPF";
+				$payment_data['payer']['identification']['number'] = $order_info['cpf'];
+				$payment_data['payer']['address']['zip_code'] = $order_info['shipping_postcode'];
+				$payment_data['payer']['address']['street_name'] = $order_info['shipping_address_1'];
+				$payment_data['payer']['address']['street_number'] = $order_info['street_number'];
+				$payment_data['payer']['address']["neighborhood"] = $order_info['shipping_city'];
+				$payment_data['payer']['address']["city"] = $order_info['shipping_city'];
+				$payment_data['payer']['address']["federal_unit"] = $order_info['shipping_zone'];
+			}
 
 			// Shipments Info
 			$payment_data['additional_info']['items'][] = $items;
 			$payment_data['additional_info']['shipments']['receiver_address']['zip_code'] = $order_info['shipping_postcode'];
 			$payment_data['additional_info']['shipments']['receiver_address']['street_name'] = $order_info['shipping_address_1'];
-			$payment_data['additional_info']['shipments']['receiver_address']['street_number'] = "-";
+			$payment_data['additional_info']['shipments']['receiver_address']['street_number'] = $order_info['street_number'];
 
 			$is_test_user = strpos($order_info['email'], '@testuser.com');
 			if (!$is_test_user) {
@@ -259,8 +303,6 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			array_push($resultModules, $result['code']);
 		}
 
-
-
         $return = array(
             'publicKey'=> "",
             'token'=> $this->_getClientId($this->config->get('mp_ticket_access_token')),
@@ -272,8 +314,6 @@ class ControllerExtensionPaymentMPTicket extends Controller {
             'installedModules' => implode(', ', $resultModules),
             'additionalInfo' => ""
         );
-
-        error_log("===setPreModuleAnalytics====" . json_encode($return));
 
         return $return;
     }
