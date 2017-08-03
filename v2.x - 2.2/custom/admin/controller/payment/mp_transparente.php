@@ -111,7 +111,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$data['payment_style'] = isset($data['methods']) && count($data['methods']) > 12 ?
 		"float:left; margin-left:2%" : "float:left; margin-left:5%";
 
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
+		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
 			$this->load->model('setting/setting');
 
 			if (isset($this->request->post['mp_transparente_methods'])) {
@@ -123,12 +123,29 @@ class ControllerPaymentMPTransparente extends Controller {
 			}
 			$this->model_setting_setting->editSetting('mp_transparente', $this->request->post);
 
-			$this->setSettings();
+			$statusReturn = true;			
+			$responseAccessToken = $this->setSettings();
+			$responsePublicKey = $this->isValidPublicKey();
 
-			$this->session->data['success'] = $this->language->get('text_success');
-			$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
+			if (!$this->user->hasPermission('modify', 'payment/mp_transparente')) {
+				$this->_error['warning'] = $this->language->get('error_permission');
+				$statusReturn = false;
+			}
 
-			
+			if ($responseAccessToken['status'] > 202) {
+				$data['error_access_token'] = $this->language->get('error_access_token');
+				$statusReturn = false;
+			} 
+
+			if ($responsePublicKey == false) {
+				$data['error_public_key'] = $this->language->get('error_public_key');
+				$statusReturn = false;
+			}
+
+			if ($statusReturn) {
+				$this->session->data['success'] = $this->language->get('text_success');
+				$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
+			}
 		}
 
 		$this->response->setOutput($this->load->view('payment/mp_transparente.tpl', $data));
@@ -249,12 +266,17 @@ class ControllerPaymentMPTransparente extends Controller {
 		return $installments;
 	}
 
-	private function validate() {
-		if (!$this->user->hasPermission('modify', 'payment/mp_transparente')) {
-			$this->_error['warning'] = $this->language->get('error_permission');
+	private function isValidPublicKey() {
+		$url = "https://api.mercadopago.com/v1/payment_methods?public_key=".$this->request->post['mp_transparente_public_key'];
+		$result = $this->callJson($url);
+		
+		if ($result != null && isset($result['status'])) {
+			
+			if ($result['status'] > 202)
+				return false;
+			
 		}
-		return count($this->_error) < 1;
-
+		return true;
 	}
 
 	public function setSettings() {
@@ -283,9 +305,11 @@ class ControllerPaymentMPTransparente extends Controller {
         );
 
         try {
-			$access_token = $this->config->get('mp_transparente_access_token');
+			$access_token = $this->request->post['mp_transparente_access_token'];
 			$mp = new MP($access_token);        	
             $userResponse = $mp->saveSettings($request);
+
+            return $userResponse;
         } catch (Exception $e) {
         	error_log($e);
         }
