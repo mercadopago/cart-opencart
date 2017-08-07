@@ -69,7 +69,15 @@ $_['entry_access_token_tooltip'] = '<span class="help">Access Token para utiliza
 $_['error_permission'] = 'Lo siento, no tienes permiso para modificar Mercado Pago';
 $_['error_client_id'] = 'Lo siento, el <b>Client Id</b> es obligatorio.';
 $_['error_client_secret'] = 'Lo siento, el <b>Client Secret</b> es obligatorio.';
-
+$_['error_client_id_and_secret'] = '<b>Client ID y/o Client Secret</b> no valido. Seleccione su país y valide sus credenciales: 
+	<a href="https://www.mercadopago.com/mla/account/credentials">Argentina</a>,
+	<a href="https://www.mercadopago.com/mlb/account/credentials">Brazil</a>,
+	<a href="https://www.mercadopago.com/mlc/account/credentials">Chile</a>,
+	<a href="https://www.mercadopago.com/mco/account/credentials">Colombia</a>,
+	<a href="https://www.mercadopago.com/mlm/account/credentials">Mexico</a>,
+	<a href="https://www.mercadopago.com/mpe/account/credentials">Peru</a>,
+	<a href="https://www.mercadopago.com/mlu/account/credentials">Uruguay</a> o
+	<a href="https://www.mercadopago.com/mlv/account/credentials">Venezuela</a>';
 // installments
 $_['18'] = '18';
 $_['15'] = '15';
