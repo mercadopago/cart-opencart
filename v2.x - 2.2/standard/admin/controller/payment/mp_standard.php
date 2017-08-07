@@ -5,7 +5,7 @@ require_once '../catalog/controller/payment/mercadopago.php';
 class ControllerPaymentMPStandard extends Controller {
 	private $_error = array();
 	private $version = "2.0";
-	private $versionModule = "2.0";
+	private $versionModule = "2.2.1";
 
 	public function index() {
 		$prefix = 'mp_standard_';
