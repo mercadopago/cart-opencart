@@ -5,7 +5,7 @@ require_once '../catalog/controller/payment/mercadopago.php';
 class ControllerPaymentMPStandard extends Controller {
 	private $_error = array();
 	private $version = "2.0";
-	private $versionModule = "2.0";
+	private $versionModule = "2.2.1";
 
 	public function index() {
 		$prefix = 'mp_standard_';
@@ -48,7 +48,7 @@ class ControllerPaymentMPStandard extends Controller {
 			$name = $text_prefix . $text;
 			$data[$name] = $this->language->get($name);
 		}
-		error_log("=====setSettings 1======");
+
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
 		$data['tab_general'] = $this->language->get('tab_general');
@@ -90,7 +90,7 @@ class ControllerPaymentMPStandard extends Controller {
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 
 		if ($_SERVER['REQUEST_METHOD'] == "POST") {
-			error_log("=====setSettings 1======");
+
 			foreach ($fields as $field) {
 				$fieldname = $prefix . $field;
 				$this->request->post[$fieldname] = str_replace(" ", "", $this->request->post[$fieldname]);
@@ -118,7 +118,7 @@ class ControllerPaymentMPStandard extends Controller {
 		$data['payment_style'] = isset($data['methods']) && count($data['methods']) > 12 ?
 		"float:left; margin-left:2%" : "float:left; margin-left:5%";
 
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
+		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
 			$this->load->model('setting/setting');
 
 			if (isset($this->request->post['mp_standard_methods'])) {
@@ -131,8 +131,24 @@ class ControllerPaymentMPStandard extends Controller {
 			$this->model_setting_setting->editSetting('mp_standard', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
-			$this->setSettings();
-			$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
+			$resultSetSettings = $this->setSettings();
+			$statusReturn = true;			
+
+			if (!$this->user->hasPermission('modify', 'payment/mp_standard')) {
+				$this->_error['warning'] = $this->language->get('error_permission');
+				$statusReturn = false;
+			}
+
+			if (!$resultSetSettings) {
+				$data['error_client_id'] = "";
+				$data['error_client_secret'] = $this->language->get('error_client_id_and_secret');
+				$statusReturn = false;
+			}
+
+			if ($statusReturn) {
+				$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
+			}
+
 		}
 
 		$this->response->setOutput($this->load->view('payment/mp_standard.tpl', $data));
@@ -260,9 +276,8 @@ class ControllerPaymentMPStandard extends Controller {
 
     public function setSettings()
     {
-		error_log("=====setSettings 1======");
-		$client_id = $this->config->get('mp_standard_client_id');
-		$client_secret = $this->config->get('mp_standard_client_secret');
+		$client_id = $this->request->post['mp_standard_client_id']; 
+		$client_secret = $this->request->post['mp_standard_client_secret'];
 		$mp = new MP($client_id, $client_secret);
 
         $moduleVersion = $this->version;
@@ -291,22 +306,8 @@ class ControllerPaymentMPStandard extends Controller {
 			$mp->saveSettings($request);
         } catch (Exception $e) {
         	error_log($e);
+        	return false;
         }
+        return true;
     }
-
-	private function validate() {
-		if (!$this->user->hasPermission('modify', 'payment/mp_standard')) {
-			$this->_error['warning'] = $this->language->get('error_permission');
-		}
-		if (!$this->request->post['mp_standard_client_id']) {
-			$this->_error['error_client_id'] = $this->language->get('error_client_id');
-		}
-
-		if (!$this->request->post['mp_standard_client_secret']) {
-			$this->_error['error_client_secret'] = $this->language->get('error_client_secret');
-		}
-
-		return count($this->_error) < 1;
-
-	}
 }

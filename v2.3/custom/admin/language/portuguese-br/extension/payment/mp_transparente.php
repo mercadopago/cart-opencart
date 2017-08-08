@@ -74,6 +74,24 @@ $_['entry_access_token_tooltip'] = '<span class="help">Access Token para utiliza
 $_['error_permission'] = 'Desculpe, você não possui permissão para modificar o módulo MercadoPago';
 $_['error_client_id'] = 'Desculpe, o <b>Client Id</b> é obrigatório.';
 $_['error_client_secret'] = 'Desculpe, o <b>Client Secret</b> é obrigatório.';
+$_['error_access_token'] = '<b>Access Token</b> inválido. Valide suas credenciais selecionando seu país: 
+	<a href="https://www.mercadopago.com/mla/account/credentials">Argentina</a>,
+	<a href="https://www.mercadopago.com/mlb/account/credentials">Brazil</a>,
+	<a href="https://www.mercadopago.com/mlc/account/credentials">Chile</a>,
+	<a href="https://www.mercadopago.com/mco/account/credentials">Colombia</a>,
+	<a href="https://www.mercadopago.com/mlm/account/credentials">Mexico</a>,
+	<a href="https://www.mercadopago.com/mpe/account/credentials">Peru</a>,
+	<a href="https://www.mercadopago.com/mlu/account/credentials">Uruguay</a> ou
+	<a href="https://www.mercadopago.com/mlv/account/credentials">Venezuela</a>';
+$_['error_public_key'] = '<b>Public Key</b> inválido. Valide suas credenciais selecionando seu país: 
+	<a href="https://www.mercadopago.com/mla/account/credentials">Argentina</a>,
+	<a href="https://www.mercadopago.com/mlb/account/credentials">Brazil</a>,
+	<a href="https://www.mercadopago.com/mlc/account/credentials">Chile</a>,
+	<a href="https://www.mercadopago.com/mco/account/credentials">Colombia</a>,
+	<a href="https://www.mercadopago.com/mlm/account/credentials">Mexico</a>,
+	<a href="https://www.mercadopago.com/mpe/account/credentials">Peru</a>,
+	<a href="https://www.mercadopago.com/mlu/account/credentials">Uruguay</a> ou
+	<a href="https://www.mercadopago.com/mlv/account/credentials">Venezuela</a>';
 
 // installments
 $_['18'] = '18';
