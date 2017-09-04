@@ -10,7 +10,7 @@
 $GLOBALS["LIB_LOCATION"] = dirname(__FILE__);
 
 class MP {
-	const version = "0.5.2";
+	const version = "0.5.3";
 	private $client_id;
 	private $client_secret;
 	private $ll_access_token;
@@ -28,6 +28,10 @@ class MP {
 			$this->client_id = func_get_arg(0);
 			$this->client_secret = func_get_arg(1);
 		}
+	}
+
+	public function setEmailAdmin($email){
+		MPRestClient::$email_admin = $email; 
 	}
 
 	public function sandbox_mode($enable = NULL) {
@@ -414,6 +418,7 @@ class MP {
  * MercadoPago cURL RestClient
  */
 class MPRestClient {
+	static $email_admin = "";
 	static $check_loop = 0;
 	const API_BASE_URL = "https://api.mercadopago.com";
 	private static function build_request($request) {
@@ -590,7 +595,8 @@ class MPRestClient {
 		 	"module" => "Opencart",
 		 	"module_version" => "2.3",
 		 	"url_store" => $_SERVER['HTTP_HOST'],
-		 	"errors" => $errors
+		 	"errors" => $errors, 
+		 	"email_admin" => self::$email_admin
 		);
 
 		$request = array(

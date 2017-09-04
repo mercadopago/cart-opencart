@@ -5,7 +5,7 @@ require_once '../catalog/controller/extension/payment/mercadopago.php';
 class ControllerExtensionPaymentMPTransparente extends Controller {
 	private $_error = array();
 	private $payment_types = array('debvisa', 'debmaster', 'credit_card', 'debit_card');
-	private $version = "2.3.2";
+	private $version = "2.3.3";
 
 	public function index() {
 
@@ -308,7 +308,8 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
         try {
 			$access_token = $this->request->post['mp_transparente_access_token'];
-			$mp = new MP($access_token);        	
+			$mp = new MP($access_token);
+			$mp->setEmailAdmin($this->config->get('config_email'));     	
             $userResponse = $mp->saveSettings($request);
 
             return $userResponse;
