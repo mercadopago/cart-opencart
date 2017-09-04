@@ -241,11 +241,8 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			$payment['campaign_id'] = (int) $params_mercadopago['campaign_id'];
 		}
 
-		error_log("Data sent on create Payment: " . json_encode($payment));
-
+		$mercadopago->setEmailAdmin($this->config->get('config_email'));
 		$payment = $mercadopago->create_payment($payment);
-		error_log("Response Payment: " . json_encode($payment));
-
 
 		if ($payment["status"] == 200 || $payment["status"] == 201) {
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' .

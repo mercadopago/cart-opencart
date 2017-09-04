@@ -308,7 +308,8 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
         try {
 			$access_token = $this->request->post['mp_transparente_access_token'];
-			$mp = new MP($access_token);        	
+			$mp = new MP($access_token);
+			$mp->setEmailAdmin($this->config->get('config_email'));     	
             $userResponse = $mp->saveSettings($request);
 
             return $userResponse;
