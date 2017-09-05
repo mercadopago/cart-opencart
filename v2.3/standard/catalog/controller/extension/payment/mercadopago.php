@@ -10,7 +10,7 @@
 $GLOBALS["LIB_LOCATION"] = dirname(__FILE__);
 
 class MP {
-	const version = "0.5.2";
+	const version = "0.5.3";
 	private $client_id;
 	private $client_secret;
 	private $ll_access_token;
@@ -28,6 +28,10 @@ class MP {
 			$this->client_id = func_get_arg(0);
 			$this->client_secret = func_get_arg(1);
 		}
+	}
+
+	public function setEmailAdmin($email){
+		MPRestClient::$email_admin = $email; 
 	}
 
 	public function sandbox_mode($enable = NULL) {
@@ -414,6 +418,7 @@ class MP {
  * MercadoPago cURL RestClient
  */
 class MPRestClient {
+	static $email_admin = "";
 	static $check_loop = 0;
 	const API_BASE_URL = "https://api.mercadopago.com";
 	private static function build_request($request) {
@@ -484,37 +489,62 @@ class MPRestClient {
 	}
 
 	private static function exec($request) {
-				
+		$response = null;
 		$connect = self::build_request($request);
 		$api_result = curl_exec($connect);
 		$api_http_code = curl_getinfo($connect, CURLINFO_HTTP_CODE);
+
 		if ($api_result === FALSE) {
 			throw new MercadoPagoException(curl_error($connect));
 		}
-		$response = array(
-			"status" => $api_http_code,
-			"response" => json_decode($api_result, true),
-		);
 
-		if ($response['status'] >= 400 && self::$check_loop == 0) {
+		if ($api_http_code != null && $api_result != null) {
+			$response = array (
+				"status" => $api_http_code,
+				"response" => json_decode($api_result, true),
+			);
+		}
+		
+
+		if ($response != null && $response['status'] >= 400 && self::$check_loop == 0) {
 
 			try {
+
 				self::$check_loop = 1;
-				$message = $response['response']['message'];
-				if (isset($response['response']['cause'])) {
-			 		if (isset($response['response']['cause']['code']) && isset($response['response']['cause']['description'])) {
-			 			$message .= " - " . $response['response']['cause']['code'] . ': ' . $response['response']['cause']['description'];
-			 		} else if (is_array($response['response']['cause'])) {
-			 			foreach ($response['response']['cause'] as $cause) {
-			 				$message .= " - " . $cause['code'] . ': ' . $cause['description'];
-			 			}
-			 		}
-			 	}
-			 	
-			 	$payloads = json_encode($request["data"]);
+				$message = null;
+				$payloads = null;
+			 	$endpoint = null;
 				$errors = array();
+
+				if (isset($response['response'])) {
+
+					if (isset($response['response']['message'])) {
+						$message = $response['response']['message'];
+					}
+
+					if (isset($response['response']['cause'])) {
+				 		if (isset($response['response']['cause']['code']) && isset($response['response']['cause']['description'])) {
+				 			$message .= " - " . $response['response']['cause']['code'] . ': ' . $response['response']['cause']['description'];
+				 		} else if (is_array($response['response']['cause'])) {
+				 			foreach ($response['response']['cause'] as $cause) {
+				 				$message .= " - " . $cause['code'] . ': ' . $cause['description'];
+				 			}
+				 		}
+				 	}
+				}
+
+				if ($request != null) {
+				 	if ($request["data"] != null) {
+				 		$payloads = json_encode($request["data"]);
+				 	}
+
+				 	if ($request["uri"] != null) {
+				 		$endpoint = $request["uri"];
+				 	}
+				}
+
 				$errors[] = array(
-					"endpoint" => $request["uri"],
+					"endpoint" => $endpoint,
 					"message" => $message,
 					"payloads" => $payloads
 				);
@@ -565,7 +595,8 @@ class MPRestClient {
 		 	"module" => "Opencart",
 		 	"module_version" => "2.3",
 		 	"url_store" => $_SERVER['HTTP_HOST'],
-		 	"errors" => $errors
+		 	"errors" => $errors, 
+		 	"email_admin" => self::$email_admin
 		);
 
 		$request = array(
