@@ -145,18 +145,88 @@
           return;
       }
 
-        function validate(firstname, lastname, docNumber, zipcode, address, number, city, state, country) {
+      function validaCNPJ (strCNPJ) {
+          strCNPJ = strCNPJ.replace('.','');
+          strCNPJ = strCNPJ.replace('.','');
+          strCNPJ = strCNPJ.replace('.','');
+          strCNPJ = strCNPJ.replace('-','');
+          strCNPJ = strCNPJ.replace('/','');
+
+          var numeros, digitos, soma, i, resultado, pos, tamanho, digitos_iguais;
+          digitos_iguais = 1;
+
+          if (strCNPJ.length < 14 && strCNPJ.length < 15){
+            return false;
+          }
+
+          for (i = 0; i < strCNPJ.length - 1; i++){
+            if (strCNPJ.charAt(i) != strCNPJ.charAt(i + 1)){
+              digitos_iguais = 0;
+              break;
+            }
+          }
+
+          if (!digitos_iguais){
+            tamanho = strCNPJ.length - 2
+            numeros = strCNPJ.substring(0,tamanho);
+            digitos = strCNPJ.substring(tamanho);
+            soma = 0;
+            pos = tamanho - 7;
+            for (i = tamanho; i >= 1; i--){
+              soma += numeros.charAt(tamanho - i) * pos--;
+              if (pos < 2){
+                pos = 9;
+              }
+
+            }
+            resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+            if (resultado != digitos.charAt(0)){
+              return false;
+            }
+
+            tamanho = tamanho + 1;
+            numeros = strCNPJ.substring(0,tamanho);
+            soma = 0;
+            pos = tamanho - 7;
+            for (i = tamanho; i >= 1; i--) {
+              soma += numeros.charAt(tamanho - i) * pos--;
+              if (pos < 2){
+                pos = 9;
+              }
+
+            }
+            resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+            if (resultado != digitos.charAt(1)){
+              return false;
+            }
+
+            return true;
+          }else{
+            return false;
+          }
+        }
+
+        function validate(firstname, lastname, docNumber, zipcode, address, number, city, state, country, typeDoc, razao, docNumberCNPJ) {
 
           var retorno = true;
 
           $('#erro_name').hide();
+          $('#erro_cnpj').hide();
           $('#erro_address').hide();
           $('#erro_state').hide();
 
           if (country == "MLB") {
-            if(firstname == "" || lastname == "" || docNumber == "" || validaCpf(docNumber) == ""){
-              $('#erro_name').show();
-              retorno = false;
+           
+            if(typeDoc == "CPF") {
+              if(firstname == "" || lastname == "" || docNumber == "" || validaCpf(docNumber) == ""){
+                $('#erro_name').show();
+                retorno = false;
+              }
+            } else {
+              if(razao == "" || docNumberCNPJ == "" || validaCNPJ(docNumberCNPJ) == "") {
+                $('#erro_cnpj').show();
+                retorno = false;
+              }
             }
 
             if(address == "" || number == ""){
@@ -182,16 +252,23 @@
         function pay(){
 
           var firstname = $('#firstname').val();
-          var lastname = $('#lastname').val();  
+          var lastname = $('#lastname').val(); 
+          var razao = $('#razao').val();  
           var docNumber = $('#docNumber').val();
+          var docNumberCNPJ = $('#docNumberCNPJ').val();
           var zipcode = $('#zipcode').val();    
           var address = $('#address').val();
           var number = $('#number').val();
           var city = $('#city').val();
           var state = $('#state').val();
           var country = $('#contryType').val();
+          var radioDoc = $("#fisica").is(":checked");
+          var typeDoc = "CPF";
 
-          var retorno = validate(firstname, lastname, docNumber, zipcode, address, number, city, state, country);
+          if (!radioDoc)
+            typeDoc = "CNPJ";
+
+          var retorno = validate(firstname, lastname, docNumber, zipcode, address, number, city, state, country, typeDoc, razao, docNumberCNPJ);
 
            if(retorno){
             this.disabled = true;
@@ -211,7 +288,10 @@
                   address : address,
                   number : number,
                   city : city,
-                  state : state
+                  state : state,
+                  docNumberCNPJ : docNumberCNPJ,
+                  razao : razao,
+                  typeDoc : typeDoc
                 }}, success: function success(data) {
                     response = JSON.parse(data);
                     if((response.error || valid_status.indexOf(status) < 0) && response.url) {
