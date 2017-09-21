@@ -75,14 +75,24 @@ class ControllerPaymentMPTicket extends Controller {
 				$mercadopago_ticket = $this->request->post['mercadopago_ticket'];
 				$docNumber = preg_replace('/[^-9]/', '', $mercadopago_ticket['docNumber']);
 
-				$order_info['firstname'] = $mercadopago_ticket['firstname'];
-				$order_info['lastname'] = $mercadopago_ticket['lastname'];
+				$order_info['docType'] = $mercadopago_ticket['typeDoc'];
+				if ($order_info['docType'] == "CPF") {
+					$docNumber = preg_replace('/[^0-9]/', '', $mercadopago_ticket['docNumber']);
+					$order_info['numberDoc'] = $docNumber;
+					$order_info['firstname'] = $mercadopago_ticket['firstname'];
+					$order_info['lastname'] = $mercadopago_ticket['lastname'];
+				} else {
+					$docNumberCNPJ = preg_replace('/[^0-9]/', '', $mercadopago_ticket['docNumberCNPJ']);
+					$order_info['numberDoc'] = $docNumberCNPJ;
+					$order_info['firstname'] = $mercadopago_ticket['razao'];
+					$order_info['lastname'] = "";
+				}
+				
 				$order_info['shipping_address_1'] = $mercadopago_ticket['address'];
 				$order_info['shipping_postcode'] = $mercadopago_ticket['zipcode'];
 				$order_info['shipping_city'] = $mercadopago_ticket['city'];
 				$order_info['shipping_zone'] = $mercadopago_ticket['state'];
 				$order_info['street_number'] = $mercadopago_ticket['number'];
-				$order_info['cpf'] = $docNumber;
 			} else {
 				$order_info['street_number'] = "-";
 			}
@@ -129,8 +139,8 @@ class ControllerPaymentMPTicket extends Controller {
 			if ($site_id == "MLB") {
 				$payment_data['payer']['first_name'] = $order_info['firstname'];
 				$payment_data['payer']['last_name'] = $order_info['lastname'];
-				$payment_data['payer']['identification']['type'] = "CPF";
-				$payment_data['payer']['identification']['number'] = $order_info['cpf'];
+				$payment_data['payer']['identification']['type'] = $order_info['docType'];				
+				$payment_data['payer']['identification']['number'] = $order_info['numberDoc'];
 				$payment_data['payer']['address']['zip_code'] = $order_info['shipping_postcode'];
 				$payment_data['payer']['address']['street_name'] = $order_info['shipping_address_1'];
 				$payment_data['payer']['address']['street_number'] = $order_info['street_number'];

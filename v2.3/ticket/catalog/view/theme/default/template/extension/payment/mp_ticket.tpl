@@ -122,7 +122,17 @@
                     <div class="panel-body" id="checkout-payment">
                       <div id="form-ticket">
                       <div id="formMLB">
+
                         <div class="form-row">
+                          <div class="form-col-6">
+                            <input type="radio" id="fisica" title="<?php echo $form_labels['form']['docNumber']; ?>" checked="checked" value="CPF" onclick="clickRadioType('fisica')"> Pessoa Física
+                          </div>
+                          <div class="form-col-6">
+                            <input type="radio" id="juridica" title="<?php echo $form_labels['form']['docNumber']; ?>" value="CNPJ" onclick="clickRadioType()"> Pessoa Jurídica
+                          </div>
+                        </div>
+
+                        <div class="form-row" id="formFisica">
                           <div class="form-col-4">
                             <label  for="firstname">NOME<em class="obrigatorio"> *</em></label>
                             <input type="text" value="<?php echo $firstname; ?>" placeholder="Nome" id="firstname" class="form-control-mine">
@@ -139,6 +149,19 @@
                             onkeypress="return event.charCode >= 48 && event.charCode <= 57" data-checkout="docNumber">
                           </div>
                           <span class="msg_erro"  id="erro_name"><em>* </em>Obrigatório o preenchimento do Nome, Sobrenome e número de CPF válido</span>
+                        </div>
+
+                        <div class="form-row" id="formJuridica">
+                          <div class="form-col-8">
+                            <label  for="razao">RAZÃO SOCIAL<em class="obrigatorio"> *</em></label>
+                            <input type="text" value="<?php echo $firstname; ?>" placeholder="Razão Social" id="razao" class="form-control-mine">
+                          </div>
+                          <div class="form-col-4">
+                            <label for="docNumberCNPJ">CNPJ<em class="obrigatorio"> *</em></label>
+                            <input type="text" placeholder="Insira seu CNPJ" class="form-control-mine" maxlength="14" id="docNumberCNPJ"
+                            onkeypress="return event.charCode >= 48 && event.charCode <= 57" data-checkout="docNumberCNPJ">
+                          </div>
+                          <span class="msg_erro"  id="erro_cnpj"><em>* </em>Obrigatório o preenchimento da Razão Social e número de CNPJ válido</span>
                         </div>
 
                         <div class="form-row">
@@ -225,6 +248,21 @@
             </div>
 <script type="text/javascript">
 
+    function clickRadioType(id){
+      
+      if (id == "fisica") {
+        $('#fisica').attr('checked', true);
+        $('#juridica').attr('checked', false);
+        $("#formJuridica").hide();
+        $("#formFisica").show();
+      } else {
+        $('#fisica').attr('checked', false);
+        $('#juridica').attr('checked', true);
+        $("#formJuridica").show();
+        $("#formFisica").hide();
+      }
+    }
+
     $(document).ready(function(){ 
         var type = $("#contryType").val();
 
@@ -233,10 +271,13 @@
             $("#div_payment_methods").show();
         } else {
            $("#formMLB").show();
+           $("#formJuridica").hide();
            $("#div_payment_methods").hide();
         }
 
         $("#docNumber").mask("999.999.999-99");
+        $("#docNumberCNPJ").mask("99.999.999/9999-99");
+        
     });
 
     $.getScript("https://secure.mlstatic.com/modules/javascript/analytics.js", function(){
