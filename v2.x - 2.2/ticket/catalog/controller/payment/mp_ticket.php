@@ -4,7 +4,7 @@ require_once "mercadopago.php";
 
 class ControllerPaymentMPTicket extends Controller {
 
-	private $version = "2.1.3";
+	private $version = "3.0";
 	private $versionModule = "2.0";
 	private $error;
 	public $sucess = true;
