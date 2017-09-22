@@ -8,7 +8,7 @@ class ControllerPaymentMPStandard extends Controller {
 	public $sucess = true;
 	private $order_info;
 	private $message;
-	private $version = "2.1.2";
+	private $version = "2.1.3";
 	private $versionModule = "2.0";
 	private $sponsors = array('MLB' => 204931135,
 		'MLM' => 204962951,
@@ -42,7 +42,7 @@ class ControllerPaymentMPStandard extends Controller {
 			'CLP' => 'CHI', 'COP' => 'COP', 'PEN' => 'PEN', 'US' => 'US', 'USD' => 'USD', 'UYU' => 'UYU');
 
 		$currency = $accepted_currencies[$order_info['currency_code']];
-		error_log("current".json_encode($order_info['currency_code']));
+
 		$currencies = array('ARS', 'BRL', 'MEX', 'CHI', 'PEN', 'VEF', 'COP', 'UYU');
 		if (!in_array($currency, $currencies)) {
 			$currency = '';
@@ -248,15 +248,11 @@ class ControllerPaymentMPStandard extends Controller {
 
 			$data['token']  = $this->config->get('mp_standard_client_id');
 			$data['paymentId']  =  $dados['collection']['payment_type'];
-			$data['paymentType']  = $dados['collection']['payment_method_id'];
+			
 			$data['checkoutType']  = "standard";
 
 			$this->response->setOutput($this->load->view('payment/mp_standard_success', $data));
-			//
-			//
-			//$this->load->view('checkout/success', $data);
-
-			//$this->response->redirect($this->url->link('checkout/success'));
+			
 		}
 	}
 
@@ -269,10 +265,6 @@ class ControllerPaymentMPStandard extends Controller {
 	}
 
 	public function retorno() {
-
-		error_log("=====collection_id======".$this->request->get['collection_id']);
-
-		error_log("=====collection_id request======".json_encode($this->request));
 
 		if (isset($this->request->get['collection_id'])) {
 			if ($this->request->get['collection_id'] == 'null') {
@@ -297,8 +289,6 @@ class ControllerPaymentMPStandard extends Controller {
 				$order_id = $dados['collection']['external_reference'];
 				$order_status = $dados['collection']['status'];
 
-				error_log("===dados compra====" . json_encode($dados));
-
 				$this->load->model('checkout/order');
 				$order = $this->model_checkout_order->getOrder($order_id);
 
@@ -308,33 +298,33 @@ class ControllerPaymentMPStandard extends Controller {
 
 				switch ($order_status) {
 				case 'approved':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'pending':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'in_process':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_process'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_process'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'rejected':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'refunded':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_refunded'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_refunded'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'cancelled':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				case 'in_metiation':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				default:
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['payment_method_id'] . ' - ' . $dados['collection']['net_received_amount']);
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
 					break;
 				}
 			}
 		} else {
-			error_log('id não setado na compra!!!');
+			error_log('DONT SET ID IN ORDER!');
 		}
 
 		return $dados;
@@ -360,8 +350,6 @@ class ControllerPaymentMPStandard extends Controller {
             'installedModules' => implode(', ', $resultModules),
             'additionalInfo' => ""
         );
-
-        error_log("===setPreModuleAnalytics====" . json_encode($return));
 
         return $return;
     }
