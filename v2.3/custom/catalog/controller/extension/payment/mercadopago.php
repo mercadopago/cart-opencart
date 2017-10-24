@@ -34,6 +34,10 @@ class MP {
 		MPRestClient::$email_admin = $email; 
 	}
 
+	public function setCountryInitial($country){
+		MPRestClient::$country_initial = $country; 
+	}
+
 	public function sandbox_mode($enable = NULL) {
 		if (!is_null($enable)) {
 			$this->sandbox = $enable === TRUE;
@@ -419,6 +423,7 @@ class MP {
  */
 class MPRestClient {
 	static $email_admin = "";
+	static $country_initial = "";
 	static $check_loop = 0;
 	const API_BASE_URL = "https://api.mercadopago.com";
 	private static function build_request($request) {
@@ -596,7 +601,8 @@ class MPRestClient {
 		 	"module_version" => "2.3",
 		 	"url_store" => $_SERVER['HTTP_HOST'],
 		 	"errors" => $errors, 
-		 	"email_admin" => self::$email_admin
+		 	"email_admin" => self::$email_admin,
+		 	"country_initial" => self::$country_initial,
 		);
 
 		$request = array(
