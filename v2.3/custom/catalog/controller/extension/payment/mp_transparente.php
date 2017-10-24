@@ -4,7 +4,7 @@ require_once "mercadopago.php";
 
 class ControllerExtensionPaymentMPTransparente extends Controller {
 	private $version = "1.0.1";
-	private $versionModule = "2.3.3";
+	private $versionModule = "2.3.4";
 	private $error;
 	private $order_info;
 	private $message;
@@ -19,6 +19,16 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		'MLC' => 204927454
 	);
 
+	private $initials = array(
+		'MLB' => "BR",
+		'MLM' => "MX",
+		'MLA' => "AR",
+		'MCO' => "CO",
+		'MLV' => "VE",
+		'MPE' => "PE",
+		'MLC' => "CL",
+		'MLU' => "UY"
+	);
 
 	public function index() {
 		$data['customer_email'] = $this->customer->getEmail();
@@ -242,6 +252,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		}
 
 		$mercadopago->setEmailAdmin($this->config->get('config_email'));
+		$mercadopago->setCountryInitial($this->initials[$this->config->get('mp_transparente_country')]);
 		$payment = $mercadopago->create_payment($payment);
 
 		if ($payment["status"] == 200 || $payment["status"] == 201) {
