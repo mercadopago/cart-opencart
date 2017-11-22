@@ -1,6 +1,7 @@
 <?php
 
-require_once "mercadopago.php";
+require_once "lib/mercadopago.php";
+require_once "lib/mp_util.php";
 
 class ControllerExtensionPaymentMPTicket extends Controller {
 
@@ -250,49 +251,21 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			$this->retorno();
 			echo json_encode(200);
 		} else {
-			$this->retornoTransparente();
+			$this->updateOrder();
 			echo json_encode(200);
 
 		}
 	}
 
-	private function retornoTransparente() {
+	private function updateOrder() {
+		$mp_util = new MPOpencartUtil();
 		$access_token = $this->config->get('mp_ticket_access_token');
-		$id = $this->request->get['data_id'];
-		$url = 'https://api.mercadopago.com/v1/payments/' . $id . '?access_token=' . $access_token;
-		$payment = $this->callJson($url);
+		$mp = new MP($access_token);
+		$payment_id = $this->request->get['data_id'];
 		$order_id = $payment['external_reference'];
 		$order_status = $payment['status'];
-		$this->load->model('checkout/order');
-		$order = $this->model_checkout_order->getOrder($order_id);
-
-		switch ($order_status) {
-		case 'approved':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_ticket_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
-			break;
-		case 'pending':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_ticket_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
-			break;
-		case 'in_process':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_ticket_order_status_id_process'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
-			break;
-		case 'rejected':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_ticket_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
-			break;
-		case 'refunded':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_ticket_order_status_id_refunded'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
-			break;
-		case 'cancelled':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_ticket_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
-			break;
-		case 'in_metiation':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_ticket_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
-			break;
-		default:
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_ticket_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount']);
-			break;
-		}
-
+		$model = $this->load->model('checkout/order');
+		$mp_util->updateOrder($mp, $order_id, $order_status, $payment_id, $model);
 	}
 
 	function _getClientId($at){

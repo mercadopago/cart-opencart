@@ -1,6 +1,6 @@
 <?php
 
-require_once '../catalog/controller/extension/payment/mercadopago.php';
+require_once '../catalog/controller/extension/payment/lib/mercadopago.php';
 
 class ControllerExtensionPaymentMPStandard extends Controller {
 	private $_error = array();

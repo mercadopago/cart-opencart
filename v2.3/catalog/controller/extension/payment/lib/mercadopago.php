@@ -70,26 +70,7 @@ class MP {
 		$this->access_data = $access_data['response'];
 		return $this->access_data['access_token'];
 	}
-	/**
-	 * Get information for specific payment
-	 * @param int $id
-	 * @return array(json)
-	 */
-	public function get_payment($id) {
-		$uri_prefix = $this->sandbox ? "/sandbox" : "";
 
-		$request = array(
-			"uri" => $uri_prefix . "/collections/notifications/{$id}",
-			"params" => array(
-				"access_token" => $this->get_access_token(),
-			),
-		);
-		$payment_info = MPRestClient::get($request);
-		return $payment_info;
-	}
-	public function get_payment_info($id) {
-		return $this->get_payment($id);
-	}
 	/**
 	 * Get information for specific authorized payment
 	 * @param id
@@ -202,6 +183,25 @@ class MP {
 
 		return $result;
 	}
+
+	public function getPayment($payment_id) {
+		$access_token = $this->get_access_token();
+
+		$request = array(
+			"uri" => "/v1/payments/". $payment_id,
+			"params" => array(
+				"access_token" => $access_token,
+			),
+			"headers" => array(
+				"x-tracking-id" => "platform:v1-whitelabel,type:OpenCart2,so:1.0.0",
+			)
+		);
+
+		$result = MPRestClient::get($request);
+
+		return $result;
+	}
+
 /**
  * Create a checkout preference
  * @param array $preference
@@ -461,7 +461,7 @@ class MPRestClient {
 		curl_setopt($connect, CURLOPT_USERAGENT, "MercadoPago PHP SDK v" . MP::version);
 		curl_setopt($connect, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($connect, CURLOPT_SSL_VERIFYPEER, true);
-		curl_setopt($connect, CURLOPT_CAINFO, $GLOBALS["LIB_LOCATION"] . "/cacert.pem");
+		curl_setopt($connect, CURLOPT_CAINFO, $GLOBALS["LIB_LOCATION"] . "/lib/cacert.pem");
 		curl_setopt($connect, CURLOPT_CUSTOMREQUEST, $request["method"]);
 		curl_setopt($connect, CURLOPT_HTTPHEADER, $headers);
 

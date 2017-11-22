@@ -1,6 +1,7 @@
 <?php
 
-require_once "mercadopago.php";
+require_once "lib/mercadopago.php";
+require_once "lib/mp_util.php";
 
 class ControllerExtensionPaymentMPTransparente extends Controller {
 	private $version = "1.0.1";
@@ -258,7 +259,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		if ($payment["status"] == 200 || $payment["status"] == 201) {
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' .
 			$payment_method);
-
+		
 			$this->updateOrder($payment['response']['id'],$customerAndCard);
 			$this->response->redirect($this->url->link('checkout/success', '', true));
 		} else {
@@ -397,46 +398,18 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		}
 	}
 
-	private function updateOrder($id) {
+	private function updateOrder($payment_id) {
+		$mp_util = new MPOpencartUtil();
 		$access_token = $this->config->get('mp_transparente_access_token');
-		$url = 'https://api.mercadopago.com/v1/payments/' . $id . '?access_token=' . $access_token;
-		$payment = $this->callJson($url);
+		$mp = new MP($access_token);
 		$order_id = $payment['external_reference'];
-		$this->load->model('checkout/order');
-		//$order = $this->model_checkout_order->getOrder($order_id);
 		$order_status = $payment['status'];
+		$model = $this->load->model('checkout/order');
+		
+		$payment = $mp_util->updateOrder($mp, $order_id, $order_status, $payment_id, $model);
 
-		switch ($order_status) {
-			case 'approved':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-
-			//Create card when card not exist/used
-			if(isset($payment['card']) && $payment['card']['id'] == null){
-				$this->createCard($payment);
-			}
-
-			break;
-			case 'pending':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-			break;
-			case 'in_process':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_process'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-			break;
-			case 'rejected':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-			break;
-			case 'refunded':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_refunded'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-			break;
-			case 'cancelled':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-			break;
-			case 'in_mediation':
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-			break;
-			default:
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
-			break;
+		if($order_status == "approved" && isset($payment['card']) && $payment['card']['id'] == null){
+			$this->createCard($payment);
 		}
 	}
 

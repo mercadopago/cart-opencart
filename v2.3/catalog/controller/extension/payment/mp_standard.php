@@ -1,6 +1,7 @@
 <?php
 
-require_once "mercadopago.php";
+require_once "lib/mercadopago.php";
+require_once "lib/mp_util.php";
 
 class ControllerExtensionPaymentMPStandard extends Controller {
 
@@ -230,7 +231,7 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 			$this->load->model('checkout/order');
 			$order = $this->model_checkout_order->getOrder($order_id);
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago_order_status_id'), date('d/m/Y h:i'));
-			$dados = $this->retorno();
+			$dados = $this->updateOrder();
 
 			$data['footer'] = array();
 			$data['continue'] = $this->url->link('checkout/success');
@@ -253,75 +254,29 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	public function notifications() {
 		if (isset($this->request->get['topic'])) {
 			$this->request->get['collection_id'] = $this->request->get['id'];
-			$this->retorno();
+			$this->updateOrder();
 			echo json_encode(200);
 		}
 	}
 
-	public function retorno() {
+	private function updateOrder() {
+		$mp_util = new MPOpencartUtil();
+		$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
 
-		if (isset($this->request->get['collection_id'])) {
-			if ($this->request->get['collection_id'] == 'null') {
-				$order_id = $this->request->get['external_reference'];
-				$this->load->model('checkout/order');
-				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_' . $this->request->get['status']), date('d/m/Y h:i'));
-				return;
+		$ids = explode(',', $this->request->get['collection_id']);
+		$client_id = $this->config->get('mp_standard_client_id');
+		$client_secret = $this->config->get('mp_standard_client_secret');
+		
+		$mp = new MP($client_id, $client_secret);
+		$mp->sandbox_mode($sandbox);
 
-			}
+		$order_id = $payment['external_reference'];
+		$order_status = $payment['status'];
+		$model = $this->load->model('checkout/order');
 
-			$ids = explode(',', $this->request->get['collection_id']);
-			$client_id = $this->config->get('mp_standard_client_id');
-			$client_secret = $this->config->get('mp_standard_client_secret');
-			$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
-			$mp = new MP($client_id, $client_secret);
-			$mp->sandbox_mode($sandbox);
-			$dados = null;
-			foreach ($ids as $id) {
-				$resposta = $mp->get_payment_info($id);
-				$dados = $resposta['response'];
-
-				$order_id = $dados['collection']['external_reference'];
-				$order_status = $dados['collection']['status'];
-
-				$this->load->model('checkout/order');
-				$order = $this->model_checkout_order->getOrder($order_id);
-
-				if ($order['order_status_id'] == '0') {
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id'));
-				}
-
-				switch ($order_status) {
-				case 'approved':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'pending':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'in_process':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_process'), date('d/m/Y h:i') .  ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'rejected':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'refunded':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_refunded'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'cancelled':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'in_metiation':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				default:
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				}
-			}
-		} else {
-			error_log('DONT SET ID IN ORDER!');
+		foreach ($ids as $id) {		
+			$mp_util->updateOrder($mp, $order_id, $order_status, $id, $model);
 		}
-
-		return $dados;
 	}
 
     function setPreModuleAnalytics() {
