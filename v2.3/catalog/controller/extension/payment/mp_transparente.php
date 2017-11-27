@@ -4,34 +4,21 @@ require_once "lib/mercadopago.php";
 require_once "lib/mp_util.php";
 
 class ControllerExtensionPaymentMPTransparente extends Controller {
-	private $version = "1.0.1";
-	private $versionModule = "2.3.4";
+
 	private $error;
 	private $order_info;
 	private $message;
-	private $special_checkouts = array('MLM', 'MLB', "MPE");
-	private $sponsors = array(
-		'MLB' => 204931135,
-		'MLM' => 204962951,
-		'MLA' => 204931029,
-		'MCO' => 204964815,
-		'MLV' => 204964612,
-		'MPE' => 217176790,
-		'MLC' => 204927454
-	);
+	private static $mp_util;
 
-	private $initials = array(
-		'MLB' => "BR",
-		'MLM' => "MX",
-		'MLA' => "AR",
-		'MCO' => "CO",
-		'MLV' => "VE",
-		'MPE' => "PE",
-		'MLC' => "CL",
-		'MLU' => "UY"
-	);
+	function get_instance_mp_util() {
+		if ($this->mp_util == null) 
+			$this->mp_util = new MPOpencartUtil();
+
+		return $this->mp_util;
+	}
 
 	public function index() {
+
 		$data['customer_email'] = $this->customer->getEmail();
 		$data['button_confirm'] = $this->language->get('button_confirm');
 		$data['button_back'] = $this->language->get('button_back');
@@ -216,7 +203,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 		if (!$is_test_user) {
-			$sponsor_id = $this->sponsors[$this->config->get('mp_transparente_country')];
+			$sponsor_id = $this->get_instance_mp_util()->sponsors[$this->config->get('mp_transparente_country')];
 			error_log('not test_user. sponsor_id will be sent: ' . $sponsor_id);
 			$payment["sponsor_id"] = $sponsor_id;
 		} else {
@@ -253,7 +240,11 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		}
 
 		$mercadopago->setEmailAdmin($this->config->get('config_email'));
-		$mercadopago->setCountryInitial($this->initials[$this->config->get('mp_transparente_country')]);
+
+error_log($this->config->get('mp_transparente_country'));
+error_log("aq".$this->get_instance_mp_util()->initials[$this->config->get('mp_transparente_country')]);
+
+		$mercadopago->setCountryInitial($this->get_instance_mp_util()->initials[$this->config->get('mp_transparente_country')]);
 		$payment = $mercadopago->create_payment($payment);
 
 		if ($payment["status"] == 200 || $payment["status"] == 201) {
@@ -399,17 +390,18 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	}
 
 	private function updateOrder($payment_id) {
-		$mp_util = new MPOpencartUtil();
 		$access_token = $this->config->get('mp_transparente_access_token');
 		$mp = new MP($access_token);
+		$payment = $mp->getPayment($payment_id);
+
 		$order_id = $payment['external_reference'];
 		$order_status = $payment['status'];
 		$model = $this->load->model('checkout/order');
-		
-		$payment = $mp_util->updateOrder($mp, $order_id, $order_status, $payment_id, $model);
+
+		$this->get_instance_mp_util()->updateOrder($payment, $order_id, $order_status, $model);
 
 		if($order_status == "approved" && isset($payment['card']) && $payment['card']['id'] == null){
-			$this->createCard($payment);
+			$this->createCard($orderReturn);
 		}
 	}
 
@@ -426,25 +418,14 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
 
         $resultModules = array();
+		$token = $this->_getClientId($this->config->get('mp_transparente_access_token'));
+		$customerEmail = $this->customer->getEmail();
+		$userLogged = $this->customer->isLogged() ? 1 : 0;
 
 		foreach ($query->rows as $result) {
 			array_push($resultModules, $result['code']);
 		}
 
-        $return = array(
-            'publicKey'=> "",
-            'token'=> $this->_getClientId($this->config->get('mp_transparente_access_token')),
-            'platform' => "Opencart",
-            'platformVersion' => $this->versionModule,
-            'moduleVersion' => $this->version,
-            'payerEmail' => $this->customer->getEmail(),
-            'userLogged' => $this->customer->isLogged() ? 1 : 0,
-            'installedModules' => implode(', ', $resultModules),
-            'additionalInfo' => ""
-        );
-
-        //error_log("===setPreModuleAnalytics====" . json_encode($return));
-
-        return $return;
+		return $this->get_instance_mp_util()->createAnalytics($resultModules, $token, $customerEmail, $userLogged); 
     }
 }

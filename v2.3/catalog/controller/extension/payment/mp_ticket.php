@@ -5,21 +5,15 @@ require_once "lib/mp_util.php";
 
 class ControllerExtensionPaymentMPTicket extends Controller {
 
-	private $version = "3.0";
-	private $versionModule = "2.3";
 	private $error;
 	public $sucess = true;
 	private $order_info;
 	private $message;
-	private $sponsors = array('MLB' => 204931135,
-		'MLM' => 204962951,
-		'MLA' => 204931029,
-		'MCO' => 204964815,
-		'MLV' => 204964612,
-		'MPE' => 217176790,
-		'MLC' => 204927454);
+	private $mp_util;
 
 	public function index() {
+		$mp_util = new MPOpencartUtil();
+
 		$this->language->load('extension/payment/mp_ticket');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
@@ -160,7 +154,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 			$is_test_user = strpos($order_info['email'], '@testuser.com');
 			if (!$is_test_user) {
-				$payment_data["sponsor_id"] = $this->sponsors[$site_id];
+				$payment_data["sponsor_id"] = $this->$mp_util->sponsors[$site_id];
 			}
 
 			$payment_response = $mp->create_payment($payment_data);
@@ -258,7 +252,6 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	}
 
 	private function updateOrder() {
-		$mp_util = new MPOpencartUtil();
 		$access_token = $this->config->get('mp_ticket_access_token');
 		$mp = new MP($access_token);
 		$payment_id = $this->request->get['data_id'];
@@ -276,28 +269,20 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		return "";
 	}
 
-    function setPreModuleAnalytics() {
+	private function setPreModuleAnalytics() {
 
 		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
 
         $resultModules = array();
+		$token = $this->_getClientId($this->config->get('mp_ticket_access_token')),
+		$customerEmail = $this->customer->getEmail();
+		$userLogged = $this->customer->isLogged() ? 1 : 0;
 
 		foreach ($query->rows as $result) {
 			array_push($resultModules, $result['code']);
 		}
 
-        $return = array(
-            'publicKey'=> "",
-            'token'=> $this->_getClientId($this->config->get('mp_ticket_access_token')),
-            'platform' => "Opencart",
-            'platformVersion' => $this->versionModule,
-            'moduleVersion' => $this->version,
-            'payerEmail' => $this->customer->getEmail(),
-            'userLogged' => $this->customer->isLogged() ? 1 : 0,
-            'installedModules' => implode(', ', $resultModules),
-            'additionalInfo' => ""
-        );
-
-        return $return;
+		return $mp_util->createAnalytics($resultModules, $token, $customerEmail, $userLogged); 
     }
+
 }

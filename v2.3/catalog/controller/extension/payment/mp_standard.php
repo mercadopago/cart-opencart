@@ -9,18 +9,11 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	public $sucess = true;
 	private $order_info;
 	private $message;
-	private $version = "1.0.2";
-	private $versionModule = "2.3.1";
-	private $sponsors = array('MLB' => 204931135,
-		'MLM' => 204962951,
-		'MLA' => 204931029,
-		'MCO' => 204964815,
-		'MLV' => 204964612,
-		'MPE' => 217176790,
-		'MLC' => 204927454,
-		'MLU' => 241827790);
+	private $mp_util;
 
 	public function index() {
+		$mp_util = new MPOpencartUtil();
+
 		$data['customer_email'] = $this->customer->getEmail();
 		$data['button_confirm'] = $this->language->get('button_confirm');
 		$data['button_back'] = $this->language->get('button_back');
@@ -183,7 +176,8 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 
 		if (!$is_test_user) {
-			$pref["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
+
+			$pref["sponsor_id"] = $this->$mp_util->sponsors[$this->config->get('mp_standard_country')];
 		}
 
 		$mp = new MP($client_id, $client_secret);
@@ -260,7 +254,6 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	}
 
 	private function updateOrder() {
-		$mp_util = new MPOpencartUtil();
 		$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
 
 		$ids = explode(',', $this->request->get['collection_id']);
@@ -279,27 +272,19 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		}
 	}
 
-    function setPreModuleAnalytics() {
+	private function setPreModuleAnalytics() {
 
 		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
-		$resultModules = array();
+
+        $resultModules = array();
+		$token = $this->config->get('mp_standard_client_id');
+		$customerEmail = $this->customer->getEmail();
+		$userLogged = $this->customer->isLogged() ? 1 : 0;
 
 		foreach ($query->rows as $result) {
 			array_push($resultModules, $result['code']);
 		}
 
-        $return = array(
-            'publicKey'=> "",
-            'token'=> $this->config->get('mp_standard_client_id'),
-            'platform' => "Opencart",
-            'platformVersion' => $this->versionModule,
-            'moduleVersion' => $this->version,
-            'payerEmail' => $this->customer->getEmail(),
-            'userLogged' => $this->customer->isLogged() ? 1 : 0,
-            'installedModules' => implode(', ', $resultModules),
-            'additionalInfo' => ""
-        );
-
-        return $return;
+		return $mp_util->createAnalytics($resultModules, $token, $customerEmail, $userLogged); 
     }
 }
