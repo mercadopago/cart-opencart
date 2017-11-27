@@ -9,7 +9,7 @@ class MPOpencartUtil {
 	private $plataformVersion = "2.3";
 	private $moduleVersion = "3.0";
 
-	public static $sponsors = array(
+	public $sponsors = array(
 		'MLB' => 204931135,
 		'MLM' => 204962951,
 		'MLA' => 204931029,
@@ -30,7 +30,7 @@ class MPOpencartUtil {
 		'MLU' => "UY"
 	);
 
-	private static $mp_order_status = [
+	private $mp_order_status = [
 	    "approved" => "completed",
 	    "pending" => "pending",
 	    "in_process" => "process",
@@ -58,13 +58,13 @@ class MPOpencartUtil {
         return $return;
     }
 
-	public static function updateOrder($payment, $model) {
+	public function updateOrder($payment, $model, $config) {
 
 		try {
-			$result_order_status = $this->mp_order_status[$payment['status']];
+			$result_order_status = $this->mp_order_status[$payment['response']['status']];
 
-			$model->addOrderHistory($payment['external_reference'], $this->config->get('mp_transparente_order_status_id_'. 
-				$result_order_status), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
+			$model->addOrderHistory($payment['response']['external_reference'], $config->get('mp_transparente_order_status_id_'. 
+				$result_order_status), date('d/m/Y h:i') . ' - ' . $payment['response']['payment_method_id'] . ' - ' . $payment['response']['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['response']['id']);
 
 		} catch (Exception $e) {
 			error_log("error for updateOrder - ".$e);

@@ -24,7 +24,7 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		if ($this->mp == null) {
 			$client_id = $this->config->get('mp_standard_client_id');
 			$client_secret = $this->config->get('mp_standard_client_secret');
-			$mp = new MP($client_id, $client_secret);
+			$this->mp = new MP($client_id, $client_secret);
 		}
 		return $this->mp;
 	}
@@ -275,11 +275,10 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 
 		$this->get_instance_mp()->sandbox_mode($sandbox);	
 		$this->load->model('checkout/order');
-		$model = $this->model_checkout_order;
 
 		foreach ($ids as $id) {
 			$payment = $this->get_instance_mp()->getPayment($id);
-			$this->get_instance_mp_util()->updateOrder($payment, $model);		
+			$this->get_instance_mp_util()->updateOrder($payment, $this->model_checkout_order, $this->config);	
 		}
 	}
 

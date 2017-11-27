@@ -21,7 +21,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	function get_instance_mp() {
 		if ($this->mp == null) {
 			$access_token = $this->config->get('mp_transparente_access_token');
-			$mp = new MP($access_token);
+			$this->mp = new MP($access_token);
 		}
 		return $this->mp;
 	}
@@ -208,12 +208,9 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 		if (!$is_test_user) {
-			$sponsor_id = $this->get_instance_mp_util()->sponsors[$this->config->get('mp_transparente_country')];
-			error_log('not test_user. sponsor_id will be sent: ' . $sponsor_id);
+			$sponsor_id = $this->get_instance_mp_util()->sponsors[$this->config->get('mp_transparente_country')];		
 			$payment["sponsor_id"] = $sponsor_id;
-		} else {
-			error_log('test_user. sponsor_id will not be sent');
-		}
+		} 
 
 		// Payer Info
 		$payment['additional_info']['payer']['first_name'] = $order_info['firstname'];
@@ -383,11 +380,9 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$payment = $this->get_instance_mp()->getPayment($payment_id);
 
 		$this->load->model('checkout/order');
-		$model = $this->model_checkout_order;
+		$this->get_instance_mp_util()->updateOrder($payment, $this->model_checkout_order, $this->config);
 
-		$this->get_instance_mp_util()->updateOrder($payment, $model);
-
-		if($order_status == "approved" && isset($payment['card']) && $payment['card']['id'] == null){
+		if(isset($payment['response']['status']) && isset($payment['response']['status']) == "approved" && isset($payment['response']['card']) && $payment['response']['card']['id'] == null){
 			$this->createCard($orderReturn);
 		}
 	}

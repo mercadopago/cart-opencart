@@ -22,7 +22,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	function get_instance_mp() {
 		if ($this->mp == null) {
 			$access_token = $this->config->get('mp_ticket_access_token');
-			$mp = new MP($access_token);
+			$this->mp = new MP($access_token);
 		}
 		return $this->mp;
 	}
@@ -264,9 +264,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		$payment = $this->get_instance_mp()->getPayment($payment_id);
 
 		$this->load->model('checkout/order');
-		$model = $this->model_checkout_order;
-
-		$this->get_instance_mp_util()->updateOrder($payment, $model);
+		$this->get_instance_mp_util()->updateOrder($payment, $this->model_checkout_order, $this->config);
 	}
 
 	function _getClientId($at){
