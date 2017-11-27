@@ -9,10 +9,27 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	public $sucess = true;
 	private $order_info;
 	private $message;
-	private $mp_util;
+	private static $mp_util;
+	private static $mp;
+
+
+	function get_instance_mp_util() {
+		if ($this->mp_util == null) 
+			$this->mp_util = new MPOpencartUtil();
+
+		return $this->mp_util;
+	}
+
+	function get_instance_mp() {
+		if ($this->mp == null) {
+			$client_id = $this->config->get('mp_standard_client_id');
+			$client_secret = $this->config->get('mp_standard_client_secret');
+			$mp = new MP($client_id, $client_secret);
+		}
+		return $this->mp;
+	}
 
 	public function index() {
-		$mp_util = new MPOpencartUtil();
 
 		$data['customer_email'] = $this->customer->getEmail();
 		$data['button_confirm'] = $this->language->get('button_confirm');
@@ -169,19 +186,18 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		$pref['payment_methods'] = $payment_methods;
 		$pref['payer'] = $payer;
 
-    if (!strrpos($url, 'localhost')) {
-    	$pref['notification_url'] = $url . 'index.php?route=extension/payment/mp_standard/notifications';
-    }
+	    if (!strrpos($url, 'localhost')) {
+	    	$pref['notification_url'] = $url . 'index.php?route=extension/payment/mp_standard/notifications';
+	    }
 		$sandbox = (bool) $this->config->get('mp_standard_sandbox');
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 
 		if (!$is_test_user) {
 
-			$pref["sponsor_id"] = $this->$mp_util->sponsors[$this->config->get('mp_standard_country')];
+			$pref["sponsor_id"] = $this->get_instance_mp_util()->sponsors[$this->config->get('mp_standard_country')];
 		}
 
-		$mp = new MP($client_id, $client_secret);
-		$preferenceResult = $mp->create_preference($pref);
+		$preferenceResult = $this->get_instance_mp()->create_preference($pref);
 
 		if ($preferenceResult['status'] == 201):
 			$data['type_checkout'] = $this->config->get('mp_standard_type_checkout');
@@ -255,20 +271,15 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 
 	private function updateOrder() {
 		$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
-
 		$ids = explode(',', $this->request->get['collection_id']);
-		$client_id = $this->config->get('mp_standard_client_id');
-		$client_secret = $this->config->get('mp_standard_client_secret');
-		
-		$mp = new MP($client_id, $client_secret);
-		$mp->sandbox_mode($sandbox);
 
-		$order_id = $payment['external_reference'];
-		$order_status = $payment['status'];
-		$model = $this->load->model('checkout/order');
+		$this->get_instance_mp()->sandbox_mode($sandbox);	
+		$this->load->model('checkout/order');
+		$model = $this->model_checkout_order;
 
-		foreach ($ids as $id) {		
-			$mp_util->updateOrder($mp, $order_id, $order_status, $id, $model);
+		foreach ($ids as $id) {
+			$payment = $this->get_instance_mp()->getPayment($id);
+			$this->get_instance_mp_util()->updateOrder($payment, $model);		
 		}
 	}
 
@@ -285,6 +296,6 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 			array_push($resultModules, $result['code']);
 		}
 
-		return $mp_util->createAnalytics($resultModules, $token, $customerEmail, $userLogged); 
+		return $this->get_instance_mp_util()->createAnalytics($resultModules, $token, $customerEmail, $userLogged); 
     }
 }

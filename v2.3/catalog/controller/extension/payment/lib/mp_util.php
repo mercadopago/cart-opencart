@@ -58,12 +58,12 @@ class MPOpencartUtil {
         return $return;
     }
 
-	public static function updateOrder($payment, $order_id, $order_status, $model) {
+	public static function updateOrder($payment, $model) {
 
 		try {
-			$result_order_status = $this->mp_order_status[$order_status];
+			$result_order_status = $this->mp_order_status[$payment['status']];
 
-			$model->addOrderHistory($order_id, $this->config->get('mp_transparente_order_status_id_'. 
+			$model->addOrderHistory($payment['external_reference'], $this->config->get('mp_transparente_order_status_id_'. 
 				$result_order_status), date('d/m/Y h:i') . ' - ' . $payment['payment_method_id'] . ' - ' . $payment['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['id']);
 
 		} catch (Exception $e) {

@@ -9,12 +9,21 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	private $order_info;
 	private $message;
 	private static $mp_util;
+	private static $mp;
 
 	function get_instance_mp_util() {
 		if ($this->mp_util == null) 
 			$this->mp_util = new MPOpencartUtil();
 
 		return $this->mp_util;
+	}
+
+	function get_instance_mp() {
+		if ($this->mp == null) {
+			$access_token = $this->config->get('mp_transparente_access_token');
+			$mp = new MP($access_token);
+		}
+		return $this->mp;
 	}
 
 	public function index() {
@@ -124,12 +133,10 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		$transaction_amount = floatval($order_info['total']) * floatval($order_info['currency_value']);
 		$transaction_amount = round($transaction_amount, 2);
-		$access_token = $this->config->get('mp_transparente_access_token');
-		$mercadopago = new MP($access_token);
 		$payer_email =  $order_info['email'];
 
 		if ($coupon_id != '') {
-			$response = $mercadopago->check_discount_campaigns(
+			$response = $this->get_instance_mp()->check_discount_campaigns(
 				$transaction_amount,
 				$payer_email,
 				$coupon_id
@@ -157,8 +164,6 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$params_mercadopago = $_REQUEST['mercadopago_custom'];
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-		$access_token = $this->config->get('mp_transparente_access_token');
-		$mercadopago = new MP($access_token);
 
 		if($params_mercadopago['paymentMethodId'] == ""){
 			$params_mercadopago['paymentMethodId'] = $params_mercadopago['paymentMethodSelector'];
@@ -239,19 +244,16 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			$payment['campaign_id'] = (int) $params_mercadopago['campaign_id'];
 		}
 
-		$mercadopago->setEmailAdmin($this->config->get('config_email'));
+		$this->get_instance_mp()->setEmailAdmin($this->config->get('config_email'));
 
-error_log($this->config->get('mp_transparente_country'));
-error_log("aq".$this->get_instance_mp_util()->initials[$this->config->get('mp_transparente_country')]);
-
-		$mercadopago->setCountryInitial($this->get_instance_mp_util()->initials[$this->config->get('mp_transparente_country')]);
-		$payment = $mercadopago->create_payment($payment);
+		$this->get_instance_mp()->setCountryInitial($this->get_instance_mp_util()->initials[$this->config->get('mp_transparente_country')]);
+		$payment = $this->get_instance_mp()->create_payment($payment);
 
 		if ($payment["status"] == 200 || $payment["status"] == 201) {
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' .
 			$payment_method);
 		
-			$this->updateOrder($payment['response']['id'],$customerAndCard);
+			$this->updateOrder($payment['response']['id']);
 			$this->response->redirect($this->url->link('checkout/success', '', true));
 		} else {
 			$this->response->redirect($this->url->link('checkout/checkout', '', true));
@@ -317,18 +319,12 @@ error_log("aq".$this->get_instance_mp_util()->initials[$this->config->get('mp_tr
 
 	public function getCustomerId() {
 
-		$access_token = $this->config->get('mp_transparente_access_token');
-
 		$this->load->model('checkout/order');
-
-
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-
 		$customer = array('email' => $order_info['email']);
 
 		$search_uri = "/v1/customers/search";
-		$mp = new MP($access_token);
-		$response = $mp->get($search_uri, $customer);
+		$response = $this->get_instance_mp()->get($search_uri, $customer);
 		$response_has_results_key = array_key_exists("results", $response["response"]);
 		$response_has_at_least_one_item = sizeof($response["response"]["results"]) > 0;
 
@@ -345,22 +341,18 @@ error_log("aq".$this->get_instance_mp_util()->initials[$this->config->get('mp_tr
 	}
 
 	private function createCustomer() {
-		$access_token = $this->config->get('mp_transparente_access_token');
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		$customer = array('email' => $order_info['email']);
 		$uri = '/v1/customers/';
-		$mp = new MP($access_token);
-		$response = $mp->post($uri, $customer);
+		$response = $this->get_instance_mp()->post($uri, $customer);
 		return $response;
 	}
 
 	private function getCards() {
 		$id = $this->getCustomerId();
 		$retorno = null;
-		$access_token = $this->config->get('mp_transparente_access_token');
-		$mp = new MP($access_token);
-		$cards = $mp->get("/v1/customers/" . $id . "/cards");
+		$cards = $this->get_instance_mp()->get("/v1/customers/" . $id . "/cards");
 		if (array_key_exists("response", $cards) && sizeof($cards["response"]) > 0) {
 			$this->session->data['cards'] = $cards["response"];
 			$retorno = $cards["response"];
@@ -372,13 +364,11 @@ error_log("aq".$this->get_instance_mp_util()->initials[$this->config->get('mp_tr
 		$country = $this->config->get('mp_transparente_country');
 		if ($country != "MPE") {
 			$id = $this->getCustomerId();
-			$access_token = $this->config->get('mp_transparente_access_token');
-			$mp = new MP($access_token);
 
 			$issuerId = isset($payment['issuer_id']) ? intval($payment['issuer_id']) : "";
 			$paymentMethodId = isset($payment['payment_method_id']) ? $payment['payment_method_id'] : "";
 
-			$card = $mp-> post("/v1/customers/" . $id . "/cards",
+			$card = $this->get_instance_mp()->post("/v1/customers/" . $id . "/cards",
 				array(
 					"token" => $payment['metadata']['token'],
 					"issuer_id" => $issuerId,
@@ -390,15 +380,12 @@ error_log("aq".$this->get_instance_mp_util()->initials[$this->config->get('mp_tr
 	}
 
 	private function updateOrder($payment_id) {
-		$access_token = $this->config->get('mp_transparente_access_token');
-		$mp = new MP($access_token);
-		$payment = $mp->getPayment($payment_id);
+		$payment = $this->get_instance_mp()->getPayment($payment_id);
 
-		$order_id = $payment['external_reference'];
-		$order_status = $payment['status'];
-		$model = $this->load->model('checkout/order');
+		$this->load->model('checkout/order');
+		$model = $this->model_checkout_order;
 
-		$this->get_instance_mp_util()->updateOrder($payment, $order_id, $order_status, $model);
+		$this->get_instance_mp_util()->updateOrder($payment, $model);
 
 		if($order_status == "approved" && isset($payment['card']) && $payment['card']['id'] == null){
 			$this->createCard($orderReturn);

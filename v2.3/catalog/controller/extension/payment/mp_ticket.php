@@ -9,10 +9,25 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	public $sucess = true;
 	private $order_info;
 	private $message;
-	private $mp_util;
+	private static $mp_util;
+	private static $mp;
+
+	function get_instance_mp_util() {
+		if ($this->mp_util == null) 
+			$this->mp_util = new MPOpencartUtil();
+
+		return $this->mp_util;
+	}
+
+	function get_instance_mp() {
+		if ($this->mp == null) {
+			$access_token = $this->config->get('mp_ticket_access_token');
+			$mp = new MP($access_token);
+		}
+		return $this->mp;
+	}
 
 	public function index() {
-		$mp_util = new MPOpencartUtil();
 
 		$this->language->load('extension/payment/mp_ticket');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -106,9 +121,6 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 					"apartment" => "-",
 					$order_info['street_number']));
 
-			$access_token = $this->config->get('mp_ticket_access_token');
-			$mp = new MP($access_token);
-
 			$total_price = round($order_info['total'] * $order_info['currency_value'], 2);
 			if($site_id == 'MCO'){
 				$total_price = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
@@ -154,10 +166,10 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 			$is_test_user = strpos($order_info['email'], '@testuser.com');
 			if (!$is_test_user) {
-				$payment_data["sponsor_id"] = $this->$mp_util->sponsors[$site_id];
+				$payment_data["sponsor_id"] = $this->get_instance_mp_util()->sponsors[$site_id];
 			}
 
-			$payment_response = $mp->create_payment($payment_data);
+			$payment_response = $this->get_instance_mp()->create_payment($payment_data);
 
 			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_ticket_order_status_id'), null, false);
 			echo json_encode(
@@ -177,17 +189,14 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	}
 
 	private function getCountry() {
-		$access_token = $this->config->get('mp_ticket_access_token');
-		$mp = new MP($access_token);
-		$result = $mp->get('/users/me?access_token=' . $access_token);
+		$result = $this->get_instance_mp()->get('/users/me?access_token=' . $access_token);
 		return $result['response']['site_id'];
 	}
 
-	private function getMethods($token) {
+	private function getMethods() {
 		try
 		{
-			$mp = new MP($token);
-			$methods = $mp->get("/v1/payment_methods");
+			$methods = $this->get_instance_mp()->get("/v1/payment_methods");
 			return $methods;
 		} catch (Exception $e) {
 			$this->load->language('extension/payment/mp_ticket');
@@ -198,8 +207,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	}
 
 	public function getAcceptedMethods() {
-		$token = $this->config->get('mp_ticket_access_token');
-		$methods = $this->getMethods($token);
+		$methods = $this->getMethods();
 		$methods_api = $methods['response'];
 		$saved_methods = preg_split("/[\s,]+/", $this->config->get('mp_ticket_methods'));
 		$accepted_methods = array();
@@ -252,13 +260,13 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	}
 
 	private function updateOrder() {
-		$access_token = $this->config->get('mp_ticket_access_token');
-		$mp = new MP($access_token);
 		$payment_id = $this->request->get['data_id'];
-		$order_id = $payment['external_reference'];
-		$order_status = $payment['status'];
-		$model = $this->load->model('checkout/order');
-		$mp_util->updateOrder($mp, $order_id, $order_status, $payment_id, $model);
+		$payment = $this->get_instance_mp()->getPayment($payment_id);
+
+		$this->load->model('checkout/order');
+		$model = $this->model_checkout_order;
+
+		$this->get_instance_mp_util()->updateOrder($payment, $model);
 	}
 
 	function _getClientId($at){
@@ -282,7 +290,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			array_push($resultModules, $result['code']);
 		}
 
-		return $mp_util->createAnalytics($resultModules, $token, $customerEmail, $userLogged); 
+		return $this->get_instance_mp_util()->createAnalytics($resultModules, $token, $customerEmail, $userLogged); 
     }
 
 }
