@@ -1,10 +1,6 @@
 <?php
 
-require_once "mercadopago.php";
-
 class MPOpencartUtil {
-
-	//$GLOBALS["LIB_LOCATION"] = dirname(__FILE__);
 
 	private $plataformVersion = "2.3";
 	private $moduleVersion = "3.0";
@@ -71,11 +67,22 @@ class MPOpencartUtil {
 		}
 	}
 
-    /*public static function logArchiveError($msg, $exceptionMessage) {
-        $date = date('d.m.Y h:i:s');
-        $log = "Date:  ".$date."  | ".$msg.
-        "|  Exception:  " . $exceptionMessage . "\n";
-        error_log($log, 3, $GLOBALS["LIB_LOCATION"]  . '/modules/mercadopago/logs/mercadopago.log');
-    }*/
+	public function setSettings($mp, $config_email, $statusCustom = false,  $custom_cupom = false) {
 
+        $request = array(
+            "module_version" => $this->moduleVersion,
+            "checkout_custom_credit_card" => $statusCustom,
+            "code_version" => phpversion(),
+            "checkout_custom_credit_card_coupon" => $custom_cupom,
+            "platform" => "OpenCart",
+            "platform_version" => $this->plataformVersion
+        );
+
+        try {
+			$mp->setEmailAdmin($config_email);     	
+            return $mp->saveSettings($request);
+        } catch (Exception $e) {
+        	error_log($e);
+        }
+    }
 }

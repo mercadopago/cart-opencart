@@ -1,16 +1,9 @@
 <?php
-/**
- * MercadoPago Integration Library
- * Access MercadoPago for payments integration
- *
- * @author hcasatti
- *
- */
 
 $GLOBALS["LIB_LOCATION"] = dirname(__FILE__);
 
 class MP {
-	const version = "0.5.3";
+	const version = "1.0";
 	private $client_id;
 	private $client_secret;
 	private $ll_access_token;
@@ -69,6 +62,21 @@ class MP {
 		}
 		$this->access_data = $access_data['response'];
 		return $this->access_data['access_token'];
+	}
+
+	public function getPaymentMethods($country_id) {
+
+		$request = array(
+			"uri" => "/sites/" . $country_id . "/payment_methods",
+
+		);	
+		$response = MPRestClient::get($request);
+
+		//$request = array(
+		//	"uri" => "/sites/" . $country_id . "/payment_methods",
+		//);
+
+		return $response['response'];
 	}
 
 	/**
@@ -323,18 +331,20 @@ class MP {
 	 * @param authenticate = true (deprecated)
 	 */
 
-	public function get($request, $params = null, $authenticate = true) {
-		if (is_string($request)) {
+	public function get($requestparam, $params = null, $authenticate = true) {
+		if (is_string($requestparam)) {
 			$request = array(
-				"uri" => $request,
+				"uri" => $requestparam,
 				"params" => $params,
 				"authenticate" => $authenticate,
 			);
 		}
+
 		$request["params"] = isset($request["params"]) && is_array($request["params"]) ? $request["params"] : array();
-		if (!isset($request["authenticate"]) || $request["authenticate"] !== false) {
+		if (isset($authenticate) && $authenticate == true) {
 			$request["params"]["access_token"] = $this->get_access_token();
 		}
+
 		$result = MPRestClient::get($request);
 		return $result;
 	}
@@ -539,6 +549,7 @@ class MPRestClient {
 				}
 
 				if ($request != null) {
+
 				 	if ($request["data"] != null) {
 				 		$payloads = json_encode($request["data"]);
 				 	}

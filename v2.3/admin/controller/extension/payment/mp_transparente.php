@@ -1,11 +1,28 @@
 <?php
 
 require_once '../catalog/controller/extension/payment/lib/mercadopago.php';
+require_once '../catalog/controller/extension/payment/lib/mp_util.php';
 
 class ControllerExtensionPaymentMPTransparente extends Controller {
 	private $_error = array();
 	private $payment_types = array('debvisa', 'debmaster', 'credit_card', 'debit_card');
-	private $version = "2.3.3";
+	private static $mp_util;
+	private static $mp;
+
+	function get_instance_mp_util() {
+		if ($this->mp_util == null) 
+			$this->mp_util = new MPOpencartUtil();
+
+		return $this->mp_util;
+	}
+
+	function get_instance_mp() {
+		if ($this->mp == null) {
+			$access_token = $this->config->get('mp_transparente_access_token');
+			$this->mp = new MP($access_token);
+		}
+		return $this->mp;
+	}
 
 	public function index() {
 
@@ -99,10 +116,9 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$country_id = $this->config->get('mp_transparente_country') == null ?
 		'MLA' : $this->config->get('mp_transparente_country');
 
-		$methods_api = $this->getMethods($country_id);
+		$methods_api = $this->get_instance_mp()->getPaymentMethods($country_id);
 		$data['methods'] = array();
 		$data['mp_transparente_methods'] = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
-		sleep(3);
 		foreach ($methods_api as $method) {
 			if (in_array($method['payment_type_id'], $this->payment_types)) {
 				$data['methods'][] = $method;
@@ -156,7 +172,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 	public function getPaymentMethodsByCountry() {
 		$country_id = $this->request->get['country_id'];
-		$payment_methods = $this->getMethods($country_id);
+		$payment_methods = $this->get_instance_mp()->getPaymentMethods($country_id);
 
 		foreach ($payment_methods as $method) {
 			if (in_array($method['payment_type_id'], $this->payment_types)) {
@@ -177,35 +193,13 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	}
 
 	private function getCountries() {
-		$url = 'https://api.mercadolibre.com/sites/';
-		$countries = $this->callJson($url);
-		return $countries;
-	}
-
-	private function getMethods($country_id) {
-		$url = "https://api.mercadolibre.com/sites/" . $country_id . "/payment_methods";
-		$methods = $this->callJson($url);
-		return $methods;
-	}
-
-	private function callJson($url, $posts = null) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //returns the transference value like a string
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded')); //sets the header
-		curl_setopt($ch, CURLOPT_URL, $url); //oauth API
-		if (isset($posts)) {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
-		}
-		$jsonresult = curl_exec($ch); //execute the conection
-		curl_close($ch);
-		$result = json_decode($jsonresult, true);
-		return $result;
+		$result = $this->get_instance_mp()->get("/sites/");
+		return $result['response'];
 	}
 
 	private function getCategoryList() {
-		$url = "https://api.mercadolibre.com/item_categories";
-		$category = $this->callJson($url);
-		return $category;
+		$result = $this->get_instance_mp()->get("/item_categories", null, false);
+		return $result['response'];
 	}
 
 	private function getInstallments() {
@@ -269,52 +263,30 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	}
 
 	private function isValidPublicKey() {
-		$url = "https://api.mercadopago.com/v1/payment_methods?public_key=".$this->request->post['mp_transparente_public_key'];
-		$result = $this->callJson($url);
-		
-		if ($result != null && isset($result['status'])) {
+		$uri = "/v1/payment_methods";
+ 		$params = array(
+ 			'public_key' => $this->request->post['mp_transparente_public_key'],
+ 		);
 			
-			if ($result['status'] > 202)
+		$result = $this->get_instance_mp()->get($uri, $params, false);
+
+		if ($result['response'] != null && isset($result['response']['status'])) {
+			if ($result['response']['status'] > 202)
 				return false;
-			
 		}
 		return true;
 	}
 
 	public function setSettings() {
-        $moduleVersion = $this->version;
-        $phpVersion = phpversion();
-        $modules = "OpenCart";
-        $modulesVersion = "2.0";
         $statusCustom = "false";
-        $custom_cupom = "false";
+	    $custom_cupom = "false";
 
-        if ($this->request->post['mp_transparente_coupon'] == "1") {
+        if ($this->request->post['mp_transparente_coupon'] == "1")
             $custom_cupom = "true";
-        }
 
-    	if ($this->request->post['mp_transparente_status'] == "1") {
+    	if ($this->request->post['mp_transparente_status'] == "1")
             $statusCustom = "true";
-        }
 
-        $request = array(
-            "module_version" => $moduleVersion,
-            "checkout_custom_credit_card" => $statusCustom,
-            "code_version" => $phpVersion,
-            "checkout_custom_credit_card_coupon" => $custom_cupom,
-            "platform" => $modules,
-            "platform_version" => $modulesVersion
-        );
-
-        try {
-			$access_token = $this->request->post['mp_transparente_access_token'];
-			$mp = new MP($access_token);
-			$mp->setEmailAdmin($this->config->get('config_email'));     	
-            $userResponse = $mp->saveSettings($request);
-
-            return $userResponse;
-        } catch (Exception $e) {
-        	error_log($e);
-        }
+		return $this->get_instance_mp_util()->setSettings($this->get_instance_mp(), $this->config->get('config_email'), $statusCustom, $custom_cupom);      
     }
 }

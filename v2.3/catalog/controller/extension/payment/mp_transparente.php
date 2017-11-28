@@ -81,7 +81,6 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			$data[$label] = $this->language->get($label);
 		}
 
-
 		if ($this->config->get('mp_transparente_coupon')) {
 			$data['mercadopago_coupon'] = $this->language->get('mercadopago_coupon');
 		}
@@ -91,7 +90,6 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$data['cards'] = $this->getCards();
 		$data['user_logged'] = $this->customer->isLogged();
 		$view = floatval(VERSION) < 2.2 ? 'default/template/payment/' : 'extension/payment/';
-		//$view = 'default/template/payment/';
 
 		$data['analytics'] = $this->setPreModuleAnalytics();
 
@@ -101,11 +99,15 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	}
 
 	public function getCardIssuers() {
-		$method = $this->request->get['payment_method_id'];
-		$token = $this->config->get('mp_transparente_access_token');
-		$url = 'https://api.mercadopago.com/v1/payment_methods/card_issuers?payment_method_id=' . $method . '&access_token=' . $token;
-		$issuers = $this->callJson($url);
-		echo json_encode($issuers);
+
+		$uri = "/v1/payment_methods/card_issuers";
+ 		$params = array(
+ 			'payment_method_id' => $this->request->get['payment_method_id'],
+ 			'access_token' => $this->config->get('mp_transparente_access_token')
+ 		);
+				
+		$issuers = $this->get_instance_mp()->get($uri, $params);
+		echo json_encode($issuers['response']);
 	}
 
 	public function coupon() {
@@ -258,12 +260,6 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		}
 	}
 
-	private function getMethods($country_id) {
-		$url = "https://api.mercadolibre.com/sites/" . $country_id . "/payment_methods";
-		$methods = $this->callJson($url);
-		return $methods;
-	}
-
 	public function getPaymentStatus() {
 		$this->load->language('payment/mp_transparente');
 		$request_type = isset($this->request->get['request_type']) ? (string) $this->request->get['request_type'] : "";
@@ -274,20 +270,6 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		$message = $this->language->get($status);
 		echo json_encode(array('message' => $message));
-	}
-
-	private function callJson($url, $posts = null) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //returns the transference value like a string
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded')); //sets the header
-		curl_setopt($ch, CURLOPT_URL, $url); //oauth API
-		if (isset($posts)) {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
-		}
-		$jsonresult = curl_exec($ch); //execute the conection
-		curl_close($ch);
-		$result = json_decode($jsonresult, true);
-		return $result;
 	}
 
 	public function callback() {

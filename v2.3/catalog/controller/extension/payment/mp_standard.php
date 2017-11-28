@@ -12,7 +12,6 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	private static $mp_util;
 	private static $mp;
 
-
 	function get_instance_mp_util() {
 		if ($this->mp_util == null) 
 			$this->mp_util = new MPOpencartUtil();
@@ -101,7 +100,6 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		$this->id = 'payment';
 
 		$data['server'] = $_SERVER;
-		//$data['debug'] = $this->config->get('mp_standard_debug');
 		$data['debug'] = 1;
 
 		$client_id = $this->config->get('mp_standard_client_id');
@@ -153,7 +151,7 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		if ($exclude != '') {
 
 			$accepted_methods = preg_split("/[\s,]+/", $exclude);
-			$all_payment_methods = $this->getMethods($country_id);
+			$all_payment_methods = $this->get_instance_mp()->getPaymentMethods($country_id);
 			$excluded_payments = array();
 			foreach ($all_payment_methods as $method) {
 				if (!in_array($method['id'], $accepted_methods) && $method['id'] != 'account_money') {
@@ -166,11 +164,9 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 				"excluded_payment_methods" => $excluded_payments,
 			);
 		} else {
-			//case not exist exclude methods
 			$payment_methods = array("installments" => $installments);
 		}
 
-		//set back url
 		$back_urls = array(
 			"pending" => $url . 'index.php?route=extension/payment/mp_standard/callback',
 			"success" => $url . 'index.php?route=extension/payment/mp_standard/callback',
@@ -193,7 +189,6 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 
 		if (!$is_test_user) {
-
 			$pref["sponsor_id"] = $this->get_instance_mp_util()->sponsors[$this->config->get('mp_standard_country')];
 		}
 
@@ -215,21 +210,6 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		$data['analytics'] = $this->setPreModuleAnalytics();
 
 		return $this->load->view($view, $data);
-	}
-
-	private function getMethods($country_id) {
-		$url = "https://api.mercadolibre.com/sites/" . $country_id . "/payment_methods";
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //returns the transference value like a string
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded')); //sets the header
-		curl_setopt($ch, CURLOPT_URL, $url); //oauth API
-		if (isset($posts)) {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
-		}
-		$jsonresult = curl_exec($ch); //execute the conection
-		curl_close($ch);
-		$result = json_decode($jsonresult, true);
-		return $result;
 	}
 
 	public function callback() {

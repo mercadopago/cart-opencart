@@ -229,20 +229,6 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		echo json_encode(array('message' => $message));
 	}
 
-	private function callJson($url, $posts = null) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //returns the transference value like a string
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded')); //sets the header
-		curl_setopt($ch, CURLOPT_URL, $url); //oauth API
-		if (isset($posts)) {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
-		}
-		$jsonresult = curl_exec($ch); //execute the conection
-		curl_close($ch);
-		$result = json_decode($jsonresult, true);
-		return $result;
-	}
-
 	public function callback() {
 		$this->response->redirect($this->url->link('checkout/success'));
 	}
