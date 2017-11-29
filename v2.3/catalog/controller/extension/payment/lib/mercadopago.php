@@ -339,7 +339,7 @@ class MP {
 				"authenticate" => $authenticate,
 			);
 		}
-
+		
 		$request["params"] = isset($request["params"]) && is_array($request["params"]) ? $request["params"] : array();
 		if (isset($authenticate) && $authenticate == true) {
 			$request["params"]["access_token"] = $this->get_access_token();
@@ -550,11 +550,11 @@ class MPRestClient {
 
 				if ($request != null) {
 
-				 	if ($request["data"] != null) {
+				 	if (isset($request["data"]) && $request["data"] != null) {
 				 		$payloads = json_encode($request["data"]);
 				 	}
 
-				 	if ($request["uri"] != null) {
+				 	if (isset($request["uri"]) && $request["uri"] != null) {
 				 		$endpoint = $request["uri"];
 				 	}
 				}

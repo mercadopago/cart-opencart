@@ -141,21 +141,22 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			
 			$this->model_setting_setting->editSetting('mp_transparente', $this->request->post);
 
-			$statusReturn = true;			
-			$responseAccessToken = $this->setSettings();
-			$responsePublicKey = $this->isValidPublicKey();
+			$statusReturn = true;
+			$this->setSettings();			
+			$isPublicKeyInvalid = $this->verifyPublicKey();
+			$isAccessTokenInvalid = $this->verifyAccessToken();
 
 			if (!$this->user->hasPermission('modify', 'extension/payment/mp_transparente')) {
 				$this->_error['warning'] = $this->language->get('error_permission');
 				$statusReturn = false;
 			}
 
-			if ($responseAccessToken['status'] > 202) {
+			if ($isAccessTokenInvalid) {
 				$data['error_access_token'] = $this->language->get('error_access_token');
 				$statusReturn = false;
 			} 
 
-			if ($responsePublicKey == false) {
+			if ($isPublicKeyInvalid) {
 				$data['error_public_key'] = $this->language->get('error_public_key');
 				$statusReturn = false;
 			}
@@ -168,28 +169,6 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		$this->response->setOutput($this->load->view('extension/payment/mp_transparente.tpl', $data));
 
-	}
-
-	public function getPaymentMethodsByCountry() {
-		$country_id = $this->request->get['country_id'];
-		$payment_methods = $this->get_instance_mp()->getPaymentMethods($country_id);
-
-		foreach ($payment_methods as $method) {
-			if (in_array($method['payment_type_id'], $this->payment_types)) {
-				$data['methods'][] = $method;
-			}
-		}
-
-		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
-		foreach ($methods_excludes as $exclude) {
-			$data['mp_transparente_methods'][] = $exclude;
-
-		}
-
-		if (isset($data['methods'])) {
-			$data['payment_style'] = count($data['methods']) > 12 ? "float:left; margin-left:7%" : "float:left; margin-left:5%";
-			$this->response->setOutput($this->load->view('extension/payment/mp_transparente_payment_methods_partial.tpl', $data));
-		}
 	}
 
 	private function getCountries() {
@@ -262,19 +241,34 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		return $installments;
 	}
 
-	private function isValidPublicKey() {
+	private function verifyPublicKey() {
 		$uri = "/v1/payment_methods";
  		$params = array(
- 			'public_key' => $this->request->post['mp_transparente_public_key'],
+ 			'public_key' => $this->request->post['mp_transparente_public_key']
  		);
 			
 		$result = $this->get_instance_mp()->get($uri, $params, false);
 
-		if ($result['response'] != null && isset($result['response']['status'])) {
-			if ($result['response']['status'] > 202)
-				return false;
+		if ($result['response'] != null && isset($result['response']['status']) && $result['response']['status'] > 202) {
+			return true;
+
 		}
-		return true;
+		return false;
+	}
+
+	private function verifyAccessToken() {
+		$uri = "/users/me";
+ 		$params = array(
+ 			'access_token' => $this->request->post['mp_transparente_access_token']
+ 		);
+			
+		$result = $this->get_instance_mp()->get($uri, $params, false);
+
+		if ($result != null && isset($result['status']) && $result['status'] > 202) {
+			return true;
+
+		}
+		return false;
 	}
 
 	public function setSettings() {
@@ -287,6 +281,8 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
     	if ($this->request->post['mp_transparente_status'] == "1")
             $statusCustom = "true";
 
-		return $this->get_instance_mp_util()->setSettings($this->get_instance_mp(), $this->config->get('config_email'), $statusCustom, $custom_cupom);      
+        $result = $this->get_instance_mp_util()->setSettings($this->get_instance_mp(), $this->config->get('config_email'), $statusCustom, $custom_cupom); 
+
+		return $result;  
     }
 }
