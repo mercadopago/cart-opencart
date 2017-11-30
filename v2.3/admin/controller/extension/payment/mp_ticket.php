@@ -1,10 +1,27 @@
 <?php
 
 require_once '../catalog/controller/extension/payment/lib/mercadopago.php';
+require_once '../catalog/controller/extension/payment/lib/mp_util.php';
 
 class ControllerExtensionPaymentMPTicket extends Controller {
 	private $_error = array();
-	private $version = "2.3.1";
+	private static $mp_util;
+	private static $mp;
+
+	function get_instance_mp_util() {
+		if ($this->mp_util == null) 
+			$this->mp_util = new MPOpencartUtil();
+
+		return $this->mp_util;
+	}
+
+	function get_instance_mp() {
+		if ($this->mp == null) {
+			$access_token = $this->config->get('mp_ticket_access_token');
+			$mp = new MP($access_token);  
+		}
+		return $this->mp;
+	}
 
 	public function index() {
 		$prefix = 'mp_ticket_';
@@ -68,7 +85,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_ticket&token=' . $this->session->data['token'];
 		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token'];
-		$data['category_list'] = $this->getCategoryList();
+		$data['category_list'] = $this->get_instance_mp_util()->getCategoryList($this->get_instance_mp());
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -91,8 +108,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		}
 
 		$data['methods'] = array();
-		$access_token = $this->config->get('mp_ticket_access_token');
-		$methods_api = $this->getMethods($access_token);
+		$methods_api = $this->getMethods();
 
 		$data['methods'] = array();
 		if (in_array('response', $methods_api)) {
@@ -135,7 +151,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			$this->model_setting_setting->editSetting('mp_ticket', array('mp_ticket_access_token' => $access_token));
 		}
 
-		$payment_methods = $this->getMethods($access_token);
+		$payment_methods = $this->getMethods();
 
 		if ($payment_methods['status'] && $payment_methods['status'] == 400) {
 			echo json_encode($payment_methods);
@@ -159,15 +175,12 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		}
 	}
 
-	private function getMethods($token) {
+	private function getMethods() {
 		$this->load->language('extension/payment/mp_ticket');
 		$error = array('status' => 400, 'message' => $this->language->get('error_access_token'));
 		try {
 
-			$mp = new MP($token);
-			$methods = $mp->get("/v1/payment_methods");
-			error_log("methods".json_encode($methods));
-	
+			$methods = $this.get_instance_mp()->get("/v1/payment_methods");
 			if($methods["status"] === 400) {		
 				return $error;	
 			}
@@ -176,26 +189,6 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		} catch (Exception $e) {
 			return $error;
 		}
-	}
-
-	private function callJson($url, $posts = null) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //returns the transference value like a string
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded')); //sets the header
-		curl_setopt($ch, CURLOPT_URL, $url); //oauth API
-		if (isset($posts)) {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
-		}
-		$jsonresult = curl_exec($ch); //execute the conection
-		curl_close($ch);
-		$result = json_decode($jsonresult, true);
-		return $result;
-	}
-
-	private function getCategoryList() {
-		$url = "https://api.mercadolibre.com/item_categories";
-		$category = $this->callJson($url);
-		return $category;
 	}
 
 	private function validate() {

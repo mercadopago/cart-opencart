@@ -67,22 +67,96 @@ class MPOpencartUtil {
 		}
 	}
 
-	public function setSettings($mp, $config_email, $statusCustom = false,  $custom_cupom = false) {
+	public function getCountries($mp) {
+		$result = $mp->get("/sites/");
+		return $result['response'];
+	}
+
+	public function setSettings($mp, $config_email, $statusCustom = false,  $custom_cupom = false, $checkout_basic = false) {
 
         $request = array(
             "module_version" => $this->moduleVersion,
-            "checkout_custom_credit_card" => $statusCustom,
             "code_version" => phpversion(),
-            "checkout_custom_credit_card_coupon" => $custom_cupom,
             "platform" => "OpenCart",
             "platform_version" => $this->plataformVersion
         );
 
-        try {
-			$mp->setEmailAdmin($config_email);     	
-            return $mp->saveSettings($request);
-        } catch (Exception $e) {
-        	error_log($e);
-        }
+        if($statusCustom)
+        	$request['checkout_custom_credit_card'] = $statusCustom;
+
+        if ($custom_cupom)
+        	$request['checkout_custom_credit_card_coupon'] = $custom_cupom;
+
+        if ($custom_cupom)
+        	$request['checkout_basic'] = $checkout_basic;
+
     }
+
+	public function getInstallments() {
+		$installments = array();
+
+		$installments[] = array(
+			'value' => '24',
+			'id' => '24');
+
+		$installments[] = array(
+			'value' => '18',
+			'id' => '18');
+		$installments[] = array(
+			'value' => '15',
+			'id' => '15');
+
+		$installments[] = array(
+			'value' => '12',
+			'id' => '12');
+
+		$installments[] = array(
+			'value' => '11',
+			'id' => '11');
+
+		$installments[] = array(
+			'value' => '10',
+			'id' => '10');
+
+		$installments[] = array(
+			'value' => '9',
+			'id' => '9');
+
+		$installments[] = array(
+			'value' => '7',
+			'id' => '7');
+
+		$installments[] = array(
+			'value' => '6',
+			'id' => '6');
+
+		$installments[] = array(
+			'value' => '5',
+			'id' => '5');
+
+		$installments[] = array(
+			'value' => '4',
+			'id' => '4');
+
+		$installments[] = array(
+			'value' => '3',
+			'id' => '3');
+		$installments[] = array(
+			'value' => '2',
+			'id' => '2');
+
+		$installments[] = array(
+			'value' => '1',
+			'id' => '1');
+
+		return $installments;
+	}
+
+	private function getCategoryList($mp) {
+		$uri = "/item_categories";
+		$category = $mp->get($uri, null, false);
+
+		return $category['response'];
+	}
+
 }

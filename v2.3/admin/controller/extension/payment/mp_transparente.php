@@ -89,9 +89,9 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_transparente&token=' . $this->session->data['token'];
 		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token'];
-		$data['category_list'] = $this->getCategoryList();
-		$data['countries'] = $this->getCountries();
-		$data['installments'] = $this->getInstallments();
+		$data['category_list'] = $this->get_instance_mp_util()->getCategoryList($this->get_instance_mp());
+		$data['countries'] = $this->get_instance_mp_util()->getCountries(get_instance_mp());
+		$data['installments'] = $this->get_instance_mp_util()->getInstallments();
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -171,76 +171,6 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 	}
 
-	private function getCountries() {
-		$result = $this->get_instance_mp()->get("/sites/");
-		return $result['response'];
-	}
-
-	private function getCategoryList() {
-		$result = $this->get_instance_mp()->get("/item_categories", null, false);
-		return $result['response'];
-	}
-
-	private function getInstallments() {
-		$installments = array();
-
-		$installments[] = array(
-			'value' => '24',
-			'id' => '24');
-
-		$installments[] = array(
-			'value' => '18',
-			'id' => '18');
-		$installments[] = array(
-			'value' => '15',
-			'id' => '15');
-
-		$installments[] = array(
-			'value' => '12',
-			'id' => '12');
-
-		$installments[] = array(
-			'value' => '11',
-			'id' => '11');
-
-		$installments[] = array(
-			'value' => '10',
-			'id' => '10');
-
-		$installments[] = array(
-			'value' => '9',
-			'id' => '9');
-
-		$installments[] = array(
-			'value' => '7',
-			'id' => '7');
-
-		$installments[] = array(
-			'value' => '6',
-			'id' => '6');
-
-		$installments[] = array(
-			'value' => '5',
-			'id' => '5');
-
-		$installments[] = array(
-			'value' => '4',
-			'id' => '4');
-
-		$installments[] = array(
-			'value' => '3',
-			'id' => '3');
-		$installments[] = array(
-			'value' => '2',
-			'id' => '2');
-
-		$installments[] = array(
-			'value' => '1',
-			'id' => '1');
-
-		return $installments;
-	}
-
 	private function verifyPublicKey() {
 		$uri = "/v1/payment_methods";
  		$params = array(
@@ -274,6 +204,8 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	public function setSettings() {
         $statusCustom = "false";
 	    $custom_cupom = "false";
+	    $config_email = $this->config->get('config_email');
+	    $result = null;
 
         if ($this->request->post['mp_transparente_coupon'] == "1")
             $custom_cupom = "true";
@@ -281,7 +213,12 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
     	if ($this->request->post['mp_transparente_status'] == "1")
             $statusCustom = "true";
 
-        $result = $this->get_instance_mp_util()->setSettings($this->get_instance_mp(), $this->config->get('config_email'), $statusCustom, $custom_cupom); 
+        try {
+			$this->get_instance_mp()->setEmailAdmin($config_email);     	           
+           	$result = $this->get_instance_mp_util()->setSettings($this->get_instance_mp(), $config_email, $statusCustom, $custom_cupom); 
+		} catch (Exception $e) {
+        	error_log($e);
+        }
 
 		return $result;  
     }

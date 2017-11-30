@@ -1,11 +1,28 @@
 <?php
 
 require_once '../catalog/controller/extension/payment/lib/mercadopago.php';
+require_once '../catalog/controller/extension/payment/lib/mp_util.php';
 
 class ControllerExtensionPaymentMPStandard extends Controller {
 	private $_error = array();
-	private $version = "2.3";
-	private $versionModule = "2.3.1";
+	private static $mp_util;
+	private static $mp;
+
+	function get_instance_mp_util() {
+		if ($this->mp_util == null) 
+			$this->mp_util = new MPOpencartUtil();
+
+		return $this->mp_util;
+	}
+
+	function get_instance_mp() {
+		if ($this->mp == null) {
+			$client_id = $this->request->post['mp_standard_client_id']; 
+			$client_secret = $this->request->post['mp_standard_client_secret'];
+			$this->$mp = new MP($client_id, $client_secret);
+		}
+		return $this->mp;
+	}
 
 	public function index() {
 		$prefix = 'mp_standard_';
@@ -78,10 +95,10 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 
 		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_standard&token=' . $this->session->data['token'];
 		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token'];
-		$data['category_list'] = $this->getCategoryList();
+		$data['category_list'] = $this->get_instance_mp_util()->getCategoryList($this->get_instance_mp());
 		$data['type_checkout'] = array("Redirect", "Lightbox", "Iframe");
-		$data['countries'] = $this->getCountries();
-		$data['installments'] = $this->getInstallments();
+		$data['countries'] = $this->get_instance_mp_util()->getCountries(get_instance_mp());
+		$data['installments'] = $this->get_instance_mp_util()->getInstallments();
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -171,140 +188,22 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		}
 	}
 
-	private function getCountries() {
-		$url = 'https://api.mercadolibre.com/sites/';
-		$countries = $this->callJson($url);
-		return $countries;
-	}
-
 	private function getMethods($country_id) {
-		$url = "https://api.mercadolibre.com/sites/" . $country_id . "/payment_methods";
-		$methods = $this->callJson($url);
-		return $methods;
+		$uri = "/sites/" . $country_id . "/payment_methods";
+		$methods = $this->get_instance_mp()->get($uri, null, false);
+
+		return $methods['response'];
 	}
 
-	private function callJson($url, $posts = null) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //returns the transference value like a string
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded')); //sets the header
-		curl_setopt($ch, CURLOPT_URL, $url); //oauth API
-		try {
-			if (isset($posts)) {
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
-			}
-			$jsonresult = curl_exec($ch); //execute the conection
-			curl_close($ch);
-			$result = json_decode($jsonresult, true);
-			return $result;
-		} catch (Exception $e) {
-			$error = curl_error($ch);
-			error_log($error);
-			$this->_error['warning'] = $error;
-		}
-
-	}
-
-	private function getCategoryList() {
-		$url = "https://api.mercadolibre.com/item_categories";
-		$category = $this->callJson($url);
-		return $category;
-	}
-
-	private function getInstallments() {
-		$installments = array();
-
-		$installments[] = array(
-			'value' => '24',
-			'id' => '24');
-
-		$installments[] = array(
-			'value' => '18',
-			'id' => '18');
-		$installments[] = array(
-			'value' => '15',
-			'id' => '15');
-
-		$installments[] = array(
-			'value' => '12',
-			'id' => '12');
-
-		$installments[] = array(
-			'value' => '11',
-			'id' => '11');
-
-		$installments[] = array(
-			'value' => '10',
-			'id' => '10');
-
-		$installments[] = array(
-			'value' => '9',
-			'id' => '9');
-
-		$installments[] = array(
-			'value' => '7',
-			'id' => '7');
-
-		$installments[] = array(
-			'value' => '6',
-			'id' => '6');
-
-		$installments[] = array(
-			'value' => '5',
-			'id' => '5');
-
-		$installments[] = array(
-			'value' => '4',
-			'id' => '4');
-
-		$installments[] = array(
-			'value' => '3',
-			'id' => '3');
-		$installments[] = array(
-			'value' => '2',
-			'id' => '2');
-
-		$installments[] = array(
-			'value' => '1',
-			'id' => '1');
-
-		return $installments;
-	}
-
-    public function setSettings()
-    {
-		$client_id = $this->request->post['mp_standard_client_id']; 
-		$client_secret = $this->request->post['mp_standard_client_secret'];
-		$mp = new MP($client_id, $client_secret);
-
-        $moduleVersion = $this->version;
-        $siteId = $this->config->get('mp_standard_country');
-        $dataCreated = date('Y-m-d H:i:s');
-
-        $phpVersion = phpversion();
-        $soServer = PHP_OS;
-        $modulesId = "OPENCART " . "2.3";
-
+	public function setSettings() {
         $standardStatus = "false";
 
         if ($this->request->post['mp_standard_status'] == "1") {
 			$standardStatus = "true";
         }
 
-        $request = array(
-            "module_version" => $this->versionModule,
-            "checkout_basic" => $standardStatus,
-            "code_version" => phpversion(),
-            "platform" => "OpenCart",
-            "platform_version" => $this->version
-    	);
+        $result = $this->get_instance_mp_util()->setSettings($this->get_instance_mp(), $this->config->get('config_email'), false, false, $standardStatus); 
 
-        try {
-			$mp->saveSettings($request);
-        } catch (Exception $e) {
-        	error_log($e);
-        	return false;
-        }
-
-        return true;
+		return $result;  
     }
 }
