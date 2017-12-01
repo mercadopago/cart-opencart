@@ -16,11 +16,18 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	}
 
 	function get_instance_mp() {
-		if ($this->mp == null) {
-			$client_id = $this->request->post['mp_standard_client_id']; 
+		
+		$client_id = $this->config->get('mp_standard_client_id');
+		$client_secret = $this->config->get('mp_standard_client_secret');
+
+		if (isset($this->request->post['mp_standard_client_id'])){
+			$client_id = $this->request->post['mp_standard_client_id'];
 			$client_secret = $this->request->post['mp_standard_client_secret'];
-			$this->$mp = new MP($client_id, $client_secret);
 		}
+
+		if ($this->mp == null)
+			$this->mp = new MP($client_id, $client_secret);
+		
 		return $this->mp;
 	}
 
@@ -97,7 +104,7 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token'];
 		$data['category_list'] = $this->get_instance_mp_util()->getCategoryList($this->get_instance_mp());
 		$data['type_checkout'] = array("Redirect", "Lightbox", "Iframe");
-		$data['countries'] = $this->get_instance_mp_util()->getCountries(get_instance_mp());
+		$data['countries'] = $this->get_instance_mp_util()->getCountries($this->get_instance_mp());
 		$data['installments'] = $this->get_instance_mp_util()->getInstallments();
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -146,7 +153,8 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 			$this->model_setting_setting->editSetting('mp_standard', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
-			$resultSetSettings = $this->setSettings();
+			$this->setSettings();
+			$resultSetSettings = $this->verifyCredentials();
 			$statusReturn = true;			
 
 			if (!$this->user->hasPermission('modify', 'extension/payment/mp_standard')) {
@@ -186,6 +194,18 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 			$data['payment_style'] = count($data['methods']) > 12 ? "float:left; margin-left:7%" : "float:left; margin-left:5%";
 			$this->response->setOutput($this->load->view('extension/payment/mp_standard_payment_methods_partial.tpl', $data));
 		}
+	}
+
+	private function verifyCredentials() {
+	
+		try {
+			$this->get_instance_mp()->get_access_token();	
+			return true;
+		} catch (MercadoPagoException $e) {
+			error_log($e);
+		}
+
+		return false;
 	}
 
 	private function getMethods($country_id) {

@@ -68,7 +68,7 @@ class MPOpencartUtil {
 	}
 
 	public function getCountries($mp) {
-		$result = $mp->get("/sites/");
+		$result = $mp->get("/sites/", null, false);
 		return $result['response'];
 	}
 
@@ -152,7 +152,7 @@ class MPOpencartUtil {
 		return $installments;
 	}
 
-	private function getCategoryList($mp) {
+	public function getCategoryList($mp) {
 		$uri = "/item_categories";
 		$category = $mp->get($uri, null, false);
 
