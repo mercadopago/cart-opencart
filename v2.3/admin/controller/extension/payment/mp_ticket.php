@@ -16,10 +16,14 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	}
 
 	function get_instance_mp() {
-		if ($this->mp == null) {
-			$access_token = $this->config->get('mp_ticket_access_token');
-			$mp = new MP($access_token);  
-		}
+
+		$access_token = $this->config->get('mp_ticket_access_token');
+
+		if(isset($this->request->get['access_token']))
+			$access_token = $this->request->get['access_token'];
+
+		$this->mp = new MP($access_token);  
+
 		return $this->mp;
 	}
 
@@ -152,8 +156,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		}
 
 		$payment_methods = $this->getMethods();
-
-		if ($payment_methods['status'] && $payment_methods['status'] == 400) {
+		if (isset($payment_methods['status']) && $payment_methods['status'] == 400) {
 			echo json_encode($payment_methods);
 			return;
 		}
@@ -180,8 +183,8 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		$error = array('status' => 400, 'message' => $this->language->get('error_access_token'));
 		try {
 
-			$methods = $this.get_instance_mp()->get("/v1/payment_methods");
-			if($methods["status"] === 400) {		
+			$methods = $this->get_instance_mp()->get("/v1/payment_methods", null, true);
+			if($methods["status"] > 202) {		
 				return $error;	
 			}
 

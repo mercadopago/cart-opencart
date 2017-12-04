@@ -189,7 +189,9 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	}
 
 	private function getCountry() {
-		$result = $this->get_instance_mp()->get('/users/me?access_token=' . $access_token);
+		$access_token = $this->config->get('mp_ticket_access_token');
+		$result = $this->get_instance_mp()->get('/users/me?access_token=' . $access_token, null, true);
+		error_log(json_encode($result));
 		return $result['response']['site_id'];
 	}
 
@@ -266,7 +268,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
 
         $resultModules = array();
-		$token = $this->_getClientId($this->config->get('mp_ticket_access_token')),
+		$token = $this->_getClientId($this->config->get('mp_ticket_access_token'));
 		$customerEmail = $this->customer->getEmail();
 		$userLogged = $this->customer->isLogged() ? 1 : 0;
 
