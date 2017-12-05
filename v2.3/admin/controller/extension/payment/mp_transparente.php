@@ -90,7 +90,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_transparente&token=' . $this->session->data['token'];
 		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token'];
 		$data['category_list'] = $this->get_instance_mp_util()->getCategoryList($this->get_instance_mp());
-		$data['countries'] = $this->get_instance_mp_util()->getCountries(get_instance_mp());
+		$data['countries'] = $this->get_instance_mp_util()->getCountries($this->get_instance_mp());
 		$data['installments'] = $this->get_instance_mp_util()->getInstallments();
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -169,6 +169,28 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		$this->response->setOutput($this->load->view('extension/payment/mp_transparente.tpl', $data));
 
+	}
+
+	public function getPaymentMethodsByCountry() {
+		$country_id = $this->request->get['country_id'];
+		$payment_methods = $this->get_instance_mp()->getPaymentMethods($country_id);
+
+		foreach ($payment_methods as $method) {
+			if (in_array($method['payment_type_id'], $this->payment_types)) {
+				$data['methods'][] = $method;
+			}
+		}
+
+		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
+		foreach ($methods_excludes as $exclude) {
+			$data['mp_transparente_methods'][] = $exclude;
+
+		}
+
+		if (isset($data['methods'])) {
+			$data['payment_style'] = count($data['methods']) > 12 ? "float:left; margin-left:7%" : "float:left; margin-left:5%";
+			$this->response->setOutput($this->load->view('extension/payment/mp_transparente_payment_methods_partial.tpl', $data));
+		}
 	}
 
 	private function verifyPublicKey() {
