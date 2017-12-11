@@ -203,27 +203,14 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	}
 
 	public function setSettings($data) {
-
-        $customStatus = "false";
+        $basic = "false";
 
         if ($data['mp_ticket_status'] == "1") {
-			$customStatus = "true";        	
+			$basic = "true";        	
         }
 
-        $request = array(
-            "module_version" => "2.0",
-            "checkout_custom_ticket" => $customStatus,
-            "code_version" => phpversion(),    
-            "platform" => "OpenCart",
-            "platform_version" => $this->version
-    	);
-  	
-        try {
-			$access_token = $this->config->get('mp_ticket_access_token');
-			$mp = new MP($access_token);        	
-			$userResponse = $mp->saveSettings($request);
-        } catch (Exception $e) {
-        	error_log($e);
-        }
+        $result = $this->get_instance_mp_util()->setSettings($this->get_instance_mp(), $this->config->get('config_email'), false, false, false, $basic); 
+
+		return $result;  
     }
 }

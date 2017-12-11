@@ -238,7 +238,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	public function notifications() {
 		if (isset($this->request->get['topic'])) {
 			$this->request->get['collection_id'] = $this->request->get['id'];
-			$this->retorno();
+			$this->updateOrder();
 			echo json_encode(200);
 		} else {
 			$this->updateOrder();

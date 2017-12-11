@@ -72,7 +72,7 @@ class MPOpencartUtil {
 		return $result['response'];
 	}
 
-	public function setSettings($mp, $config_email, $statusCustom = false,  $custom_cupom = false, $checkout_basic = false) {
+	public function setSettings($mp, $config_email, $statusCustom = false,  $custom_cupom = false, $standard = false, $checkout_basic = false) {
 
         $request = array(
             "module_version" => $this->moduleVersion,
@@ -87,8 +87,13 @@ class MPOpencartUtil {
         if ($custom_cupom)
         	$request['checkout_custom_credit_card_coupon'] = $custom_cupom;
 
-        if ($custom_cupom)
-        	$request['checkout_basic'] = $checkout_basic;
+        if ($standard)
+        	$request['checkout_basic'] = $standard;
+
+		if ($checkout_basic)
+        	$request['checkout_custom_ticket'] = $checkout_basic;
+
+        
 
     }
 
