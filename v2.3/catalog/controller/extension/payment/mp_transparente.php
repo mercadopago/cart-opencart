@@ -365,7 +365,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$this->get_instance_mp_util()->updateOrder($payment, $this->model_checkout_order, $this->config);
 
 		if(isset($payment['response']['status']) && isset($payment['response']['status']) == "approved" && isset($payment['response']['card']) && $payment['response']['card']['id'] == null){
-			$this->createCard($orderReturn);
+			$this->createCard($payment['response']);
 		}
 	}
 
