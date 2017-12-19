@@ -1,6 +1,7 @@
 <?php
 
-require_once "mercadopago.php";
+require_once "lib/mercadopago.php";
+require_once "lib/mp_util.php";
 
 class ControllerExtensionPaymentMPStandard extends Controller {
 
@@ -8,18 +9,27 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	public $sucess = true;
 	private $order_info;
 	private $message;
-	private $version = "1.0.2";
-	private $versionModule = "2.3.1";
-	private $sponsors = array('MLB' => 204931135,
-		'MLM' => 204962951,
-		'MLA' => 204931029,
-		'MCO' => 204964815,
-		'MLV' => 204964612,
-		'MPE' => 217176790,
-		'MLC' => 204927454,
-		'MLU' => 241827790);
+	private static $mp_util;
+	private static $mp;
+
+	function get_instance_mp_util() {
+		if ($this->mp_util == null) 
+			$this->mp_util = new MPOpencartUtil();
+
+		return $this->mp_util;
+	}
+
+	function get_instance_mp() {
+		if ($this->mp == null) {
+			$client_id = $this->config->get('mp_standard_client_id');
+			$client_secret = $this->config->get('mp_standard_client_secret');
+			$this->mp = new MP($client_id, $client_secret);
+		}
+		return $this->mp;
+	}
 
 	public function index() {
+
 		$data['customer_email'] = $this->customer->getEmail();
 		$data['button_confirm'] = $this->language->get('button_confirm');
 		$data['button_back'] = $this->language->get('button_back');
@@ -90,7 +100,6 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		$this->id = 'payment';
 
 		$data['server'] = $_SERVER;
-		//$data['debug'] = $this->config->get('mp_standard_debug');
 		$data['debug'] = 1;
 
 		$client_id = $this->config->get('mp_standard_client_id');
@@ -142,7 +151,7 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		if ($exclude != '') {
 
 			$accepted_methods = preg_split("/[\s,]+/", $exclude);
-			$all_payment_methods = $this->getMethods($country_id);
+			$all_payment_methods = $this->get_instance_mp()->getPaymentMethods($country_id);
 			$excluded_payments = array();
 			foreach ($all_payment_methods as $method) {
 				if (!in_array($method['id'], $accepted_methods) && $method['id'] != 'account_money') {
@@ -155,11 +164,9 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 				"excluded_payment_methods" => $excluded_payments,
 			);
 		} else {
-			//case not exist exclude methods
 			$payment_methods = array("installments" => $installments);
 		}
 
-		//set back url
 		$back_urls = array(
 			"pending" => $url . 'index.php?route=extension/payment/mp_standard/callback',
 			"success" => $url . 'index.php?route=extension/payment/mp_standard/callback',
@@ -175,18 +182,17 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		$pref['payment_methods'] = $payment_methods;
 		$pref['payer'] = $payer;
 
-    if (!strrpos($url, 'localhost')) {
-    	$pref['notification_url'] = $url . 'index.php?route=extension/payment/mp_standard/notifications';
-    }
+	    if (!strrpos($url, 'localhost')) {
+	    	$pref['notification_url'] = $url . 'index.php?route=extension/payment/mp_standard/notifications';
+	    }
 		$sandbox = (bool) $this->config->get('mp_standard_sandbox');
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 
 		if (!$is_test_user) {
-			$pref["sponsor_id"] = $this->sponsors[$this->config->get('mp_standard_country')];
+			$pref["sponsor_id"] = $this->get_instance_mp_util()->sponsors[$this->config->get('mp_standard_country')];
 		}
 
-		$mp = new MP($client_id, $client_secret);
-		$preferenceResult = $mp->create_preference($pref);
+		$preferenceResult = $this->get_instance_mp()->create_preference($pref);
 
 		if ($preferenceResult['status'] == 201):
 			$data['type_checkout'] = $this->config->get('mp_standard_type_checkout');
@@ -206,21 +212,6 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 		return $this->load->view($view, $data);
 	}
 
-	private function getMethods($country_id) {
-		$url = "https://api.mercadolibre.com/sites/" . $country_id . "/payment_methods";
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //returns the transference value like a string
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/x-www-form-urlencoded')); //sets the header
-		curl_setopt($ch, CURLOPT_URL, $url); //oauth API
-		if (isset($posts)) {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $posts);
-		}
-		$jsonresult = curl_exec($ch); //execute the conection
-		curl_close($ch);
-		$result = json_decode($jsonresult, true);
-		return $result;
-	}
-
 	public function callback() {
 		if ($this->request->get['collection_status'] == "null") {
 			$this->response->redirect($this->url->link('checkout/checkout'));
@@ -230,7 +221,7 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 			$this->load->model('checkout/order');
 			$order = $this->model_checkout_order->getOrder($order_id);
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mercadopago_order_status_id'), date('d/m/Y h:i'));
-			$dados = $this->retorno();
+			$dados = $this->updateOrder();
 
 			$data['footer'] = array();
 			$data['continue'] = $this->url->link('checkout/success');
@@ -253,98 +244,37 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	public function notifications() {
 		if (isset($this->request->get['topic'])) {
 			$this->request->get['collection_id'] = $this->request->get['id'];
-			$this->retorno();
+			$this->updateOrder();
 			echo json_encode(200);
 		}
 	}
 
-	public function retorno() {
+	private function updateOrder() {
+		$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
+		$ids = explode(',', $this->request->get['collection_id']);
 
-		if (isset($this->request->get['collection_id'])) {
-			if ($this->request->get['collection_id'] == 'null') {
-				$order_id = $this->request->get['external_reference'];
-				$this->load->model('checkout/order');
-				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_' . $this->request->get['status']), date('d/m/Y h:i'));
-				return;
+		$this->get_instance_mp()->sandbox_mode($sandbox);	
+		$this->load->model('checkout/order');
 
-			}
-
-			$ids = explode(',', $this->request->get['collection_id']);
-			$client_id = $this->config->get('mp_standard_client_id');
-			$client_secret = $this->config->get('mp_standard_client_secret');
-			$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
-			$mp = new MP($client_id, $client_secret);
-			$mp->sandbox_mode($sandbox);
-			$dados = null;
-			foreach ($ids as $id) {
-				$resposta = $mp->get_payment_info($id);
-				$dados = $resposta['response'];
-
-				$order_id = $dados['collection']['external_reference'];
-				$order_status = $dados['collection']['status'];
-
-				$this->load->model('checkout/order');
-				$order = $this->model_checkout_order->getOrder($order_id);
-
-				if ($order['order_status_id'] == '0') {
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id'));
-				}
-
-				switch ($order_status) {
-				case 'approved':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_completed'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'pending':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'in_process':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_process'), date('d/m/Y h:i') .  ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'rejected':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_rejected'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'refunded':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_refunded'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'cancelled':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_cancelled'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				case 'in_metiation':
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_in_mediation'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				default:
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('mp_standard_order_status_id_pending'), date('d/m/Y h:i') . ' - ' . $dados['collection']['net_received_amount']);
-					break;
-				}
-			}
-		} else {
-			error_log('DONT SET ID IN ORDER!');
+		foreach ($ids as $id) {
+			$payment = $this->get_instance_mp()->getPayment($id);
+			$this->get_instance_mp_util()->updateOrder($payment, $this->model_checkout_order, $this->config);	
 		}
-
-		return $dados;
 	}
 
-    function setPreModuleAnalytics() {
+	private function setPreModuleAnalytics() {
 
 		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
-		$resultModules = array();
+
+        $resultModules = array();
+		$token = $this->config->get('mp_standard_client_id');
+		$customerEmail = $this->customer->getEmail();
+		$userLogged = $this->customer->isLogged() ? 1 : 0;
 
 		foreach ($query->rows as $result) {
 			array_push($resultModules, $result['code']);
 		}
 
-        $return = array(
-            'publicKey'=> "",
-            'token'=> $this->config->get('mp_standard_client_id'),
-            'platform' => "Opencart",
-            'platformVersion' => $this->versionModule,
-            'moduleVersion' => $this->version,
-            'payerEmail' => $this->customer->getEmail(),
-            'userLogged' => $this->customer->isLogged() ? 1 : 0,
-            'installedModules' => implode(', ', $resultModules),
-            'additionalInfo' => ""
-        );
-
-        return $return;
+		return $this->get_instance_mp_util()->createAnalytics($resultModules, $token, $customerEmail, $userLogged); 
     }
 }

@@ -1,0 +1,112 @@
+.msg_erro {
+  color : red;
+  display : none;
+}
+.inputspar {
+  width:49%;
+  display:inline
+}
+.obrigatorio {
+  color: red
+}
+
+#checkout-payment label {
+  text-transform: uppercase;
+  font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  margin: 0 0 5px 0;
+  display: block;
+}
+
+#form-ticket{
+  margin: 0 auto;
+  width: 720px;
+}
+
+
+.form-row{
+  display: block;
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+[class^=form-col-]{
+  position: relative;
+  min-height: 1px;
+  padding-right: 5px;
+  padding-left: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  float: left;
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  box-sizing: border-box;
+}
+
+.form-col-1{
+  width: 8.33333333%;
+}
+.form-col-2{
+  width: 16.66666667%;
+}
+.form-col-3{
+  width: 25%;
+}
+.form-col-4{
+  width: 33.33333333%;
+}
+.form-col-5{
+  width: 41.66666667%;
+}
+.form-col-6{
+  width: 50%;
+}
+.form-col-7{
+  width: 58.33333333%;
+}
+.form-col-8{
+  width: 66.66666667%;
+}
+.form-col-9{
+  width: 75%;
+}
+.form-col-10{
+  width: 83.33333333%;
+}
+.form-col-11{
+  width: 91.66666667%;
+}
+.form-col-12{
+  width: 100%;
+}
+
+.form-control-mine {
+  width: 100%;
+  height: 34px;
+  padding: 5px;
+  font-size: 14px;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.mensagem-febraban{
+  text-transform: uppercase;
+  font-size: 10px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 400;
+}

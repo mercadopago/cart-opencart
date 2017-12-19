@@ -1,16 +1,9 @@
 <?php
-/**
- * MercadoPago Integration Library
- * Access MercadoPago for payments integration
- *
- * @author hcasatti
- *
- */
 
 $GLOBALS["LIB_LOCATION"] = dirname(__FILE__);
 
 class MP {
-	const version = "0.5.3";
+	const version = "1.0";
 	private $client_id;
 	private $client_secret;
 	private $ll_access_token;
@@ -70,26 +63,22 @@ class MP {
 		$this->access_data = $access_data['response'];
 		return $this->access_data['access_token'];
 	}
-	/**
-	 * Get information for specific payment
-	 * @param int $id
-	 * @return array(json)
-	 */
-	public function get_payment($id) {
-		$uri_prefix = $this->sandbox ? "/sandbox" : "";
+
+	public function getPaymentMethods($country_id) {
 
 		$request = array(
-			"uri" => $uri_prefix . "/collections/notifications/{$id}",
-			"params" => array(
-				"access_token" => $this->get_access_token(),
-			),
-		);
-		$payment_info = MPRestClient::get($request);
-		return $payment_info;
+			"uri" => "/sites/" . $country_id . "/payment_methods",
+
+		);	
+		$response = MPRestClient::get($request);
+
+		//$request = array(
+		//	"uri" => "/sites/" . $country_id . "/payment_methods",
+		//);
+
+		return $response['response'];
 	}
-	public function get_payment_info($id) {
-		return $this->get_payment($id);
-	}
+
 	/**
 	 * Get information for specific authorized payment
 	 * @param id
@@ -202,6 +191,25 @@ class MP {
 
 		return $result;
 	}
+
+	public function getPayment($payment_id) {
+		$access_token = $this->get_access_token();
+
+		$request = array(
+			"uri" => "/v1/payments/". $payment_id,
+			"params" => array(
+				"access_token" => $access_token,
+			),
+			"headers" => array(
+				"x-tracking-id" => "platform:v1-whitelabel,type:OpenCart2,so:1.0.0",
+			)
+		);
+
+		$result = MPRestClient::get($request);
+
+		return $result;
+	}
+
 /**
  * Create a checkout preference
  * @param array $preference
@@ -323,18 +331,20 @@ class MP {
 	 * @param authenticate = true (deprecated)
 	 */
 
-	public function get($request, $params = null, $authenticate = true) {
-		if (is_string($request)) {
+	public function get($requestparam, $params = null, $authenticate = true) {
+		if (is_string($requestparam)) {
 			$request = array(
-				"uri" => $request,
+				"uri" => $requestparam,
 				"params" => $params,
 				"authenticate" => $authenticate,
 			);
 		}
+		
 		$request["params"] = isset($request["params"]) && is_array($request["params"]) ? $request["params"] : array();
-		if (!isset($request["authenticate"]) || $request["authenticate"] !== false) {
+		if (isset($authenticate) && $authenticate == true) {
 			$request["params"]["access_token"] = $this->get_access_token();
 		}
+
 		$result = MPRestClient::get($request);
 		return $result;
 	}
@@ -539,11 +549,12 @@ class MPRestClient {
 				}
 
 				if ($request != null) {
-				 	if ($request["data"] != null) {
+
+				 	if (isset($request["data"]) && $request["data"] != null) {
 				 		$payloads = json_encode($request["data"]);
 				 	}
 
-				 	if ($request["uri"] != null) {
+				 	if (isset($request["uri"]) && $request["uri"] != null) {
 				 		$endpoint = $request["uri"];
 				 	}
 				}
