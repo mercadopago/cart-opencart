@@ -175,6 +175,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$payment['payment_method_id'] = $params_mercadopago['paymentMethodId'];
 		$payment['payer']['email'] = $order_info['email'];
 		$payment['external_reference'] = $this->session->data['order_id'];
+		$payment['description'] = $order_info['store_name'].' - '.$order_info['order_id'];
 		$notification_url = $order_info['store_url'] . 'index.php?route=payment/mp_transparente/notifications';
 		$domain = $_SERVER['HTTP_HOST'];
 		if (strpos($domain, "localhost") === false) {
