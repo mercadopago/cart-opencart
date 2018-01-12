@@ -258,7 +258,7 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 
 		foreach ($ids as $id) {
 			$payment = $this->get_instance_mp()->getPayment($id);
-			$this->get_instance_mp_util()->updateOrder($payment, $this->model_checkout_order, $this->config);	
+			$this->get_instance_mp_util()->updateOrder($payment, $this->model_checkout_order, $this->config, $this->db);	
 		}
 	}
 

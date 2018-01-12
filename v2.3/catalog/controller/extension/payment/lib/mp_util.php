@@ -3,7 +3,7 @@
 class MPOpencartUtil {
 
 	private $plataformVersion = "2.3";
-	private $moduleVersion = "3.0";
+	private $moduleVersion = "3.1";
 
 	public $sponsors = array(
 		'MLB' => 204931135,
@@ -32,9 +32,16 @@ class MPOpencartUtil {
 	    "in_process" => "process",
 	    "rejected" => "rejected",
 	    "refunded" => "refunded",
-	    "refunded" => "refunded",
 	    "cancelled" => "cancelled",
 		"in_mediation" => " - "
+	];
+
+	private $mp_order_status_id = [
+		"completed" => 5,
+		"pending" => 1,
+		"refunded" => 11,
+		"cancelled" => 7,
+		"rejected" => 10  
 	];
 
 	public function createAnalytics($resultModules, $token, $customerEmail, $userLogged) {
@@ -54,13 +61,28 @@ class MPOpencartUtil {
         return $return;
     }
 
-	public function updateOrder($payment, $model, $config) {
+	public function updateOrder($payment, $model, $config, $db) {
 
 		try {
-			$result_order_status = $this->mp_order_status[$payment['response']['status']];
 
-			$model->addOrderHistory($payment['response']['external_reference'], $config->get('mp_transparente_order_status_id_'. 
-				$result_order_status), date('d/m/Y h:i') . ' - ' . $payment['response']['payment_method_id'] . ' - ' . $payment['response']['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['response']['id']);
+			$result_order_status = $this->mp_order_status[$payment['response']['status']];
+			$actualize = true;
+
+			if(isset($db) && $db != null) {
+				
+				$status_id = $this->mp_order_status_id[$result_order_status];
+				$sql = "SELECT max(order_history_id) as order_history FROM " . DB_PREFIX . "order_history WHERE order_id = ".$payment['response']['external_reference']. " and order_status_id = ".$status_id;
+
+				$query = $db->query($sql);
+
+				if(isset($query->rows) && $query->rows[0]['order_history'] != null)
+					$actualize = false;
+			}
+
+			if ($actualize) {
+				$model->addOrderHistory($payment['response']['external_reference'], $config->get('mp_transparente_order_status_id_'. 
+					$result_order_status), date('d/m/Y h:i') . ' - ' . $payment['response']['payment_method_id'] . ' - ' . $payment['response']['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['response']['id']);
+			}
 
 		} catch (Exception $e) {
 			error_log("error for updateOrder - ".$e);
