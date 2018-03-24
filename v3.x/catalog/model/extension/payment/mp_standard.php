@@ -1,15 +1,15 @@
 <?php
 
-class ModelExtensionPaymentMPStandard extends Model {
+class ModelExtensionPaymentMpStandard extends Model {
 	public function getMethod( $address ) {
-		$this->load->language( 'extension/payment/ocmercadopagostandard' );
-		if ( $this->config->get( 'payment_ocmercadopagostandard_status' ) ) {
+		$this->load->language( 'extension/payment/mp_standard' );
+		if ( $this->config->get( 'mp_standard_status' ) ) {
 			$query = $this->db->query(
 				'SELECT * FROM ' . DB_PREFIX . 'zone_to_geo_zone ' .
-				'WHERE geo_zone_id = "' . (int) $this->config->get( 'ocmercadopagostandard_geo_zone_id' ) .
+				'WHERE geo_zone_id = "' . (int) $this->config->get( 'mp_standard_geo_zone_id' ) .
 				'" AND country_id = "' . (int) $address['country_id'] . '" AND (zone_id = "' . (int) $address['zone_id'] . '" OR zone_id = "0")'
 			);
-			if ( ! $this->config->get( 'ocmercadopagostandard_geo_zone_id' ) ) {
+			if ( ! $this->config->get( 'mp_standard_geo_zone_id' ) ) {
 				$status = TRUE;
 			} elseif ( $query->num_rows ) {
 				$status = TRUE;
@@ -22,10 +22,10 @@ class ModelExtensionPaymentMPStandard extends Model {
 		$method_data = array();
 		if ( $status ) {
 			$method_data = array(
-				'code' => 'ocmercadopagostandard',
+				'code' => 'mp_standard',
 				'title' => $this->language->get( 'text_title' ),
 				'terms' => '',
-				'sort_order' => $this->config->get( 'ocmercadopagostandard_sort_order' ),
+				'sort_order' => $this->config->get( 'mp_standard_sort_order' ),
 			);
 		}
 		return $method_data;
