@@ -48,6 +48,8 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 						$this->model_setting_setting->editSetting( 'mp_standard', $this->request->post );
 						$this->session->data['success'] = $this->language->get( 'text_success' );
 						$this->response->redirect( $this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ) );
+
+						$this->set_settings();
 					} else {
 						$has_payments_available = false;
 					}
@@ -87,6 +89,9 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 			'action' => $this->url->link( 'extension/payment/mp_standard', 'user_token=' . $this->session->data['user_token'], true ),
 			'cancel' => $this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ),
 			// Mercado Pago fields
+			'mp_standard_status' => ( isset( $this->request->post['mp_standard_status'] ) ) ?
+		 		$this->request->post['mp_standard_status'] :
+		 		$this->config->get( 'mp_standard_status' ),
 			'mp_standard_client_id' => ( isset( $this->request->post['mp_standard_client_id'] ) ) ?
 		 		$this->request->post['mp_standard_client_id'] :
 		 		$this->config->get( 'mp_standard_client_id' ),
