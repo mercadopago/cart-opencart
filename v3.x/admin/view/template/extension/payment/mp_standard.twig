@@ -33,8 +33,8 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
             <div class="col-sm-10">
-              <select name="mp_standard_status" id="input-status" class="form-control">
-                {% if mp_standard_status %}
+              <select name="payment_mp_standard_status" id="input-status" class="form-control">
+                {% if payment_mp_standard_status %}
                   <option value="1" selected="selected">{{ text_enabled }}</option>
                   <option value="0">{{ text_disabled }}</option>
                 {% else %}
@@ -46,17 +46,17 @@
           </div>
           {# Set the country that the payment gateway will operate #}
           <div class="form-group required">
-            <label class="col-sm-2 control-label" for="mp_standard_country_id">{{ entry_country }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_country">{{ entry_country }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_country" id="country">
-                <option id="MLA" {% if mp_standard_country == "MLA" %}selected="selected"{% endif %} value="MLA">Argentina</option>
-                <option id="MLB" {% if mp_standard_country == "MLB" %}selected="selected"{% endif %} value="MLB">Brasil</option>
-                <option id="MLC" {% if mp_standard_country == "MLC" %}selected="selected"{% endif %} value="MLC">Chile</option>
-                <option id="MCO" {% if mp_standard_country == "MCO" %}selected="selected"{% endif %} value="MCO">Colombia</option>
-                <option id="MLM" {% if mp_standard_country == "MLM" %}selected="selected"{% endif %} value="MLM">Mexico</option>
-                <option id="MPE" {% if mp_standard_country == "MPE" %}selected="selected"{% endif %} value="MPE">Peru</option>
-                <option id="MLU" {% if mp_standard_country == "MLU" %}selected="selected"{% endif %} value="MLU">Uruguai</option>
-                <option id="MLV" {% if mp_standard_country == "MLV" %}selected="selected"{% endif %} value="MLV">Venezuela</option>
+              <select class="form-control" name="payment_mp_standard_country" id="country">
+                <option id="MLA" {% if payment_mp_standard_country == "MLA" %}selected="selected"{% endif %} value="MLA">Argentina</option>
+                <option id="MLB" {% if payment_mp_standard_country == "MLB" %}selected="selected"{% endif %} value="MLB">Brasil</option>
+                <option id="MLC" {% if payment_mp_standard_country == "MLC" %}selected="selected"{% endif %} value="MLC">Chile</option>
+                <option id="MCO" {% if payment_mp_standard_country == "MCO" %}selected="selected"{% endif %} value="MCO">Colombia</option>
+                <option id="MLM" {% if payment_mp_standard_country == "MLM" %}selected="selected"{% endif %} value="MLM">Mexico</option>
+                <option id="MPE" {% if payment_mp_standard_country == "MPE" %}selected="selected"{% endif %} value="MPE">Peru</option>
+                <option id="MLU" {% if payment_mp_standard_country == "MLU" %}selected="selected"{% endif %} value="MLU">Uruguai</option>
+                <option id="MLV" {% if payment_mp_standard_country == "MLV" %}selected="selected"{% endif %} value="MLV">Venezuela</option>
               </select>
             </div>
           </div>
@@ -64,9 +64,9 @@
           <div class="form-group required">
             <label class="col-sm-2 control-label" for="entry_type_checkout">{{ entry_type_checkout }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_type_checkout" id="mp_standard_type_checkout">
+              <select class="form-control" name="payment_mp_standard_type_checkout" id="payment_mp_standard_type_checkout">
                 {% for type in type_checkout %}
-                  {% if ( type == mp_standard_type_checkout ) %}
+                  {% if ( type == payment_mp_standard_type_checkout ) %}
                     <option value="{{ type }}" selected="selected" id="{{ type }}">{{ type }}</option>
                   {% else %}
                     <option value="{{ type }}" id="{{ type }}">{{ type }}</option>
@@ -83,14 +83,14 @@
               {{ entry_credentials_basic_tooltip }}
             </div>
             {# Client ID #}
-            <label class="col-sm-2 control-label" for="mp_standard_client_id">{{ entry_credentials_client_id }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_client_id">{{ entry_credentials_client_id }}</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="mp_standard_client_id" name="mp_standard_client_id" value="{{ mp_standard_client_id }}" />
+              <input type="text" class="form-control" id="payment_mp_standard_client_id" name="payment_mp_standard_client_id" value="{{ payment_mp_standard_client_id }}" />
             </div>
             {# Client Secret #}
-            <label class="col-sm-2 control-label" for="mp_standard_client_secret">{{ entry_credentials_client_secret }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_client_secret">{{ entry_credentials_client_secret }}</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="mp_standard_client_secret" name="mp_standard_client_secret" value="{{ mp_standard_client_secret }}" />
+              <input type="text" class="form-control" id="payment_mp_standard_client_secret" name="payment_mp_standard_client_secret" value="{{ payment_mp_standard_client_secret }}" />
             </div>
             {# Message for absence of credentials #}
             <label class="col-sm-2"></label>
@@ -106,11 +106,11 @@
             <div class="col-sm-10">
               {{ entry_category_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_category_id">{{ entry_category }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_category_id">{{ entry_category }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_category_id" id="mp_standard_category_id">
+              <select class="form-control" name="payment_mp_standard_category_id" id="payment_mp_standard_category_id">
                 {% for category in category_list %}
-                  {% if category.id == mp_standard_category_id %}
+                  {% if category.id == payment_mp_standard_category_id %}
                     <option value="{{ category.id }}" selected="selected" id="{{ category.description }}">{{ category.description }}</option>
                   {% else %}
                     <option value="{{ category.id }}" id="{{ category.description }}">{{ category.description }}</option>
@@ -125,10 +125,10 @@
             <div class="col-sm-10">
               {{ entry_debug_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_debug">{{ entry_debug }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_debug">{{ entry_debug }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_debug" id="mp_standard_debug">
-                {% if mp_standard_debug %}
+              <select class="form-control" name="payment_mp_standard_debug" id="payment_mp_standard_debug">
+                {% if payment_mp_standard_debug %}
                   <option value="1" selected="selected">{{ text_enabled }}</option>
                   <option value="0">{{ text_disabled }}</option>
                 {% else %}
@@ -144,10 +144,10 @@
             <div class="col-sm-10">
               {{ entry_autoreturn_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_enable_return">{{ entry_autoreturn }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_enable_return">{{ entry_autoreturn }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_enable_return" id="mp_standard_enable_return">
-                {% if mp_standard_enable_return == "all" %}
+              <select class="form-control" name="payment_mp_standard_enable_return" id="payment_mp_standard_enable_return">
+                {% if payment_mp_standard_enable_return == "all" %}
                   <option value="all" selected="selected">{{ text_enabled }}</option>
                   <option value="approved">{{ text_disabled }}</option>
                 {% else %}
@@ -163,10 +163,10 @@
             <div class="col-sm-10">
               {{ entry_sandbox_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_sandbox">{{ entry_sandbox }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_sandbox">{{ entry_sandbox }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_sandbox" id="mp_standard_sandbox">
-                {% if mp_standard_sandbox %}
+              <select class="form-control" name="payment_mp_standard_sandbox" id="payment_mp_standard_sandbox">
+                {% if payment_mp_standard_sandbox %}
                   <option value="1" selected="selected">{{ text_enabled }}</option>
                   <option value="0">{{ text_disabled }}</option>
                 {% else %}
@@ -182,11 +182,11 @@
             <div class="col-sm-10">
               {{ entry_installments_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_installments">{{ entry_installments }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_installments">{{ entry_installments }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_installments" id="mp_standard_installments">
+              <select class="form-control" name="payment_mp_standard_installments" id="payment_mp_standard_installments">
                 {% for installment in installments %}
-                  {% if installment.id == mp_standard_installments %}
+                  {% if installment.id == payment_mp_standard_installments %}
                     <option value="{{ installment.id }}" selected="selected" id="{{ installment.id }}">{{ installment.value }}</option>
                   {% else %}
                     <option value="{{ installment.id }}" id="{{ installment.id }}">{{ installment.value }}</option>
@@ -201,18 +201,18 @@
             <div class="col-sm-10">
               {{ entry_payments_not_accept_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_methods">{{ entry_payments_not_accept }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_methods">{{ entry_payments_not_accept }}</label>
             <div class="col-sm-10" id="div_payments">
               <div style="margin-top:8px;">
-                <input type="hidden" class="form-control" id="nro_count_payment_methods" name="nro_count_payment_methods" value="{{ count_payment_methods }}" />
+                <input type="hidden" class="form-control" id="payment_nro_count_payment_methods" name="payment_nro_count_payment_methods" value="{{ count_payment_methods }}" />
                 {% for method in methods %}
                   <div style="{{ payment_style }}" id="{{ method.name }}">
-                    {% if method.id in mp_standard_methods %}
+                    {% if method.id in payment_mp_standard_methods %}
                       <img src="{{ method.secure_thumbnail }}" height="24"><br/>
-                      <input name="mp_standard_methods[]" type="checkbox" checked="yes" value="{{ method.id }}" style="margin-top:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
+                      <input name="payment_mp_standard_methods[]" type="checkbox" checked="yes" value="{{ method.id }}" style="margin-top:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
                     {% else %}
                       <img src="{{ method.secure_thumbnail }}" height="24"><br/>
-                      <input name="mp_standard_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
+                      <input name="payment_mp_standard_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
                     {% endif %}
                   </div>
                 {% endfor %}
@@ -231,11 +231,11 @@
             <div class="col-sm-10">
               {{ entry_order_status_approved_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_order_status_id_completed">{{ entry_order_status_approved }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_order_status_id_completed">{{ entry_order_status_approved }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_order_status_id_completed" id="mp_standard_order_status_id_completed">
+              <select class="form-control" name="payment_mp_standard_order_status_id_completed" id="payment_mp_standard_order_status_id_completed">
                 {% for order_status in order_statuses %}
-                  {% if order_status.order_status_id == mp_standard_order_status_id_completed %}
+                  {% if order_status.order_status_id == payment_mp_standard_order_status_id_completed %}
                     <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
                   {% else %}
                     <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -250,11 +250,11 @@
             <div class="col-sm-10">
               {{ entry_order_status_pending_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_order_status_id_pending">{{ entry_order_status_pending }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_order_status_id_pending">{{ entry_order_status_pending }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_order_status_id_pending" id="mp_standard_order_status_id_pending">
+              <select class="form-control" name="payment_mp_standard_order_status_id_pending" id="payment_mp_standard_order_status_id_pending">
                 {% for order_status in order_statuses %}
-                  {% if order_status.order_status_id == mp_standard_order_status_id_pending %}
+                  {% if order_status.order_status_id == payment_mp_standard_order_status_id_pending %}
                     <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
                   {% else %}
                     <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -269,11 +269,11 @@
             <div class="col-sm-10">
               {{ entry_order_status_canceled_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_order_status_id_canceled">{{ entry_order_status_canceled }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_order_status_id_canceled">{{ entry_order_status_canceled }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_order_status_id_canceled" id="mp_standard_order_status_id_canceled">
+              <select class="form-control" name="payment_mp_standard_order_status_id_canceled" id="payment_mp_standard_order_status_id_canceled">
                 {% for order_status in order_statuses %}
-                  {% if order_status.order_status_id == mp_standard_order_status_id_canceled %}
+                  {% if order_status.order_status_id == payment_mp_standard_order_status_id_canceled %}
                     <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
                   {% else %}
                     <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -288,11 +288,11 @@
             <div class="col-sm-10">
               {{ entry_order_status_in_process_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_order_status_id_in_process">{{ entry_order_status_in_process }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_order_status_id_in_process">{{ entry_order_status_in_process }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_order_status_id_in_process" id="mp_standard_order_status_id_in_process">
+              <select class="form-control" name="payment_mp_standard_order_status_id_in_process" id="payment_mp_standard_order_status_id_in_process">
                 {% for order_status in order_statuses %}
-                  {% if order_status.order_status_id == mp_standard_order_status_id_in_process %}
+                  {% if order_status.order_status_id == payment_mp_standard_order_status_id_in_process %}
                     <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
                   {% else %}
                     <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -307,11 +307,11 @@
             <div class="col-sm-10">
               {{ entry_order_status_rejected_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_order_status_id_rejected">{{ entry_order_status_rejected }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_order_status_id_rejected">{{ entry_order_status_rejected }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_order_status_id_rejected" id="mp_standard_order_status_id_rejected">
+              <select class="form-control" name="payment_mp_standard_order_status_id_rejected" id="payment_mp_standard_order_status_id_rejected">
                 {% for order_status in order_statuses %}
-                  {% if order_status.order_status_id == mp_standard_order_status_id_rejected %}
+                  {% if order_status.order_status_id == payment_mp_standard_order_status_id_rejected %}
                     <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
                   {% else %}
                     <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -326,11 +326,11 @@
             <div class="col-sm-10">
               {{ entry_order_status_refunded_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_order_status_id_refunded">{{ entry_order_status_refunded }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_order_status_id_refunded">{{ entry_order_status_refunded }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_order_status_id_refunded" id="mp_standard_order_status_id_refunded">
+              <select class="form-control" name="payment_mp_standard_order_status_id_refunded" id="payment_mp_standard_order_status_id_refunded">
                 {% for order_status in order_statuses %}
-                  {% if order_status.order_status_id == mp_standard_order_status_id_refunded %}
+                  {% if order_status.order_status_id == payment_mp_standard_order_status_id_refunded %}
                     <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
                   {% else %}
                     <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -345,11 +345,11 @@
             <div class="col-sm-10">
               {{ entry_order_status_in_mediation_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_order_status_id_in_mediation">{{ entry_order_status_in_mediation }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_order_status_id_in_mediation">{{ entry_order_status_in_mediation }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_order_status_id_in_mediation" id="mp_standard_order_status_id_in_mediation">
+              <select class="form-control" name="payment_mp_standard_order_status_id_in_mediation" id="payment_mp_standard_order_status_id_in_mediation">
                 {% for order_status in order_statuses %}
-                  {% if order_status.order_status_id == mp_standard_order_status_id_in_mediation %}
+                  {% if order_status.order_status_id == payment_mp_standard_order_status_id_in_mediation %}
                     <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
                   {% else %}
                     <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -364,11 +364,11 @@
             <div class="col-sm-10">
               {{ entry_order_status_chargeback_tooltip }}
             </div>
-            <label class="col-sm-2 control-label" for="mp_standard_order_status_id_chargeback">{{ entry_order_status_chargeback }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_standard_order_status_id_chargeback">{{ entry_order_status_chargeback }}</label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_standard_order_status_id_chargeback" id="mp_standard_order_status_id_chargeback">
+              <select class="form-control" name="payment_mp_standard_order_status_id_chargeback" id="payment_mp_standard_order_status_id_chargeback">
                 {% for order_status in order_statuses %}
-                  {% if order_status.order_status_id == mp_standard_order_status_id_chargeback %}
+                  {% if order_status.order_status_id == payment_mp_standard_order_status_id_chargeback %}
                     <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
                   {% else %}
                     <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>

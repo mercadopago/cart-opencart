@@ -3,6 +3,15 @@
 // Heading
 $_['heading_title'] = 'Mercado Pago - Standard';
 
+// Other translations
+$_['text_edit'] = 'Edit';
+$_['text_enabled'] = 'Enabled';
+$_['text_disabled'] = 'Disabled';
+$_['text_yes'] = 'Yes';
+$_['text_no'] = 'No';
+$_['button_save'] = 'Save';
+$_['button_cancel'] = 'cancel';
+
 // Credentials
 $_['entry_credentials_client_id'] = 'Client ID: ';
 $_['entry_credentials_client_secret'] = 'Client Secret: ';
@@ -15,7 +24,6 @@ $_['entry_credentials_basic_tooltip'] = 'Get these fields for your country in: '
 	'<a href="https://www.mercadopago.com/mpe/account/credentials?type=basic" target="_blank">Peru</a>, ' .
 	'<a href="https://www.mercadopago.com/mlu/account/credentials?type=basic" target="_blank">Uruguay</a>, or ' .
 	'<a href="https://www.mercadopago.com/mlv/account/credentials?type=basic" target="_blank">Venezuela</a>';
-$_['error_entry_credentials_basic'] = 'Sorry, your <b>Client Id</b> and <b>Client Secret</b> are mandatory.';
 // Store entries
 $_['entry_country'] = 'Sales Country:';
 $_['entry_type_checkout'] = 'Type Checkout:';
@@ -48,8 +56,25 @@ $_['entry_order_status_in_mediation'] = 'Payment Mediation, Order is';
 $_['entry_order_status_in_mediation_tooltip'] = 'Select the status order case the payment was under <b>Mediation</b>';
 $_['entry_order_status_chargeback'] = 'Payment Chargeback, Order is';
 $_['entry_order_status_chargeback_tooltip'] = 'Select the status order case the payment was a <b>ChargeBack</b>';
+// Errors
+$_['error_entry_credentials_basic'] = 'Sorry, your <b>Client Id</b> and <b>Client Secret</b> are mandatory.';
+$_['error_entry_no_payments'] = 'Sorry, there is no payment methods available.';
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Other translations
 $_['text_success'] = 'Success, your modifications are done!';
+
 
 
 

@@ -16,11 +16,11 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 	}
 
 	function get_instance_mp() {
-		$client_id = $this->config->get( 'mp_standard_client_id' );
-		$client_secret = $this->config->get( 'mp_standard_client_secret' );
-		if ( isset( $this->request->post['mp_standard_client_id'] ) ) {
-			$client_id = $this->request->post['mp_standard_client_id'];
-			$client_secret = $this->request->post['mp_standard_client_secret'];
+		$client_id = $this->config->get( 'payment_mp_standard_client_id' );
+		$client_secret = $this->config->get( 'payment_mp_standard_client_secret' );
+		if ( isset( $this->request->post['payment_mp_standard_client_id'] ) ) {
+			$client_id = $this->request->post['payment_mp_standard_client_id'];
+			$client_secret = $this->request->post['payment_mp_standard_client_secret'];
 		}
 		if ( $this->mp == null ) {
 			$this->mp = new MP( $client_id, $client_secret );
@@ -37,25 +37,28 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		$valid_credentials = true;
 		$has_payments_available = true;
 		if ( ( $this->request->server['REQUEST_METHOD'] == 'POST' ) ) {
-			if ( $this->validate_credentials() ) {
-				if ( isset( $this->request->post['mp_standard_methods'] ) ) {
-					$names = $this->request->post['mp_standard_methods'];
-					$this->request->post['mp_standard_methods'] = '';
-					foreach ( $names as $name ) {
-						$this->request->post['mp_standard_methods'] .= $name . ',';
-					}
-					if ( $this->request->post['nro_count_payment_methods'] > count( $names ) ) {
-						$this->model_setting_setting->editSetting( 'mp_standard', $this->request->post );
-						$this->session->data['success'] = $this->language->get( 'text_success' );
-						$this->response->redirect( $this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ) );
-
-						$this->set_settings();
-					} else {
+			// Validate if we have available payment methods
+			if ( $this->request->post['payment_nro_count_payment_methods'] > 0 ) {
+				// We have exluded payment methods, so we need to check if we have not excluded them all
+				if ( isset( $this->request->post['payment_mp_standard_methods'] ) ) {
+					$names = $this->request->post['payment_mp_standard_methods'];
+					$this->request->post['payment_mp_standard_methods'] = implode( ',', $names );
+					if ( $this->request->post['payment_nro_count_payment_methods'] <= count( $names ) ) {
 						$has_payments_available = false;
 					}
 				}
 			} else {
+				$has_payments_available = false;
+			}
+			// Validate credentials
+			if ( ! $this->validate_credentials() ) {
 				$valid_credentials = false;
+			}
+			$this->model_setting_setting->editSetting( 'payment_mp_standard', $this->request->post );
+			$this->session->data['success'] = $this->language->get( 'text_success' );
+			$this->set_settings();
+			if ( $has_payments_available && $valid_credentials ) {
+				$this->response->redirect( $this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ) );
 			}
 		}
 		
@@ -89,75 +92,75 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 			'action' => $this->url->link( 'extension/payment/mp_standard', 'user_token=' . $this->session->data['user_token'], true ),
 			'cancel' => $this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ),
 			// Mercado Pago fields
-			'mp_standard_status' => ( isset( $this->request->post['mp_standard_status'] ) ) ?
-		 		$this->request->post['mp_standard_status'] :
-		 		$this->config->get( 'mp_standard_status' ),
-			'mp_standard_client_id' => ( isset( $this->request->post['mp_standard_client_id'] ) ) ?
-		 		$this->request->post['mp_standard_client_id'] :
-		 		$this->config->get( 'mp_standard_client_id' ),
-		 	'mp_standard_client_secret' => ( isset( $this->request->post['mp_standard_client_secret'] ) ) ?
-				$this->request->post['mp_standard_client_secret'] :
-				$this->config->get( 'mp_standard_client_secret' ),
+			'payment_mp_standard_status' => ( isset( $this->request->post['payment_mp_standard_status'] ) ) ?
+		 		$this->request->post['payment_mp_standard_status'] :
+		 		$this->config->get( 'payment_mp_standard_status' ),
+			'payment_mp_standard_client_id' => ( isset( $this->request->post['payment_mp_standard_client_id'] ) ) ?
+		 		$this->request->post['payment_mp_standard_client_id'] :
+		 		$this->config->get( 'payment_mp_standard_client_id' ),
+		 	'payment_mp_standard_client_secret' => ( isset( $this->request->post['payment_mp_standard_client_secret'] ) ) ?
+				$this->request->post['payment_mp_standard_client_secret'] :
+				$this->config->get( 'payment_mp_standard_client_secret' ),
 			'error_entry_credentials_basic' => $valid_credentials ? '' : $this->language->get( 'error_entry_credentials_basic' ),
-			'mp_standard_country' => ( isset( $this->request->post['mp_standard_country'] ) ) ?
-				$this->request->post['mp_standard_country'] :
-				$this->config->get( 'mp_standard_country' ),
+			'payment_mp_standard_country' => ( isset( $this->request->post['payment_mp_standard_country'] ) ) ?
+				$this->request->post['payment_mp_standard_country'] :
+				$this->config->get( 'payment_mp_standard_country' ),
 			'type_checkout' => array( 'Redirect', 'Lightbox', 'Iframe' ),
-			'mp_standard_type_checkout' => ( isset( $this->request->post['mp_standard_type_checkout'] ) ) ?
-				$this->request->post['mp_standard_type_checkout'] :
-				$this->config->get( 'mp_standard_type_checkout' ),
+			'payment_mp_standard_type_checkout' => ( isset( $this->request->post['payment_mp_standard_type_checkout'] ) ) ?
+				$this->request->post['payment_mp_standard_type_checkout'] :
+				$this->config->get( 'payment_mp_standard_type_checkout' ),
 			'category_list' => $this->get_instance_mp_util()->get_category_list( $this->get_instance_mp() ),
-			'mp_standard_category_id' => ( isset( $this->request->post['mp_standard_category_id'] ) ?
-				$this->request->post['mp_standard_category_id'] :
-				$this->config->get( 'mp_standard_category_id' ) ),
-			'mp_standard_debug' => ( isset( $this->request->post['mp_standard_debug'] ) ?
-				$this->request->post['mp_standard_debug'] :
-				$this->config->get( 'mp_standard_debug' ) ),
-			'mp_standard_enable_return' => ( isset( $this->request->post['mp_standard_enable_return'] ) ?
-				$this->request->post['mp_standard_enable_return'] :
-				$this->config->get( 'mp_standard_enable_return' ) ),
-			'mp_standard_sandbox' => ( isset( $this->request->post['mp_standard_sandbox'] ) ?
-				$this->request->post['mp_standard_sandbox'] :
-				$this->config->get( 'mp_standard_sandbox' ) ),
+			'payment_mp_standard_category_id' => ( isset( $this->request->post['payment_mp_standard_category_id'] ) ?
+				$this->request->post['payment_mp_standard_category_id'] :
+				$this->config->get( 'payment_mp_standard_category_id' ) ),
+			'payment_mp_standard_debug' => ( isset( $this->request->post['payment_mp_standard_debug'] ) ?
+				$this->request->post['payment_mp_standard_debug'] :
+				$this->config->get( 'payment_mp_standard_debug' ) ),
+			'payment_mp_standard_enable_return' => ( isset( $this->request->post['payment_mp_standard_enable_return'] ) ?
+				$this->request->post['payment_mp_standard_enable_return'] :
+				$this->config->get( 'payment_mp_standard_enable_return' ) ),
+			'payment_mp_standard_sandbox' => ( isset( $this->request->post['payment_mp_standard_sandbox'] ) ?
+				$this->request->post['payment_mp_standard_sandbox'] :
+				$this->config->get( 'payment_mp_standard_sandbox' ) ),
 			'installments' => $this->get_instance_mp_util()->get_installments(),
-			'mp_standard_installments' => ( isset( $this->request->post['mp_standard_installments'] ) ?
-				$this->request->post['mp_standard_installments'] :
-				$this->config->get( 'mp_standard_installments' ) ),
+			'payment_mp_standard_installments' => ( isset( $this->request->post['payment_mp_standard_installments'] ) ?
+				$this->request->post['payment_mp_standard_installments'] :
+				$this->config->get( 'payment_mp_standard_installments' ) ),
 			// Oder x Payment statuses
-			'mp_standard_order_status_id_completed' => ( isset( $this->request->post['mp_standard_order_status_id_completed'] ) ?
-				$this->request->post['mp_standard_order_status_id_completed'] :
-				$this->config->get( 'mp_standard_order_status_id_completed' ) ),
-			'mp_standard_order_status_id_pending' => ( isset( $this->request->post['mp_standard_order_status_id_pending'] ) ?
-				$this->request->post['mp_standard_order_status_id_pending'] :
-				$this->config->get( 'mp_standard_order_status_id_pending' ) ),
-			'mp_standard_order_status_id_canceled' => ( isset( $this->request->post['mp_standard_order_status_id_canceled'] ) ?
-				$this->request->post['mp_standard_order_status_id_canceled'] :
-				$this->config->get( 'mp_standard_order_status_id_canceled' ) ),
-			'mp_standard_order_status_id_in_process' => ( isset( $this->request->post['mp_standard_order_status_id_in_process'] ) ?
-				$this->request->post['mp_standard_order_status_id_in_process'] :
-				$this->config->get( 'mp_standard_order_status_id_in_process' ) ),
-			'mp_standard_order_status_id_rejected' => ( isset( $this->request->post['mp_standard_order_status_id_rejected'] ) ?
-				$this->request->post['mp_standard_order_status_id_rejected'] :
-				$this->config->get( 'mp_standard_order_status_id_rejected' ) ),
-			'mp_standard_order_status_id_refunded' => ( isset( $this->request->post['mp_standard_order_status_id_refunded'] ) ?
-				$this->request->post['mp_standard_order_status_id_refunded'] :
-				$this->config->get( 'mp_standard_order_status_id_refunded' ) ),
-			'mp_standard_order_status_id_in_mediation' => ( isset( $this->request->post['mp_standard_order_status_id_in_mediation'] ) ?
-				$this->request->post['mp_standard_order_status_id_in_mediation'] :
-				$this->config->get( 'mp_standard_order_status_id_in_mediation' ) ),
-			'mp_standard_order_status_id_chargeback' => ( isset( $this->request->post['mp_standard_order_status_id_chargeback'] ) ?
-				$this->request->post['mp_standard_order_status_id_chargeback'] :
-				$this->config->get( 'mp_standard_order_status_id_chargeback' ) )
+			'payment_mp_standard_order_status_id_completed' => ( isset( $this->request->post['payment_mp_standard_order_status_id_completed'] ) ?
+				$this->request->post['payment_mp_standard_order_status_id_completed'] :
+				$this->config->get( 'payment_mp_standard_order_status_id_completed' ) ),
+			'payment_mp_standard_order_status_id_pending' => ( isset( $this->request->post['payment_mp_standard_order_status_id_pending'] ) ?
+				$this->request->post['payment_mp_standard_order_status_id_pending'] :
+				$this->config->get( 'payment_mp_standard_order_status_id_pending' ) ),
+			'payment_mp_standard_order_status_id_canceled' => ( isset( $this->request->post['payment_mp_standard_order_status_id_canceled'] ) ?
+				$this->request->post['payment_mp_standard_order_status_id_canceled'] :
+				$this->config->get( 'payment_mp_standard_order_status_id_canceled' ) ),
+			'payment_mp_standard_order_status_id_in_process' => ( isset( $this->request->post['payment_mp_standard_order_status_id_in_process'] ) ?
+				$this->request->post['payment_mp_standard_order_status_id_in_process'] :
+				$this->config->get( 'payment_mp_standard_order_status_id_in_process' ) ),
+			'payment_mp_standard_order_status_id_rejected' => ( isset( $this->request->post['payment_mp_standard_order_status_id_rejected'] ) ?
+				$this->request->post['payment_mp_standard_order_status_id_rejected'] :
+				$this->config->get( 'payment_mp_standard_order_status_id_rejected' ) ),
+			'payment_mp_standard_order_status_id_refunded' => ( isset( $this->request->post['payment_mp_standard_order_status_id_refunded'] ) ?
+				$this->request->post['payment_mp_standard_order_status_id_refunded'] :
+				$this->config->get( 'payment_mp_standard_order_status_id_refunded' ) ),
+			'payment_mp_standard_order_status_id_in_mediation' => ( isset( $this->request->post['payment_mp_standard_order_status_id_in_mediation'] ) ?
+				$this->request->post['payment_mp_standard_order_status_id_in_mediation'] :
+				$this->config->get( 'payment_mp_standard_order_status_id_in_mediation' ) ),
+			'payment_mp_standard_order_status_id_chargeback' => ( isset( $this->request->post['payment_mp_standard_order_status_id_chargeback'] ) ?
+				$this->request->post['payment_mp_standard_order_status_id_chargeback'] :
+				$this->config->get( 'payment_mp_standard_order_status_id_chargeback' ) )
 		);
 
 		// Get available payment methods
-		$country_id = $this->config->get( 'mp_standard_country' ) != null ?
-			$this->config->get( 'mp_standard_country' ) : 'MLA';
+		$country_id = $this->config->get( 'payment_mp_standard_country' ) != null ?
+			$this->config->get( 'payment_mp_standard_country' ) : 'MLA';
 		$methods_api = $this->get_instance_mp_util()->get_methods( $country_id, $this->get_instance_mp() );
 		$data['methods'] = array();
-		$data['mp_standard_methods'] = ( isset( $this->request->post['mp_standard_methods'] ) ) ?
-			$this->request->post['mp_standard_methods'] :
-			preg_split( '/[\s,]+/', $this->config->get( 'mp_standard_methods' ) );
+		$data['payment_mp_standard_methods'] = ( isset( $this->request->post['payment_mp_standard_methods'] ) ) ?
+			$this->request->post['payment_mp_standard_methods'] :
+			preg_split( '/[\s,]+/', $this->config->get( 'payment_mp_standard_methods' ) );
 		foreach ( $methods_api as $method ) {
 			if ( $method['id'] != 'account_money' ) {
 				$data['methods'][] = $method;
@@ -176,14 +179,14 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 	}
 
 	protected function validate_credentials() {
-		return ( $this->request->post['mp_standard_client_id'] && $this->request->post['mp_standard_client_secret'] );
+		return ( $this->request->post['payment_mp_standard_client_id'] && $this->request->post['payment_mp_standard_client_secret'] );
 	}
 
 	public function set_settings() {
         $result = $this->get_instance_mp_util()->set_settings(
         	$this->get_instance_mp(),
         	$this->config->get( 'config_email' ), false, false,
-        	( $this->request->post['mp_standard_status'] == '1' ? 'true' : 'false' )
+        	( $this->request->post['payment_mp_standard_status'] == '1' ? 'true' : 'false' )
     	);
 		return $result;  
     }
