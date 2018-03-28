@@ -182,7 +182,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 				'content_bottom' => $this->load->controller( 'common/content_bottom' ),
 				'continue' => $this->url->link( 'checkout/success' ),
 				'token' => $this->config->get( 'payment_mp_standard_client_id' ),
-				'paymentId' =>  $payment_type['collection']['payment_type'],
+				'paymentId' => $payment_type,
 				'checkoutType' => 'standard'
 			);
 
@@ -201,8 +201,6 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 	}
 
 	public function update_order() {
-
-		// TODO: check why this function is causing error!!!
 		
 		// If collection ID is unset, it means that we haven't received updates yet
 		if ( ! isset( $this->request->get['collection_id'] ) ) {
@@ -216,8 +214,8 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 
 		$this->load->model( 'checkout/order' );
 
-		$client_id = $this->config->get( 'payment_mp_standard_mp_id' );
-		$client_secret = $this->config->get( 'payment_mp_standard_mp_token' );
+		$client_id = $this->config->get( 'payment_mp_standard_client_id' );
+		$client_secret = $this->config->get( 'payment_mp_standard_client_secret' );
 		$mp = new MP( $client_id, $client_secret );
 		$ids = explode( ',', $this->request->get['collection_id'] );
 		$payment_types = '';
@@ -233,36 +231,14 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 				$payment_types .= ',' . $payment_info['collection']['payment_type'];
 			}
 
-			// Get order based on external reference
-			$order_id = $payment_info['collection']['external_reference'];
-			$order = $this->model_checkout_order->getOrder( $order_id );
-
-			// Get payment status from Mercado Pago
-			$payment_status = $payment_info['collection']['status'];
-			$order_payment_map = array(
-				'approved'		=> $this->config->get( 'payment_mp_standard_order_status_id_completed' ),
-				'pending'		=> $this->config->get( 'payment_mp_standard_order_status_id_pending' ),
-				'in_process'	=> $this->config->get( 'payment_mp_standard_order_status_id_process' ),
-				'reject'		=> $this->config->get( 'payment_mp_standard_order_status_id_rejected' ),
-				'refunded'		=> $this->config->get( 'payment_mp_standard_order_status_id_refunded' ),
-				'cancelled'		=> $this->config->get( 'payment_mp_standard_order_status_id_cancelled'),
-				'in_mediation'	=> $this->config->get( 'payment_mp_standard_order_status_id_in_mediation' ),
-				'charged-back'	=> $this->config->get( 'payment_mp_standard_order_status_id_chargeback' )
+			// Update the order
+			$payment = $this->get_instance_mp()->get_payment( $id );
+			$this->get_instance_mp_util()->update_order(
+				$payment,
+				$this->model_checkout_order,
+				$this->config,
+				$this->db
 			);
-
-			if ( in_array( $payment_status, $order_payment_map ) ) {
-				// Update order status
-				$this->model_checkout_order->addOrderHistory(
-					$order_id, $order_payment_map[$payment_status], date( 'd/m/Y h:i' ) . ' - ' .
-					$payment_info['collection']['payment_method_id'] . ' - ' . $payment_info['collection']['net_received_amount']
-				);
-			} else {
-				// Default value is pending
-				$this->model_checkout_order->addOrderHistory(
-					$order_id, $order_payment_map['pending'], date( 'd/m/Y h:i' ) . ' - ' .
-					$payment_info['collection']['payment_method_id'] . ' - ' . $payment_info['collection']['net_received_amount']
-				);
-			}
 		}
 
 		return $payment_types;

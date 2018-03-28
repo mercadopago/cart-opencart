@@ -80,7 +80,7 @@ class MPOpencartUtil {
 			if ( $actualize ) {
 				$model->addOrderHistory(
 					$payment['response']['external_reference'],
-					$config->get( 'mp_transparente_order_status_id_'. $result_order_status),
+					$config->get( 'payment_mp_standard_order_status_id_'. $result_order_status),
 					date( 'd/m/Y h:i' ) . ' - ' .
 					$payment['response']['payment_method_id'] . ' - ' .
 					$payment['response']['transaction_details']['net_received_amount'] . ' - ' .

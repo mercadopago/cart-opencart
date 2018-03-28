@@ -284,6 +284,18 @@ class MP {
 		return $discount_info;
 	}
 
+	public function get_payment_info( $id ) {
+		$uri_prefix = $this->sandbox ? '/sandbox' : '';
+		$request = array(
+			'uri' => $uri_prefix . '/collections/notifications/' . $id,
+			'params' => array(
+				'access_token' => $this->get_access_token()
+			)
+		);
+		$payment_info = MPRestClient::get( $request );
+		return $payment_info;
+	}
+
 	/* **************************************************************************************** */
 
 	/* Generic resource call methods */

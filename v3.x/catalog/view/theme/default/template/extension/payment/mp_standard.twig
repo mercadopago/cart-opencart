@@ -29,15 +29,33 @@
 			var x = document.getElementsByTagName("script")[0];x.parentNode.insertBefore(s, x);window.$MPBR_loaded = true;})();}
 			window.$MPBR_loaded !== true ? (window.attachEvent ? window.attachEvent("onload", $MPBR_load) : window.addEventListener("load", $MPBR_load, false)) : null;})();
 		</script>
-	{% else %}
+	{#
+	{% elseif type_checkout == "Lightbox" %}
 		<div class="pull-right">
-			<script type="text/javascript" src="//resources.mlstatic.com/mptools/render.js"></script>
+			<style type="text/css">
+				#MP-Checkout-dialog #MP-Checkout-IFrame { bottom: -28px !important; height: 590px !important; }
+			</style>
+			<script type="text/javascript" src="https://secure.mlstatic.com/mptools/render.js"></script>
+			<script type="text/javascript">
+				(function() { $MPC.openCheckout({ url: "{{ redirect_link }}", mode: "modal" }); })();
+			</script>
 			<a href="{{ redirect_link }}" name="MP-Checkout" class="btn btn-primary" mp-mode="modal" onreturn="execute_my_onreturn">Pagar</a>
 		</div>
+	#}
+	{% else %}
+		<div class="row"><div class="col-xs-12 col-md-6">
+			<a href="{{ redirect_link }}" id="id-standard" mp-mode="redirect" name="MP-Checkout">
+				<div class="mp-form hover"><div class="row"><div class="col">
+					<img style="margin-left: 20px;" src="catalog/view/image/payment/mp_standard.png" id="id-standard-logo">
+					<img src="catalog/view/image/payment/{{ action }}/banner_all_methods.png" class="mp-standard-banner" />
+					<span class="payment-label standard">{{ "Pay with Mercado Pago, up to 24x installments." }}</span>
+				</div></div></div>
+			</a>
+		</div></div>
 	{% endif %}
 {% endif %}
 
-{#<script type="text/javascript">
+<script type="text/javascript">
 	$.getScript("https://secure.mlstatic.com/modules/javascript/analytics.js", function(){
 		ModuleAnalytics.setToken("{{ analytics['token'] }}");
 		ModuleAnalytics.setPlatform("{{ analytics['platform'] }}");
@@ -50,4 +68,3 @@
 		ModuleAnalytics.post();
 	});
 </script>
-#}
