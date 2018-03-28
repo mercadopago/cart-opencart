@@ -10,19 +10,20 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 	private static $mp;
 
 	function get_instance_mp_util() {
-		if ( $this->mp_util == null ) 
-		$this->mp_util = new MPOpencartUtil();
+		if ( $this->mp_util == null ) {
+			$this->mp_util = new MPOpencartUtil();
+		}
 		return $this->mp_util;
 	}
 
 	function get_instance_mp() {
-		$client_id = $this->config->get( 'payment_mp_standard_client_id' );
-		$client_secret = $this->config->get( 'payment_mp_standard_client_secret' );
-		if ( isset( $this->request->post['payment_mp_standard_client_id'] ) ) {
-			$client_id = $this->request->post['payment_mp_standard_client_id'];
-			$client_secret = $this->request->post['payment_mp_standard_client_secret'];
-		}
 		if ( $this->mp == null ) {
+			$client_id = isset( $this->request->post['payment_mp_standard_client_id'] ) ?
+				$this->request->post['payment_mp_standard_client_id'] :
+				$this->config->get( 'payment_mp_standard_client_id' );
+			$client_secret = isset( $this->request->post['payment_mp_standard_client_secret'] ) ?
+				$this->request->post['payment_mp_standard_client_secret'] :
+				$this->config->get( 'payment_mp_standard_client_secret' );
 			$this->mp = new MP( $client_id, $client_secret );
 		}
 		return $this->mp;
@@ -174,6 +175,8 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		// Get order statuses
 		$this->load->model( 'localisation/order_status' );
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+		$this->load->model( 'localisation/geo_zone' );
+		$data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
 
 		$this->response->setOutput( $this->load->view( 'extension/payment/mp_standard', $data ) );
 	}
