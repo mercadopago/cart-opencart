@@ -186,12 +186,37 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 	}
 
 	public function set_settings() {
-        $result = $this->get_instance_mp_util()->set_settings(
-        	$this->get_instance_mp(),
-        	$this->config->get( 'config_email' ), false, false,
-        	( $this->request->post['payment_mp_standard_status'] == '1' ? 'true' : 'false' )
-    	);
+		$result = $this->get_instance_mp_util()->set_settings(
+			$this->get_instance_mp(),
+			$this->config->get( 'config_email' ), false, false,
+				( $this->request->post['payment_mp_standard_status'] == '1' ? 'true' : 'false' )
+			);
 		return $result;  
-    }
+	}
+
+	public function get_payment_methods_by_country() {
+		$country_id = $this->request->get['country_id'];
+		$payment_methods = $this->get_instance_mp_util()->get_methods( $country_id, $this->get_instance_mp() );
+		$data['methods'] = array();
+		foreach ( $payment_methods as $method ) {
+			if ( $method['id'] != 'account_money' ) {
+				$data['methods'][] = $method;
+			}
+		}
+		$data['count_payment_methods'] = count( $data['methods'] );
+		$data['payment_nro_count_payment_methods'] = $data['count_payment_methods'];
+		$data['error_has_no_payments'] = false;
+		$methods_excludes = preg_split( '/[\s,]+/', $this->config->get( 'payment_mp_standard_methods' ) );
+		foreach ( $methods_excludes as $exclude ) {
+			$data['payment_mp_standard_methods'][] = $exclude;
+		}
+		if ( isset( $data['methods'] ) ) {
+			$data['payment_style'] = isset( $data['methods'] ) && count( $data['methods'] ) > 12 ?
+				'float:left; margin:8px;' : 'float:left; margin:12px;';
+			$this->response->setOutput(
+				$this->load->view( 'extension/payment/mp_standard_methods_partial', $data )
+			);
+		}
+	}
 
 }

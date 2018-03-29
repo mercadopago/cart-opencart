@@ -40,7 +40,7 @@ $_['entry_sandbox_tooltip'] = 'Sandbox é utilizado para testar o Checkout e Not
 $_['entry_installments'] = 'Parcelas:';
 $_['entry_installments_tooltip'] = 'Quantidade máxima de parcelas';
 $_['entry_payments_not_accept'] = 'Excluir Pagamentos:';
-$_['entry_payments_not_accept_tooltip'] = 'Marque quais meios de pagamento você não deseja aceitar. <b>Importante:</b>Caso troque o país de venda, espere até que os novos meio de pagamento estejam carregados.';
+$_['entry_payments_not_accept_tooltip'] = 'Marque quais meios de pagamento você não deseja aceitar. <b>Importante:</b> Caso troque o país de venda, espere até que os novos meio de pagamento estejam carregados.';
 
 // Order statuses
 $_['entry_order_status_approved'] = 'Pgto Aprovado, Pedido fica';

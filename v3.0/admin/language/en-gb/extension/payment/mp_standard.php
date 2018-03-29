@@ -40,7 +40,7 @@ $_['entry_sandbox_tooltip'] = 'Sandbox is used for testing the Checkout and IPN.
 $_['entry_installments'] = 'Installments:';
 $_['entry_installments_tooltip'] = 'Maximum accepted payments';
 $_['entry_payments_not_accept'] = 'Exclude Payments:';
-$_['entry_payments_not_accept_tooltip'] = 'Check the payments methods that you do not want to accept. <b>Important:</b>If you change sales country, wait until the full load of the payment methods.';
+$_['entry_payments_not_accept_tooltip'] = 'Check the payments methods that you do not want to accept. <b>Important:</b> If you change sales country, wait until the full load of the payment methods.';
 
 // Order statuses
 $_['entry_order_status_approved'] = 'Payment Approved, Order is';
