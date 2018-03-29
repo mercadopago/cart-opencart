@@ -88,13 +88,18 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
     </tr>
     <tr>
       <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v2.x%20-%202.2">v2.x - v2.2</a></td>
-      <td>Stable (Current Version)</td>
+      <td>Deprecated (Old Version)</td>
       <td>OpenCart v2.x - v2.2</td>
     </tr>
     <tr>
       <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v2.3">v2.3</a></td>
       <td>Stable (Current Version)</td>
       <td>OpenCart v2.3</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v3.0">v3.0</a></td>
+      <td>Stable (Current Version)</td>
+      <td>OpenCart v3.0</td>
     </tr>
   </tbody>
 </table>
@@ -107,6 +112,7 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
     * OpenCart 1.5.x
     * OpenCart 2.x - 2.2
     * OpenCart 2.3
+    * OpenCart 3.0
 
 2. Copy the folders **admin**, **catalog** and **image** to your OpenCart ROOT installation. Make sure to keep the OpenCart folders structure intact.
 
