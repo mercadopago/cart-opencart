@@ -89,26 +89,26 @@ class MP {
         return $discount_info;
     }
 
-	/**
-	 * Get information for specific payment
-	 * @param int $id
-	 * @return array(json)
-	 */
-	public function get_payment($id) {
-		//$uri_prefix = $this->sandbox ? "/sandbox" : "";
+	public function getPayment($payment_id) {
+		$access_token = $this->get_access_token();
 
 		$request = array(
-			//"uri" => $uri_prefix . "/collections/notifications/{$id}",
-			"uri" => "/collections/notifications/{$id}",
+			"uri" => "/v1/payments/". $payment_id,
 			"params" => array(
-				"access_token" => $this->get_access_token(),
+				"access_token" => $access_token,
 			),
+			"headers" => array(
+				"x-tracking-id" => "platform:v1-whitelabel,type:OpenCart2,so:1.0.0",
+			)
 		);
-		$payment_info = MPRestClient::get($request);
-		return $payment_info;
+
+		$result = MPRestClient::get($request);
+
+		return $result;
 	}
+
 	public function get_payment_info($id) {
-		return $this->get_payment($id);
+		return $this->getPayment($id);
 	}
 	/**
 	 * Get information for specific authorized payment
@@ -125,42 +125,7 @@ class MP {
 		$authorized_payment_info = MPRestClient::get($request);
 		return $authorized_payment_info;
 	}
-	/**
-	 * Refund accredited payment
-	 * @param int $id
-	 * @return array(json)
-	 */
-	public function refund_payment($id) {
-		$request = array(
-			"uri" => "/collections/{$id}",
-			"params" => array(
-				"access_token" => $this->get_access_token(),
-			),
-			"data" => array(
-				"status" => "refunded",
-			),
-		);
-		$response = MPRestClient::put($request);
-		return $response;
-	}
-	/**
-	 * Cancel pending payment
-	 * @param int $id
-	 * @return array(json)
-	 */
-	public function cancel_payment($id) {
-		$request = array(
-			"uri" => "/collections/{$id}",
-			"params" => array(
-				"access_token" => $this->get_access_token(),
-			),
-			"data" => array(
-				"status" => "cancelled",
-			),
-		);
-		$response = MPRestClient::put($request);
-		return $response;
-	}
+
 	/**
 	 * Cancel preapproval payment
 	 * @param int $id
@@ -179,27 +144,7 @@ class MP {
 		$response = MPRestClient::put($request);
 		return $response;
 	}
-	/**
-	 * Search payments according to filters, with pagination
-	 * @param array $filters
-	 * @param int $offset
-	 * @param int $limit
-	 * @return array(json)
-	 */
-	public function search_payment($filters, $offset = 0, $limit = 0) {
-		$filters["offset"] = $offset;
-		$filters["limit"] = $limit;
-		$uri_prefix = $this->sandbox ? "/sandbox" : "";
 
-		$request = array(
-			"uri" => $uri_prefix . "/collections/search",
-			"params" => array_merge($filters, array(
-				"access_token" => $this->get_access_token(),
-			)),
-		);
-		$collection_result = MPRestClient::get($request);
-		return $collection_result;
-	}
 	/**
 	 * Create a payment
 	 * @param array $payment
