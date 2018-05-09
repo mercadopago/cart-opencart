@@ -46,7 +46,6 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-		//Cambio el código ISO-3 de la moneda por el que se les ocurrio poner a los de mp_standard!!!
 		$accepted_currencies = array('ARS' => 'ARS', 'ARG' => 'ARS', 'VEF' => 'VEF',
 			'BRA' => 'BRL', 'BRL' => 'BRL', 'REA' => 'BRL', 'MXN' => 'MEX',
 			'CLP' => 'CHI', 'COP' => 'COP', 'PEN' => 'PEN', 'US' => 'US', 'USD' => 'USD', 'UYU' => 'UYU');
@@ -73,10 +72,9 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 			$items[] = array(
 				"id" => $product['product_id'],
 				"title" => $product['name'],
-				"description" => $product['quantity'] . ' x ' . $product['name'], // string
+				"description" => $product['quantity'] . ' x ' . $product['name'],
 				"quantity" => intval($product['quantity']),
 				"unit_price" => $product_price,
-				//"unit_price" => round(floatval($product['price']) * $order_info['currency_code'], 2), //decimal
 				"currency_id" => $currency,
 				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
 				"category_id" => $this->config->get('payment_mp_standard_category_id'),

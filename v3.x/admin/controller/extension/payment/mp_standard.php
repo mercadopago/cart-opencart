@@ -37,9 +37,9 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		$valid_credentials = true;
 		$has_payments_available = true;
 		if ( ( $this->request->server['REQUEST_METHOD'] == 'POST' ) ) {
-			// Validate if we have available payment methods
+
 			if ( $this->request->post['payment_nro_count_payment_methods'] > 0 ) {
-				// We have exluded payment methods, so we need to check if we have not excluded them all
+
 				if ( isset( $this->request->post['payment_mp_standard_methods'] ) ) {
 					$names = $this->request->post['payment_mp_standard_methods'];
 					$this->request->post['payment_mp_standard_methods'] = implode( ',', $names );
@@ -50,7 +50,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 			} else {
 				$has_payments_available = false;
 			}
-			// Validate credentials
+
 			if ( ! $this->validate_credentials() ) {
 				$valid_credentials = false;
 			}
@@ -63,14 +63,13 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		}
 		
 		$data = array(
-			// Translations
+
 			'text_edit' => $this->language->get( 'text_edit' ),
 			'text_enabled' => $this->language->get( 'text_enabled' ),
 			'text_disabled' => $this->language->get( 'text_disabled' ),
 			'text_all_zones' => $this->language->get( 'text_all_zones' ),
 			'button_save' => $this->language->get( 'button_save' ),
 			'button_cancel' => $this->language->get( 'button_cancel' ),
-			// Plugin fields
 			'header' => $this->load->controller( 'common/header' ),
 			'heading_title' => $this->language->get( 'heading_title' ),
 			'column_left' => $this->load->controller( 'common/column_left' ),
@@ -126,7 +125,6 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 			'payment_mp_standard_installments' => ( isset( $this->request->post['payment_mp_standard_installments'] ) ?
 				$this->request->post['payment_mp_standard_installments'] :
 				$this->config->get( 'payment_mp_standard_installments' ) ),
-			// Oder x Payment statuses
 			'payment_mp_standard_order_status_id_completed' => ( isset( $this->request->post['payment_mp_standard_order_status_id_completed'] ) ?
 				$this->request->post['payment_mp_standard_order_status_id_completed'] :
 				$this->config->get( 'payment_mp_standard_order_status_id_completed' ) ),
@@ -153,7 +151,6 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 				$this->config->get( 'payment_mp_standard_order_status_id_chargeback' ) )
 		);
 
-		// Get available payment methods
 		$country_id = $this->config->get( 'payment_mp_standard_country' ) != null ?
 			$this->config->get( 'payment_mp_standard_country' ) : 'MLA';
 		$methods_api = $this->get_instance_mp_util()->getMethods( $country_id, $this->get_instance_mp() );
@@ -171,7 +168,6 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		$data['payment_style'] = isset( $data['methods'] ) && count( $data['methods'] ) > 12 ?
 			'float:left; margin:8px;' : 'float:left; margin:12px;';
 
-		// Get order statuses
 		$this->load->model( 'localisation/order_status' );
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 		$this->load->model( 'localisation/geo_zone' );
