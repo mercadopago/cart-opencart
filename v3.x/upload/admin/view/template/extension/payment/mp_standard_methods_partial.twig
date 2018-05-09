@@ -1,0 +1,14 @@
+{{ header }}{{ column_left }}
+<input type="hidden" class="form-control" id="payment_nro_count_payment_methods" name="payment_nro_count_payment_methods" value="{{ count_payment_methods }}" />
+{% for method in methods %}
+  <div style="{{ payment_style }}" id="{{ method.name }}">
+    {% if method.id in payment_mp_standard_methods %}
+      <img src="{{ method.secure_thumbnail }}" height="24"><br/>
+      <input name="payment_mp_standard_methods[]" type="checkbox" checked="yes" value="{{ method.id }}" style="margin-top:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
+    {% else %}
+      <img src="{{ method.secure_thumbnail }}" height="24"><br/>
+      <input name="payment_mp_standard_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
+    {% endif %}
+  </div>
+{% endfor %}
+{{ footer }}
