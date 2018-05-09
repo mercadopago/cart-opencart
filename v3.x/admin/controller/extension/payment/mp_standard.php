@@ -185,7 +185,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 	}
 
 	public function set_settings() {
-		$result = $this->get_instance_mp_util()->set_settings(
+		$result = $this->get_instance_mp_util()->setSettings(
 			$this->get_instance_mp(),
 			$this->config->get( 'config_email' ), false, false,
 				( $this->request->post['payment_mp_standard_status'] == '1' ? 'true' : 'false' )
@@ -217,5 +217,4 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 			);
 		}
 	}
-
 }
