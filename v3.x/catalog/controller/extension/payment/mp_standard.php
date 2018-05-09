@@ -21,8 +21,8 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 
 	function get_instance_mp() {
 		if ($this->mp == null) {
-			$client_id = $this->config->get('mp_standard_client_id');
-			$client_secret = $this->config->get('mp_standard_client_secret');
+			$client_id = $this->config->get( 'payment_mp_standard_client_id' );
+			$client_secret = $this->config->get( 'payment_mp_standard_client_secret' );
 			$this->mp = new MP($client_id, $client_secret);
 		}
 		return $this->mp;
@@ -34,10 +34,10 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		$data['button_confirm'] = $this->language->get('button_confirm');
 		$data['button_back'] = $this->language->get('button_back');
 		$data['terms'] = 'Teste de termos';
-		$data['public_key'] = $this->config->get('mp_standard_public_key');
+		$data['public_key'] = $this->config->get('payment_mp_standard_public_key');
 
-		if ($this->config->get('mp_standard_country')) {
-			$data['action'] = $this->config->get('mp_standard_country');
+		if ($this->config->get('payment_mp_standard_country')) {
+			$data['action'] = $this->config->get('payment_mp_standard_country');
 		}
 
 		$this->load->model('checkout/order');
@@ -65,7 +65,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 
 		foreach ($all_products as $product) {
 			$product_price = round($product['price'] * $order_info['currency_value'], 2);
-			if($this->config->get('mp_standard_country') == 'MCO'){
+			if($this->config->get('payment_mp_standard_country') == 'MCO'){
 				$product_price = $this->currency->format($product['price'], $order_info['currency_code'], false, false);
 			}
 
@@ -79,7 +79,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 				//"unit_price" => round(floatval($product['price']) * $order_info['currency_code'], 2), //decimal
 				"currency_id" => $currency,
 				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
-				"category_id" => $this->config->get('mp_standard_category_id'),
+				"category_id" => $this->config->get('payment_mp_standard_category_id'),
 			);
 		}
 
@@ -93,7 +93,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 				"quantity" => 1,
 				"unit_price" => $total,
 				"currency_id" => $currency,
-				"category_id" => $this->config->get('mp_standard_category_id')
+				"category_id" => $this->config->get('payment_mp_standard_category_id')
 			);
 		}
 
@@ -102,10 +102,10 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		$data['server'] = $_SERVER;
 		$data['debug'] = 1;
 
-		$client_id = $this->config->get('mp_standard_client_id');
-		$client_secret = $this->config->get('mp_standard_client_secret');
+		$client_id = $this->config->get('payment_mp_standard_client_id');
+		$client_secret = $this->config->get('payment_mp_standard_client_secret');
 		$url = $order_info['store_url'];
-		$installments = (int) $this->config->get('mp_standard_installments');
+		$installments = (int) $this->config->get('payment_mp_standard_installments');
 
 		$cust = $this->db->query("SELECT * FROM `" .
 			DB_PREFIX . "customer` WHERE customer_id = " .
@@ -144,8 +144,8 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 			),
 		);
 
-		$exclude = $this->config->get('mp_standard_methods');
-		$country_id = $this->config->get('mp_standard_country') == null ? 'MLA' : $this->config->get('mp_standard_country');
+		$exclude = $this->config->get('payment_mp_standard_methods');
+		$country_id = $this->config->get('payment_mp_standard_country') == null ? 'MLA' : $this->config->get('payment_mp_standard_country');
 
 		$installments = (int) $installments;
 		if ($exclude != '') {
@@ -177,7 +177,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		$pref['external_reference'] = $order_info['order_id'];
 		$pref['items'] = $items;
 
-		$pref['auto_return'] = $this->config->get('mp_standard_enable_return');
+		$pref['auto_return'] = $this->config->get('payment_mp_standard_enable_return');
 		$pref['back_urls'] = $back_urls;
 		$pref['payment_methods'] = $payment_methods;
 		$pref['payer'] = $payer;
@@ -185,17 +185,17 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 	    if (!strrpos($url, 'localhost')) {
 	    	$pref['notification_url'] = $url . 'index.php?route=extension/payment/mp_standard/notifications';
 	    }
-		$sandbox = (bool) $this->config->get('mp_standard_sandbox');
+		$sandbox = (bool) $this->config->get('payment_mp_standard_sandbox');
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 
 		if (!$is_test_user) {
-			$pref["sponsor_id"] = $this->get_instance_mp_util()->sponsors[$this->config->get('mp_standard_country')];
+			$pref["sponsor_id"] = $this->get_instance_mp_util()->sponsors[$this->config->get('payment_mp_standard_country')];
 		}
 
 		$preferenceResult = $this->get_instance_mp()->create_preference($pref);
 
 		if ($preferenceResult['status'] == 201):
-			$data['type_checkout'] = $this->config->get('mp_standard_type_checkout');
+			$data['type_checkout'] = $this->config->get('payment_mp_standard_type_checkout');
 			if ($sandbox):
 				$data['redirect_link'] = $preferenceResult['response']['sandbox_init_point'];
 			else:
@@ -204,12 +204,12 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		else:
 			$data['error'] = "Error: " . $preferenceResult['status'];
 		endif;
-		$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('order_status_id_pending'), date('d/m/Y h:i'));
-		$view = floatval(VERSION) < 2.2 ? 'default/template/extension/payment/mp_standard.tpl' : 'extension/payment/mp_standard.tpl';
 
+		$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_mp_standard_order_status_id_pending'), date('d/m/Y h:i'));
+		
 		$data['analytics'] = $this->setPreModuleAnalytics();
 
-		return $this->load->view($view, $data);
+		return $this->load->view( 'extension/payment/mp_standard', $data );
 	}
 
 	public function callback() {
@@ -250,7 +250,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 	}
 
 	private function updateOrder() {
-		$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
+		$sandbox = $this->config->get('payment_mp_standard_sandbox') == 1 ? true : null;
 		$ids = explode(',', $this->request->get['collection_id']);
 
 		$this->get_instance_mp()->sandbox_mode($sandbox);	
@@ -267,7 +267,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
 
         $resultModules = array();
-		$token = $this->config->get('mp_standard_client_id');
+		$token = $this->config->get('payment_mp_standard_client_id');
 		$customerEmail = $this->customer->getEmail();
 		$userLogged = $this->customer->isLogged() ? 1 : 0;
 
