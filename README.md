@@ -1,3 +1,5 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/ac9dc76d0b9240138f54/maintainability)](https://codeclimate.com/github/mercadopago/cart-opencart/maintainability)
+
 # OpenCart - Mercado Pago Module (v1.4.9, 1.5.x, 2.x - 2.2, 2.3)
 
 * [Features](#features)
