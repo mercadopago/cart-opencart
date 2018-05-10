@@ -138,28 +138,37 @@
         </div>
 
           {# Excluded Methods #}
-          {% if methods > 0 %}<div class="form-group">
-            <label class="col-sm-2"></label>
-            <div class="col-sm-10">
-              {{ entry_payments_not_accept_tooltip }}
-            </div>
-            <label class="col-sm-2 control-label" for="mp_transparente_methods">{{ entry_payments_not_accept }}</label>
-            <div class="col-sm-10" id="div_payments">
-              <div style="margin-top:8px;">
-                <input type="hidden" class="form-control" id="payment_nro_count_payment_methods" name="payment_nro_count_payment_methods" value="{{ count_payment_methods }}" />
-                {% for method in methods %}
-                  <div style="{{ payment_style }}" id="{{ method.name }}">
-                    {% if method.id in mp_transparente_methods %}
-                      <img src="{{ method.secure_thumbnail }}" height="24"><br/>
-                      <input name="mp_transparente_methods[]" type="checkbox" checked="yes" value="{{ method.id }}" style="margin-top:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
-                    {% else %}
-                      <img src="{{ method.secure_thumbnail }}" height="24"><br/>
-                      <input name="mp_transparente_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
-                    {% endif %}
-                  </div>
-                {% endfor %}
+          {% if methods > 0 %}
+            <div class="form-group">
+              <label class="col-sm-2"></label>
+              <div class="col-sm-10">
+                {{ entry_payments_not_accept_tooltip }}
+              </div>
+              <label class="col-sm-2 control-label" for="mp_transparente_methods">{{ entry_payments_not_accept }}</label>
+              <div class="col-sm-10" id="div_payments">
+                <div style="margin-top:8px;">
+                  <input type="hidden" class="form-control" id="payment_nro_count_payment_methods" name="payment_nro_count_payment_methods" value="{{ count_payment_methods }}" />
+                  {% for method in methods %}
+                    <div style="{{ payment_style }}" id="{{ method.name }}">
+                      {% if method.id in mp_transparente_methods %}
+                        <img src="{{ method.secure_thumbnail }}" height="24"><br/>
+                        <input name="mp_transparente_methods[]" type="checkbox" checked="yes" value="{{ method.id }}" style="margin-top:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
+                      {% else %}
+                        <img src="{{ method.secure_thumbnail }}" height="24"><br/>
+                        <input name="mp_transparente_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <label class="col-sm-2"></label>
+              <div class="col-sm-10">
+                {% if error_has_no_payments %}
+                  <div class="text-danger">{{ error_entry_no_payments }}</div>
+                {% endif %}
               </div>
             </div>
+          {% endif %}
 
 
 

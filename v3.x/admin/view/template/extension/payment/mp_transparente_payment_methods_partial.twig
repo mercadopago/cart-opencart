@@ -1,9 +1,11 @@
+ 
+{{ header }}{{ column_left }}
  <div class="form-group">
     {% for method in methods %}
           <div style="{{ payment_style }}" id="{{ method.name }}">
             {% ifmethod.id  is not  'account_money'  %}
-                {% if mp_transparente_methods  is not  null(  and  in_array(method.id, mp_transparente_methods  ))
-%}              <img src="{{ method.secure_thumbnail}}"><br /><input name="mp_transparente_methods[]" type="checkbox" checked="yes" value="{{ method.id}}" style="margin-left:25%;">
+                {% if mp_transparente_methods  is not  null)%}
+                 <img src="{{ method.secure_thumbnail}}"><br /><input name="mp_transparente_methods[]" type="checkbox" checked="yes" value="{{ method.id}}" style="margin-left:25%;">
             </div>
               {% else %}
                 <img src="{{ method.secure_thumbnail }}"><br/><input name="mp_transparente_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%;">
@@ -11,3 +13,4 @@
         {% endif %}
       {% endif %}
       {% endfor %}
+      {{ footer }}

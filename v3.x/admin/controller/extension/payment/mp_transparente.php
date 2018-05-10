@@ -87,8 +87,8 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			'href' => $this->url->link('extension/payment/mp_transparente', 'user_token=' . $this->session->data['user_token'], true ),
 		);
 
-		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_transparente&token=' . $this->session->data['user_token'];
-		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['user_token'];
+		$data['action'] = $this->url->link( 'extension/payment/mp_transparente', 'user_token=' . $this->session->data['user_token'], true );
+		$data['cancel'] = $this->url->link( 'extension/extension', 'user_token=' . $this->session->data['user_token'], true );
 		$data['category_list'] = $this->get_instance_mp_util()->getCategoryList($this->get_instance_mp());
 		$data['countries'] = $this->get_instance_mp_util()->getCountries($this->get_instance_mp());
 		$data['installments'] = $this->get_instance_mp_util()->getInstallments();
@@ -163,7 +163,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 			if ($statusReturn) {
 				$this->session->data['success'] = $this->language->get('text_success');
-				$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token']);
+				$this->response->redirect($this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ));
 			}
 		}
 
