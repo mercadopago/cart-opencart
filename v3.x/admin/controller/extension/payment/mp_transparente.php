@@ -74,21 +74,21 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], true ),
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_payment'),
-			'href' => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('extension/payment', 'user_token=' . $this->session->data['user_token'], true ),
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/payment/mp_transparente', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('extension/payment/mp_transparente', 'user_token=' . $this->session->data['user_token'], true ),
 		);
 
-		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_transparente&token=' . $this->session->data['token'];
-		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['token'];
+		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_transparente&token=' . $this->session->data['user_token'];
+		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&token=' . $this->session->data['user_token'];
 		$data['category_list'] = $this->get_instance_mp_util()->getCategoryList($this->get_instance_mp());
 		$data['countries'] = $this->get_instance_mp_util()->getCountries($this->get_instance_mp());
 		$data['installments'] = $this->get_instance_mp_util()->getInstallments();
