@@ -5,12 +5,12 @@
             div_payments.innerHTML = '';
             var spinner = new Spinner().spin(div_payments);
             var url_site =  window.location.href.split('admin')[0];
-            var token = window.location.href.split('token=')[1];
+            var token = window.location.href.split('user_token=')[1];
             if (url_site.value != "")
             {
                 var url_backend = url_site.slice(-1) == '/' ? url_site : url_site + '/';
                 var country = country_select.options[country_select.selectedIndex].value;
-                url_backend += 'admin/index.php?route=extension/payment/mp_transparente/getPaymentMethodsByCountry&country_id=' + country + "&token=" + token;
+                url_backend += 'admin/index.php?route=extension/payment/mp_transparente/getPaymentMethodsByCountry&country_id=' + country + "&user_token=" + token;
                 $.get(url_backend , function(data) {
                     div_payments.innerHTML = data;
                     spinner.stop();
