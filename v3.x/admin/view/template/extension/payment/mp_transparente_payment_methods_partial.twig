@@ -2,12 +2,7 @@
 <div class="form-group">
 {% for method in methods %}
     <div style="{{ payment_style }}" id="{{ method.name }}">
-      {% if mp_transparente_methods  != null)%}
-           <img src="{{ method.secure_thumbnail}}"><br /><input name="mp_transparente_methods[]" type="checkbox" checked="yes" value="{{ method.id}}" style="margin-left:25%;">
-      </div>
-      {% else %}
-          <img src="{{ method.secure_thumbnail }}"><br/><input name="mp_transparente_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%;">
-        </div> 
-      {% endif %}
+      <img src="{{ method.secure_thumbnail}}"><br /><input name="mp_transparente_methods[]" type="checkbox" value="{{ method.id}}" style="margin-left:25%;">
+    </div>
 {% endfor %}
 {{ footer }}
