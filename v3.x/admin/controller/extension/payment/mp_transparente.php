@@ -152,12 +152,12 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			}
 
 			if ($isAccessTokenInvalid) {
-				$data['error_access_token'] = $this->language->get('error_access_token');
+				$data['error_access_token_span'] = $this->language->get('error_access_token');
 				$statusReturn = false;
 			} 
 
 			if ($isPublicKeyInvalid) {
-				$data['error_public_key'] = $this->language->get('error_public_key');
+				$data['error_public_key_span'] = $this->language->get('error_public_key');
 				$statusReturn = false;
 			}
 
