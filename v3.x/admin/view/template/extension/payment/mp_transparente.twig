@@ -29,8 +29,8 @@
          <div class="form-group">
           <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
           <div class="col-sm-10">
-            <select name="mp_transparente_status" id="input-status" class="form-control">
-              {% if mp_transparente_status  %}
+            <select name="payment_mp_transparente_status" id="input-status" class="form-control">
+              {% if payment_mp_transparente_status  %}
                 <option value="1" selected="selected">{{ text_enabled }}</option>
                 <option value="0">{{ text_disabled }}</option>
                {% else %}
@@ -41,10 +41,10 @@
           </div>
         </div>
         <div class="form-group required">
-          <label class="col-sm-2 control-label" for="mp_transparente_order_status_id">{{ entry_country }}</label>
+          <label class="col-sm-2 control-label" for="payment_mp_transparente_order_status_id">{{ entry_country }}</label>
           <div class="col-sm-10">
-            <input type="hidden" value="{% if mp_transparente_country%}{{ mp_transparente_country }}{% endif %}" id="countryName" />
-            <select class="form-control" name="mp_transparente_country" id="country">
+            <input type="hidden" value="{% if payment_mp_transparente_country%}{{ payment_mp_transparente_country }}{% endif %}" id="countryName" />
+            <select class="form-control" name="payment_mp_transparente_country" id="country">
              <option id="MLA" value="MLA">Argentina</option>
              <option id="MLB" value="MLB">Brasil</option>
              <option id="MLC" value="MLC">Chile</option>
@@ -58,20 +58,20 @@
        </div>
 
        <div class="form-group required" id="div_public_key">
-         <label class="col-sm-2 control-label" for="mp_transparente_public_key">
+         <label class="col-sm-2 control-label" for="payment_mp_transparente_public_key">
           <span data-toggle="tooltip" data-trigger="click" title='{{ entry_public_key_tooltip }} '>{{ entry_public_key }}</span></label>
           <div class="col-sm-10">
-           <input type="text" class="form-control" id="mp_transparente_public_key" name="mp_transparente_public_key" value="{{ mp_transparente_public_key }}" />
+           <input type="text" class="form-control" id="payment_mp_transparente_public_key" name="payment_mp_transparente_public_key" value="{{ payment_mp_transparente_public_key }}" />
            {% if error_public_key_span is defined %}
              <div class="text-danger">{{ error_public_key }}</div>
            {% endif %}
          </div>
        </div>
        <div class="form-group required" id="div_access_token">
-         <label class="col-sm-2 control-label" for="mp_transparente_access_token">
+         <label class="col-sm-2 control-label" for="payment_mp_transparente_access_token">
           <span data-toggle="tooltip" data-trigger="click" title='{{ entry_access_token_tooltip }} '>{{ entry_access_token }}</span></label>
           <div class="col-sm-10">
-           <input type="text" class="form-control" id="mp_transparente_access_token" name="mp_transparente_access_token" value="{{ mp_transparente_access_token }}" />
+           <input type="text" class="form-control" id="payment_mp_transparente_access_token" name="payment_mp_transparente_access_token" value="{{ payment_mp_transparente_access_token }}" />
            {% if error_access_token_span is defined  %}
              <div class="text-danger">{{ error_access_token }}</div>
            {% endif %}
@@ -79,12 +79,12 @@
        </div>
 
        <div class="form-group required">
-        <label class="col-sm-2 control-label" for="mp_transparente_category_id"> <span data-toggle="tooltip" data-trigger="click" title='{{ entry_category_tooltip }}'>
+        <label class="col-sm-2 control-label" for="payment_mp_transparente_category_id"> <span data-toggle="tooltip" data-trigger="click" title='{{ entry_category_tooltip }}'>
           {{ entry_category }}</label>
           <div class="col-sm-10">
-            <select class="form-control" name="mp_transparente_category_id" id="mp_transparente_category_id">
+            <select class="form-control" name="payment_mp_transparente_category_id" id="payment_mp_transparente_category_id">
               {% for category in category_list %}
-                {% if category.id  in  mp_transparente_category_id  %}
+                {% if category.id in payment_mp_transparente_category_id  %}
                   <option value="{{ category.id }}" selected="selected" id="{{ category.description }}">{{ category.description }}</option>
                  {% else %}
                   <option value="{{ category.id }}" id="{{ category.description }}">{{ category.description }}</option>
@@ -94,10 +94,10 @@
           </div>
         </div>
         <div class="form-group required">
-          <label class="col-sm-2 control-label" for="mp_transparente_debug"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_debug_tooltip }} '> {{ entry_debug }}</span></label>
+          <label class="col-sm-2 control-label" for="payment_mp_transparente_debug"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_debug_tooltip }} '> {{ entry_debug }}</span></label>
           <div class="col-sm-10">
-            <select class="form-control" name="mp_transparente_debug" id="mp_transparente_debug">
-              {% if mp_transparente_debug  %}
+            <select class="form-control" name="payment_mp_transparente_debug" id="payment_mp_transparente_debug">
+              {% if payment_mp_transparente_debug  %}
                 <option value="1" selected="selected">{{ text_enabled }}</option>
                 <option value="0">{{ text_disabled }}</option>
               {% else %}
@@ -109,11 +109,11 @@
         </div>
 
         <div class="form-group">
-          <label class="col-sm-2 control-label" for="mp_transparente_coupon"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_coupon_tooltip }}'>
+          <label class="col-sm-2 control-label" for="payment_mp_transparente_coupon"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_coupon_tooltip }}'>
             {{ entry_coupon }}</span></label>
             <div class="col-sm-10">
-              <select class="form-control" name="mp_transparente_coupon" id="mp_transparente_coupon">
-                {% if mp_transparente_coupon  %}
+              <select class="form-control" name="payment_mp_transparente_coupon" id="payment_mp_transparente_coupon">
+                {% if payment_mp_transparente_coupon  %}
                   <option value="1" selected="selected">{{ text_enabled }}</option>
                   <option value="0">{{ text_disabled }}</option>
                 {% else %}
@@ -124,11 +124,11 @@
             </div>
           </div>
           <div class="form-group required">
-            <label class="col-sm-2 control-label" for="mp_transparente_installments">{{ entry_installments }}</label>
+            <label class="col-sm-2 control-label" for="payment_mp_transparente_installments">{{ entry_installments }}</label>
             <div class="col-sm-10">
-             <select class="form-control" name="mp_transparente_installments" id="mp_transparente_installments">
+             <select class="form-control" name="payment_mp_transparente_installments" id="payment_mp_transparente_installments">
               {% for installment in installments %}
-                {% if installment.id  in  mp_transparente_installments  %}
+                {% if installment.id in payment_mp_transparente_installments  %}
                   <option value="{{ installment.id }}" selected="selected" id="{{ installment.id }}">{{ installment.value }}</option>
                 {% else %}
                   <option value="{{ installment.id }}" id="{{ installment.id }}">{{ installment.value }}</option>
@@ -145,18 +145,18 @@
               <div class="col-sm-10">
                 {{ entry_payments_not_accept_tooltip }}
               </div>
-              <label class="col-sm-2 control-label" for="mp_transparente_methods">{{ entry_payments_not_accept }}</label>
+              <label class="col-sm-2 control-label" for="payment_mp_transparente_methods">{{ entry_payments_not_accept }}</label>
               <div class="col-sm-10" id="div_payments">
                 <div style="margin-top:8px;">
                   <input type="hidden" class="form-control" id="payment_nro_count_payment_methods" name="payment_nro_count_payment_methods" value="{{ count_payment_methods }}" />
                   {% for method in methods %}
                     <div style="{{ payment_style }}" id="{{ method.name }}">
-                      {% if method.id in mp_transparente_methods %}
+                      {% if method.id in payment_mp_transparente_methods %}
                         <img src="{{ method.secure_thumbnail }}" height="24"><br/>
-                        <input name="mp_transparente_methods[]" type="checkbox" checked="yes" value="{{ method.id }}" style="margin-top:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
+                        <input name="payment_mp_transparente_methods[]" type="checkbox" checked="yes" value="{{ method.id }}" style="margin-top:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
                       {% else %}
                         <img src="{{ method.secure_thumbnail }}" height="24"><br/>
-                        <input name="mp_transparente_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
+                        <input name="payment_mp_transparente_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%; margin-top:4px; border:1px solid #888; width:16px; height:16px;">
                       {% endif %}
                     </div>
                   {% endfor %}
@@ -174,14 +174,14 @@
 
 
       <div class="form-group">
-        <label class="col-sm-3 control-label" for="mp_transparente_order_status_id_completed">{{ entry_order_status_general }}</label>
+        <label class="col-sm-3 control-label" for="payment_mp_transparente_order_status_id_completed">{{ entry_order_status_general }}</label>
       </div>
       <div class="form-group required">
-        <label class="col-sm-2 control-label" for="mp_transparente_order_status_id"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_tooltip }} '>{{ entry_order_status }} </span></label>
+        <label class="col-sm-2 control-label" for="payment_mp_transparente_order_status_id"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_tooltip }} '>{{ entry_order_status }} </span></label>
         <div class="col-sm-10">
-         <select class="form-control" name="mp_transparente_order_status_id" id="mp_transparente_order_status_id">
+         <select class="form-control" name="payment_mp_transparente_order_status_id" id="payment_mp_transparente_order_status_id">
           {% for order_status in order_statuses %}
-            {% if order_status.order_status_id  in  mp_transparente_order_status_id  %}
+            {% if order_status.order_status_id in payment_mp_transparente_order_status_id  %}
               <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
             {% else %}
               <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -191,11 +191,11 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="col-sm-2 control-label" for="mp_transparente_order_status_id_completed"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_completed_tooltip }} '>{{ entry_order_status_completed }}</span></label>
+      <label class="col-sm-2 control-label" for="payment_mp_transparente_order_status_id_completed"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_completed_tooltip }} '>{{ entry_order_status_completed }}</span></label>
       <div class="col-sm-10">
-        <select class="form-control" name="mp_transparente_order_status_id_completed" id="mp_transparente_order_status_id_completed">
+        <select class="form-control" name="payment_mp_transparente_order_status_id_completed" id="payment_mp_transparente_order_status_id_completed">
          {% for order_status in order_statuses %}
-          {% if order_status.order_status_id  in  mp_transparente_order_status_id_completed  %}
+          {% if order_status.order_status_id in payment_mp_transparente_order_status_id_completed  %}
             <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
           {% else %}
             <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -205,11 +205,11 @@
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="mp_transparente_order_status_id_pending"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_pending_tooltip }} '>{{ entry_order_status_pending }}</span></label>
+    <label class="col-sm-2 control-label" for="payment_mp_transparente_order_status_id_pending"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_pending_tooltip }} '>{{ entry_order_status_pending }}</span></label>
     <div class="col-sm-10">
-      <select class="form-control" name="mp_transparente_order_status_id_pending" id="mp_transparente_order_status_id_pending">
+      <select class="form-control" name="payment_mp_transparente_order_status_id_pending" id="payment_mp_transparente_order_status_id_pending">
        {% for order_status in order_statuses %}
-        {% if order_status.order_status_id  in  mp_transparente_order_status_id_pending  %}
+        {% if order_status.order_status_id in payment_mp_transparente_order_status_id_pending  %}
           <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
         {% else %}
           <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -219,12 +219,12 @@
   </div>
 </div>
 <div class="form-group">
-  <label class="col-sm-2 control-label" for="mp_transparente_order_status_id_canceled">
+  <label class="col-sm-2 control-label" for="payment_mp_transparente_order_status_id_canceled">
     <span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_canceled_tooltip }} '>{{ entry_order_status_canceled }}</span></label>
     <div class="col-sm-10">
-      <select class="form-control" name="mp_transparente_order_status_id_canceled" id="mp_transparente_order_status_id_canceled">
+      <select class="form-control" name="payment_mp_transparente_order_status_id_canceled" id="payment_mp_transparente_order_status_id_canceled">
        {% for order_status in order_statuses %}
-        {% if order_status.order_status_id  in  mp_transparente_order_status_id_canceled  %}
+        {% if order_status.order_status_id in payment_mp_transparente_order_status_id_canceled  %}
           <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
         {% else %}
           <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -235,12 +235,12 @@
 </div>
 
 <div class="form-group">
-  <label class="col-sm-2 control-label" for="mp_transparente_order_status_id_in_process">
+  <label class="col-sm-2 control-label" for="payment_mp_transparente_order_status_id_in_process">
     <span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_in_process_tooltip }} '>{{ entry_order_status_in_process }}</span></label>
     <div class="col-sm-10">
-      <select class="form-control" name="mp_transparente_order_status_id_in_process" id="mp_transparente_order_status_id_in_process">
+      <select class="form-control" name="payment_mp_transparente_order_status_id_in_process" id="payment_mp_transparente_order_status_id_in_process">
        {% for order_status in order_statuses %}
-        {% if order_status.order_status_id  in  mp_transparente_order_status_id_in_process  %}
+        {% if order_status.order_status_id in payment_mp_transparente_order_status_id_in_process  %}
           <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
         {% else %}
           <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -250,11 +250,11 @@
   </div>
 </div>
 <div class="form-group">
-  <label class="col-sm-2 control-label" for="mp_transparente_order_status_id_rejected"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_rejected_tooltip }} '>{{ entry_order_status_rejected }}</span></label>
+  <label class="col-sm-2 control-label" for="payment_mp_transparente_order_status_id_rejected"><span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_rejected_tooltip }} '>{{ entry_order_status_rejected }}</span></label>
   <div class="col-sm-10">
-    <select class="form-control" name="mp_transparente_order_status_id_rejected" id="mp_transparente_order_status_id_rejected">
+    <select class="form-control" name="payment_mp_transparente_order_status_id_rejected" id="payment_mp_transparente_order_status_id_rejected">
      {% for order_status in order_statuses %}
-      {% if order_status.order_status_id  in  mp_transparente_order_status_id_rejected  %}
+      {% if order_status.order_status_id in payment_mp_transparente_order_status_id_rejected  %}
         <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
       {% else %}
         <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -264,12 +264,12 @@
 </div>
 </div>
 <div class="form-group">
-  <label class="col-sm-2 control-label" for="mp_transparente_order_status_id_refunded">
+  <label class="col-sm-2 control-label" for="payment_mp_transparente_order_status_id_refunded">
     <span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_refunded_tooltip }} '>{{ entry_order_status_refunded }}</span></label>
     <div class="col-sm-10">
-      <select class="form-control" name="mp_transparente_order_status_id_refunded" id="mp_transparente_order_status_id_refunded">
+      <select class="form-control" name="payment_mp_transparente_order_status_id_refunded" id="payment_mp_transparente_order_status_id_refunded">
         {% for order_status in order_statuses %}
-          {% if order_status.order_status_id  in  mp_transparente_order_status_id_refunded  %}
+          {% if order_status.order_status_id in payment_mp_transparente_order_status_id_refunded  %}
             <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
            {% else %}
             <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -279,12 +279,12 @@
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="mp_transparente_order_status_id_in_mediation">
+    <label class="col-sm-2 control-label" for="payment_mp_transparente_order_status_id_in_mediation">
       <span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_in_mediation_tooltip }} '>{{ entry_order_status_in_mediation }}</span></label>
       <div class="col-sm-10">
-        <select class="form-control" name="mp_transparente_order_status_id_in_mediation" id="mp_transparente_order_status_id_in_mediation">
+        <select class="form-control" name="payment_mp_transparente_order_status_id_in_mediation" id="payment_mp_transparente_order_status_id_in_mediation">
          {% for order_status in order_statuses %}
-          {% if order_status.order_status_id  in  mp_transparente_order_status_id_in_mediation  %}
+          {% if order_status.order_status_id in payment_mp_transparente_order_status_id_in_mediation  %}
             <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
           {% else %}
             <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
@@ -294,15 +294,15 @@
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="mp_transparente_order_status_chargeback">
+    <label class="col-sm-2 control-label" for="payment_mp_transparente_order_status_chargeback">
       <span data-toggle="tooltip" data-trigger="click" title='{{ entry_order_status_chargeback_tooltip }}'>
         {{ entry_order_status_chargeback }}
       </span>
     </label>
     <div class="col-sm-10">
-      <select class="form-control" name="mp_transparente_order_status_chargeback" id="mp_transparente_order_status_chargeback">
+      <select class="form-control" name="payment_mp_transparente_order_status_chargeback" id="payment_mp_transparente_order_status_chargeback">
         {% for order_status in order_statuses %}
-          {% if mp_transparente_order_status_chargeback  and  order_status.order_status_id  in  mp_transparente_order_status_chargeback  %}
+          {% if payment_mp_transparente_order_status_chargeback  and  order_status.order_status_id in payment_mp_transparente_order_status_chargeback  %}
             <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
           {% else %}
             <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>

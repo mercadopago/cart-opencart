@@ -1,9 +1,261 @@
-<link rel="stylesheet" type="text/css" href="./catalog/view/css/custom_checkout_mercadopago.css">
-<link rel="stylesheet" type="text/css" href="./catalog/view/css/mp_form.css">
+<style>
+  body{
+  background-color: #F5F5F5;
+  padding: 0;
+  margin: 0;
+}
+
+#mp-box-form{
+  padding: 15px 10px;
+  margin: 30px auto;
+  width: 420px;
+  background-color: #fff;
+  overflow: auto;
+  border-radius: 5px;
+}
+
+.mp-box-inputs{
+  float: left;
+}
+
+.mp-col-10{
+  width: 10%;
+}
+
+.mp-col-20{
+  width: 20%;
+}
+
+.mp-col-25{
+  width: 25%;
+}
+
+.mp-col-30{
+  width: 30%;
+}
+
+.mp-col-35{
+  width: 35%;
+}
+
+.mp-col-45{
+  width: 45%;
+}
+
+.mp-col-50{
+  width: 50%;
+}
+
+.mp-col-55{
+  width: 55%;
+}
+
+.mp-col-65{
+  width: 65%;
+}
+
+.mp-col-75{
+  width: 75%;
+}
+
+.mp-col-100{
+  width: 100%;
+  margin: 5px 0;
+}
+
+.mp-line{
+  width: 100%;
+  margin: 5px 0;
+}
+
+.mp-box-inputs label{
+  text-transform: uppercase;
+  font-size: 11px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  margin: 0 0 5px 0;
+  display: block;
+}
+
+.mp-box-inputs label em{
+  color: red;
+}
+
+.mp-box-inputs input, .mp-box-inputs select{
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #cecece;
+  padding: 5px;
+  border-radius: 3px;
+  color: #666;
+  height: 32px;
+  /*font-size: 100%;*/
+}
+
+.mp-box-inputs input:focus, .mp-box-inputs select:focus{
+  border: 1px solid #999;
+  outline: 0;
+}
+
+
+.mp-box-inputs input.mp-error-input, .mp-box-inputs select.mp-error-input{
+  border: 1px solid red;
+}
+
+#mp-box-loading{
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin: -10px 0px;
+}
+
+#mp-separete-date{
+  vertical-align: middle;
+  line-height: 65px;
+  text-align: center;
+  height: 48px;
+  font-size: 24px;
+  font-weight: 100;
+}
+
+#mercadopago-utilities{
+  display: none;
+}
+
+
+#submit{
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+#applyCoupon{
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+#applyCoupon:hover {
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;
+}
+
+#submit:hover {
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;
+}
+
+#mpCouponApplyed{
+  display: none;
+  border-style: solid;
+  border-width: thin;
+  border-color: #009EE3;
+  padding: 8px 8px 8px 8px;
+}
+
+#mercadopago-form-coupon .mp-box-message{
+  margin: -5px 0 5px;
+}
+
+/*
+*
+*
+* Error
+*
+*
+*/
+
+.mp-error{
+  text-transform: uppercase;
+  font-size: 10px;
+  color: red;
+  font-weight: bold;
+  display: none;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  clear: both;
+  float: left;
+}
+
+
+/*
+ * Tax
+ *
+ */
+
+#mp-box-input-tax-tea{
+  color: #666;
+  font-weight: 300;
+  font-size: 9px;
+  display: none;
+}
+
+#mp-box-input-tax-cft{
+  font-weight: 300;
+  color: #666;
+  font-size: 21px;
+  display: none;
+}
+
+#mp-box-input-tax-cft #mp-tax-cft-text{
+  padding: 30px 0 0 10px;
+  float: left;
+}
+
+/*cartão*/
+.cartao{
+    margin-bottom:10px;margin:20px auto;-moz-border-radius:5px;border-radius:5px;
+    width:600px;background:#fff;-webkit-border-radius:5px;box-shadow:0 0 1px #666;
+    padding:13px 20px 20px 20px;
+}
+
+.couponDiscount{
+    margin-bottom:10px;margin:20px auto;-moz-border-radius:5px;border-radius:5px;
+    width:600px;background:#fff;-webkit-border-radius:5px;box-shadow:0 0 1px #666;
+    padding:13px 20px 20px 20px;
+}
+
+  .banner{margin-bottom:10px;margin:20px auto;-moz-border-radius:5px;border-radius:5px;width:600px;background:#fff;-webkit-border-radius:5px;}
+
+.mp-standard-banner {
+  width: 320px;
+  display: inline;
+  margin-top: 10px;
+  margin-left: 15px;
+  margin-bottom: 10px;
+}
+
+.mp-form {
+    border: 1px solid #d6d4d4;
+    border-radius: 4px;
+    padding: 10px;
+    width: 570px;
+    background: white;
+    margin-bottom: 20px;
+  }
+
+.hover:hover {
+  background: 60% no-repeat whitesmoke;
+}
+
+</style>
+
 
 <div class="form-group">
   <div class="banner">
-    <img src="./image/banners/{{ action }}/credit_card.png" />
+    <img src="admin/view/image/payment/banners/{{ action }}/credit_card.png" />
   </div>
 </div>
 
@@ -298,9 +550,9 @@
     MPv1.text.remove = '{{ form_labels.form.remove }}';
     MPv1.text.coupon_empty = '{{ form_labels.form.coupon_empty }}';
 
-    MPv1.paths.check = "./image/mercadopago/check.png";
-    MPv1.paths.error = "./image/mercadopago/error.png";
-    MPv1.paths.loading = "./image/mercadopago/loading.gif";
+    MPv1.paths.check = "admin/view/image/payment/mercadopago/check.png";
+    MPv1.paths.error = "admin/view/image/payment/mercadopago/error.png";
+    MPv1.paths.loading = "admin/view/image/payment/mercadopago/loading.gif";
 
     var mercadopago_coupon = $("#mercadopago_coupon");
     var url_site = window.location.href.split('index.php')[0];

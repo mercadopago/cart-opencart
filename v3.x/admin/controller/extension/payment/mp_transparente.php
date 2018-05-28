@@ -18,7 +18,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 	function get_instance_mp() {
 		if ($this->mp == null) {
-			$access_token = $this->config->get('mp_transparente_access_token');
+			$access_token = $this->config->get('payment_mp_transparente_access_token');
 			$this->mp = new MP($access_token);
 		}
 		return $this->mp;
@@ -26,7 +26,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 	public function index() {
 
-		$prefix = 'mp_transparente_';
+		$prefix = 'payment_mp_transparente_';
 		$fields = array('public_key', 'access_token', 'status', 'category_id',
 			'debug', 'coupon', 'country', 'installments', 'order_status_id',
 			'order_status_id_completed', 'order_status_id_pending',
@@ -113,12 +113,12 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			}
 		}
 
-		$country_id = $this->config->get('mp_transparente_country') == null ?
-		'MLA' : $this->config->get('mp_transparente_country');
+		$country_id = $this->config->get('payment_mp_transparente_country') == null ?
+		'MLA' : $this->config->get('payment_mp_transparente_country');
 
 		$methods_api = $this->get_instance_mp()->getPaymentMethods($country_id);
 		$data['methods'] = array();
-		$data['mp_transparente_methods'] = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
+		$data['payment_mp_transparente_methods'] = preg_split("/[\s,]+/", $this->config->get('payment_mp_transparente_methods'));
 		foreach ($methods_api as $method) {
 			if (in_array($method['payment_type_id'], $this->payment_types)) {
 				$data['methods'][] = $method;
@@ -131,15 +131,15 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
 			$this->load->model('setting/setting');
 
-			if (isset($this->request->post['mp_transparente_methods'])) {
-				$names = $this->request->post['mp_transparente_methods'];
-				$this->request->post['mp_transparente_methods'] = '';
+			if (isset($this->request->post['payment_mp_transparente_methods'])) {
+				$names = $this->request->post['payment_mp_transparente_methods'];
+				$this->request->post['payment_mp_transparente_methods'] = '';
 				foreach ($names as $name) {
-					$this->request->post['mp_transparente_methods'] .= $name . ',';
+					$this->request->post['payment_mp_transparente_methods'] .= $name . ',';
 				}
 			}
 			
-			$this->model_setting_setting->editSetting('mp_transparente', $this->request->post);
+			$this->model_setting_setting->editSetting('payment_mp_transparente', $this->request->post);
 
 			$statusReturn = true;
 			$this->setSettings();			
@@ -181,7 +181,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			}
 		}
 
-		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('mp_transparente_methods'));
+		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('payment_mp_transparente_methods'));
 		foreach ($methods_excludes as $exclude) {
 			$data['mp_transparente_methods'][] = $exclude;
 
@@ -196,7 +196,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	private function verifyPublicKey() {
 		$uri = "/v1/payment_methods";
  		$params = array(
- 			'public_key' => $this->request->post['mp_transparente_public_key']
+ 			'public_key' => $this->request->post['payment_mp_transparente_public_key']
  		);
 			
 		$result = $this->get_instance_mp()->get($uri, $params, false);
@@ -211,7 +211,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	private function verifyAccessToken() {
 		$uri = "/users/me";
  		$params = array(
- 			'access_token' => $this->request->post['mp_transparente_access_token']
+ 			'access_token' => $this->request->post['payment_mp_transparente_access_token']
  		);
 			
 		$result = $this->get_instance_mp()->get($uri, $params, false);
@@ -229,10 +229,10 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	    $config_email = $this->config->get('config_email');
 	    $result = null;
 
-        if ($this->request->post['mp_transparente_coupon'] == "1")
+        if ($this->request->post['payment_mp_transparente_coupon'] == "1")
             $custom_cupom = "true";
 
-    	if ($this->request->post['mp_transparente_status'] == "1")
+    	if ($this->request->post['payment_mp_transparente_status'] == "1")
             $statusCustom = "true";
 
         try {
