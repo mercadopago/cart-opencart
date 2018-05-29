@@ -255,7 +255,7 @@
 
 <div class="form-group">
   <div class="banner">
-    <img src="admin/view/image/payment/banners/{{ action }}/credit_card.png" />
+    <img src="admin/view/image/payment/{{ action }}/credit_card.png" />
   </div>
 </div>
 
@@ -617,7 +617,7 @@
     </div>
     <div class="mp-box-inputs mp-col-100" id="mercadopago-utilities">
       <input type="text" id="site_id"  name="mercadopago_custom[site_id]"/>
-      <input type="text" id="amount" value="{{ 2|round }}" name="mercadopago_custom[amount]"/>
+      <input type="text" id="amount" value="{{ amount }}" name="mercadopago_custom[amount]"/>
       <input type="hidden" id="campaign_id" name="mercadopago_custom[campaign_id]"/>
       <input type="hidden" id="campaign" name="mercadopago_custom[campaign]"/>
       <input type="hidden" id="discount" name="mercadopago_custom[discount]"/>
