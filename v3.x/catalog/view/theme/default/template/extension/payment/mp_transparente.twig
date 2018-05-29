@@ -259,263 +259,11 @@
   </div>
 </div>
 
-<div class="clearfix"></div>
-<div id="mp-box-form">
-  
-  form_labels  
-  "form"  
-    "coupon_empty"  cucoupon_empty,
-    'apply'  cuapply,
-    'remove'  curemove,
-    'discount_info1'  cudiscount_info1,
-    'discount_info2'  cudiscount_info2,
-    'discount_info3'  cudiscount_info3,
-    'discount_info4'  cudiscount_info4,
-    'discount_info5'  cudiscount_info5,
-    'discount_info6'  cudiscount_info6,
-    'coupon_of_discounts'  cucoupon_of_discounts,
-    'label_other_bank'  culabel_other_bank,
-    'label_choose'  culabel_choose,
-    "payment_method"  cupayment_method,
-    "credit_card_number"  cucredit_card_number,
-    "expiration_month"  cuexpiration_month,
-    "expiration_year"  cuexpiration_year,
-    "year"  cuyear,
-    "month"  cumonth,
-    "card_holder_name"  cucard_holder_name,
-    "security_code"  cusecurity_code,
-    "document_type"  cudocument_type,
-    "document_number"  cudocument_number,
-    "issuer"  cuissuer,
-    "installments"  cuinstallments,
-    "your_card"  cuyour_card,
-    "other_cards"  cuother_cards,
-    "other_card"  cuother_card,
-    "ended_in"  cuended_in,
-    "btn_pay"  cubtn_pay
-  ,
-    "error"  
-      "205"  cue205,
-      "E301"  cueE301,
-      "208"  cue208,
-      "209"  cue209,
-      "325"  cue325,
-      "326"  cue326,
-      "221"  cue221,
-      "316"  cue316,
-      "224"  cue224,
-      "E302"  cueE302,
-      "E203"  cueE203,
-      "212"  cue212,
-      "322"  cue322,
-      "214"  cue214,
-      "324"  cue324,
-      "213"  cue213,
-      "323"  cue323,
-      "220"  cue220,
-    ,
-    "coupon_error"  
-      "EMPTY"  cueEMPTY
-    
-  
 
-
-  <!-- <div id="mercadopago-form" > -->
-  <form method="post" id="mercadopago-formulario" name="mercadopago-formulario" action="{{ actionForm }}">
-
-    <div class="mp-box-inputs mp-line" id="mercadopago-form-coupon">
-      <label for="couponCodeLabel">{{ form_labels.form.coupon_of_discounts }}</label>
-      <div class="mp-box-inputs mp-col-65">
-        <input type="text" id="couponCode" name="mercadopago_custom[coupon_code]" autocomplete="off" maxlength="24" />
-      </div>
-
-      <div class="mp-box-inputs mp-col-10">
-        <div id="mp-separete-date"></div>
-      </div>
-
-      <div class="mp-box-inputs mp-col-25">
-        <input type="button" class="button" id="applyCoupon" value="{{ form_labels.form.apply }}" >
-      </div>
-
-      <div class="mp-box-inputs mp-col-100">
-        <span class="mp-discount" id="mpCouponApplyed" ></span>
-        <span class="mp-error" id="mpCouponError" ></span>
-      </div>
-    </div>
-
-    <div id="mercadopago-form-customer-and-card">
-
-      <div class="mp-box-inputs mp-line">
-        <label for="paymentMethodIdSelector">{{ form_labels.form.payment_method }} <em>*</em></label>
-
-        <select id="paymentMethodSelector" name="mercadopago_custom[paymentMethodSelector]" data-checkout='cardId'>
-          <optgroup label="{{ form_labels.form.your_card }}" id="payment-methods-for-customer-and-cards">
-            {% for card in cards %}
-            <option value="{{ card.id }}"
-              first_six_digits="{{ card.first_six_digits }}"
-              last_four_digits="{{ card.last_four_digits }}"
-              security_code_length="{{ card.security_code.length }}"
-              type_checkout="customer_and_card"
-              payment_method_id="{{ card.payment_method.id }}"
-              >
-              {{ ucfirst(card.payment_method.name) }} {{ form_labels.form.ended_in }} {{ card.last_four_digits }}
-            </option>
-            {% endfor %}
-          </optgroup>
-
-          <optgroup label="{{ form_labels.form.other_cards }}" id="payment-methods-list-other-cards">
-            <option value="-1">{{ form_labels.form.other_card }}</option>
-          </optgroup>
-
-        </select>
-      </div>
-
-      <div class="mp-box-inputs mp-line" id="mp-securityCode-customer-and-card">
-        <div class="mp-box-inputs mp-col-45">
-          <label for="customer-and-card-securityCode">{{ form_labels.form.security_code }} <em>*</em></label>
-          <input type="text" id="customer-and-card-securityCode" data-checkout="securityCode" autocomplete="off" maxlength="4"/>
-
-          <span class="mp-error" id="mp-error-224" data-main="#customer-and-card-securityCode"> {{ form_labels.error.224 }} </span>
-          <span class="mp-error" id="mp-error-E302" data-main="#customer-and-card-securityCode"> {{ form_labels.error.E302 }} </span>
-          <span class="mp-error" id="mp-error-E203" data-main="#customer-and-card-securityCode"> {{ form_labels.error.E203 }} </span>
-        </div>
-      </div>
-
-    </div> <!--  end mercadopago-form-osc -->
-
-    <div id="mercadopago-form">
-      <div class="mp-box-inputs mp-col-100">
-        <label for="cardNumber">{{ form_labels.form.credit_card_number }} <em>*</em></label>
-        <input type="text" id="cardNumber" data-checkout="cardNumber" autocomplete="off"/>
-        <span class="mp-error" id="mp-error-205" data-main="#cardNumber"> {{ form_labels.error.205 }} </span>
-        <span class="mp-error" id="mp-error-E301" data-main="#cardNumber"> {{ form_labels.error.E301 }} </span>
-      </div>
-
-      <div class="mp-box-inputs mp-line">
-        <div class="mp-box-inputs mp-col-45">
-          <label for="cardExpirationMonth">{{ form_labels.form.expiration_month }} <em>*</em></label>
-          <select id="cardExpirationMonth" data-checkout="cardExpirationMonth" name="mercadopago_custom[cardExpirationMonth]">
-            <option value="-1"> {{ form_labels.form.month }} </option>
-             x1 x<=12 {% $x = $x + 1 %}
-              <option value="{{ x }}"> {{ x }}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <div class="mp-box-inputs mp-col-10">
-          <div id="mp-separete-date">
-            /
-          </div>
-        </div>
-
-        <div class="mp-box-inputs mp-col-45">
-          <label for="cardExpirationYear">{{ form_labels.form.expiration_year }} <em>*</em></label>
-          <select  id="cardExpirationYear" data-checkout="cardExpirationYear" name="mercadopago_custom[cardExpirationYear]">
-            <option value="-1"> {{ form_labels.form.year }} </option>
-             xdate("Y") x<= date("Y" + 10) {% $x = $x + 1 %}
-              <option value="{{ x }}"> {{ x }} </option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <span class="mp-error" id="mp-error-208" data-main="#cardExpirationMonth"> {{ form_labels.error.208 }} </span>
-        <span class="mp-error" id="mp-error-209" data-main="#cardExpirationYear"> </span>
-        <span class="mp-error" id="mp-error-325" data-main="#cardExpirationMonth"> {{ form_labels.error.325 }} </span>
-        <span class="mp-error" id="mp-error-326" data-main="#cardExpirationYear"> </span>
-
-      </div>
-
-      <div class="mp-box-inputs mp-col-100">
-        <label for="cardholderName">{{ form_labels.form.card_holder_name }} <em>*</em></label>
-        <input type="text" id="cardholderName" name="mercadopago_custom[cardholderName]" data-checkout="cardholderName" autocomplete="off"/>
-
-        <span class="mp-error" id="mp-error-221" data-main="#cardholderName"> {{ form_labels.error.221 }} </span>
-        <span class="mp-error" id="mp-error-316" data-main="#cardholderName"> {{ form_labels.error.316 }} </span>
-      </div>
-
-      <div class="mp-box-inputs mp-line">
-        <div class="mp-box-inputs mp-col-45">
-          <label for="securityCode">{{ form_labels.form.security_code }} <em>*</em></label>
-          <input type="text" id="securityCode" data-checkout="securityCode" autocomplete="off" maxlength="4"/>
-
-          <span class="mp-error" id="mp-error-224" data-main="#securityCode"> {{ form_labels.error.224 }} </span>
-          <span class="mp-error" id="mp-error-E302" data-main="#securityCode"> {{ form_labels.error.E302 }} </span>
-        </div>
-      </div>
-
-      <div class="mp-box-inputs mp-col-100 mp-doc">
-        <div class="mp-box-inputs mp-col-35 mp-docType">
-          <label for="docType">{{ form_labels.form.document_type }} <em>*</em></label>
-          <select id="docType" data-checkout="docType" name="mercadopago_custom[docType]"></select>
-
-          <span class="mp-error" id="mp-error-212" data-main="#docType"> {{ form_labels.error.212 }} </span>
-          <span class="mp-error" id="mp-error-322" data-main="#docType"> {{ form_labels.error.322 }} </span>
-        </div>
-
-        <div class="mp-box-inputs mp-col-65 mp-docNumber">
-          <label for="docNumber">{{ form_labels.form.document_number }} <em>*</em></label>
-          <input type="text" id="docNumber" data-checkout="docNumber" name="mercadopago_custom[docNumber]" autocomplete="off"/>
-
-          <span class="mp-error" id="mp-error-214" data-main="#docNumber"> {{ form_labels.error.214 }} </span>
-          <span class="mp-error" id="mp-error-324" data-main="#docNumber"> {{ form_labels.error.324 }} </span>
-        </div>
-      </div>
-
-      <div class="mp-box-inputs mp-col-100 mp-issuer">
-        <label for="issuer">{{ form_labels.form.issuer }} <em>*</em></label>
-          <select id="issuer" data-checkout="issuer" name="mercadopago_custom[issuer]">
-            <option value="-1">{{ form_labels.form.label_choose }} ...</option>
-          </select>
-
-        <span class="mp-error" id="mp-error-2201" data-main="#issuer"> {{ form_labels.error.220 }} </span>
-      </div>
-
-    </div>  <!-- end #mercadopago-form -->
-    
-<div id="mp-box-installments">
-       <div class="mp-box-inputs mp-col-100" id="mp-box-installments-selector">
-         <label for="installments">{{ form_labels.form.installments }} <em>*</em></label>
-         <select id="installments" data-checkout="installments" name="mercadopago_custom[installments]">
-           <option value="-1">{{ form_labels.form.label_choose }} ...</option>
-         </select>
-         <span class="mp-error" id="mp-error-2202" data-main="#issuer"> {{ form_labels.error.220 }} </span>
-       </div>
- 
-       <div class="mp-box-inputs mp-col-30" id="mp-box-input-tax-cft">
-         <div id="mp-tax-cft-text"></div>
-       </div>
- 
-       <div class="mp-box-inputs mp-col-100" id="mp-box-input-tax-tea">
-          <div id="mp-tax-tea-text"></div>
-      </div>
-    </div>
-    <div class="mp-box-inputs mp-line">
-      <div class="mp-box-inputs mp-col-50">
-        <input type="submit" id="btnSubmit" name="btnSubmit" value={{ form_labels.form.btn_pay }} >
-      </div>
-      <!-- NOT DELETE LOADING-->
-      <div class="mp-box-inputs mp-col-25">
-        <div id="mp-box-loading">
-        </div>
-      </div>
-    </div>
-    <div class="mp-box-inputs mp-col-100" id="mercadopago-utilities">
-      <input type="text" id="site_id"  name="mercadopago_custom[site_id]"/>
-      <input type="text" id="amount" value="{{ round(amount,2) }}" name="mercadopago_custom[amount]"/>
-      <input type="hidden" id="campaign_id" name="mercadopago_custom[campaign_id]"/>
-      <input type="hidden" id="campaign" name="mercadopago_custom[campaign]"/>
-      <input type="hidden" id="discount" name="mercadopago_custom[discount]"/>
-      <input type="text" id="paymentMethodId" name="mercadopago_custom[paymentMethodId]"/>
-      <input type="text" id="token" name="mercadopago_custom[token]"/>
-      <input type="text" id="cardTruncated" name="mercadopago_custom[cardTruncated]"/>
-      <input type="text" id="CustomerAndCard" name="mercadopago_custom[CustomerAndCard]"/>
-    </div>
-  </form>
-</div>
 <script type="text/javascript" src="./catalog/view/javascript/mp_transparente/MPv1.js" defer></script>
 
 
-<script>
+<script type="text/javascript">
 
   function async(u, c) {
     var d = document;
@@ -598,7 +346,7 @@
       }
     }
 
-    MPv1.Initialize(mercadopago_site_id, mercadopago_public_key, '{{ mp_transparente_coupon  is  0? false(:true() )}}', url_message, mercadopago_payer_email);
+    MPv1.Initialize(mercadopago_site_id, mercadopago_public_key, '{{ payment_mp_transparente_coupon == 0? constant('false'):constant('true') }}', url_message, mercadopago_payer_email);
 
   });
 
@@ -620,3 +368,263 @@
 
      });
 </script>
+
+<div class="clearfix"></div>
+<div id="mp-box-form">
+ {% 
+  set form = {
+   "coupon_empty" : cucoupon_empty,
+   'apply' : cuapply,
+   'remove' : curemove,
+   'discount_info1' : cudiscount_info1,
+   'discount_info2' : cudiscount_info2,
+   'discount_info3' : cudiscount_info3,
+   'discount_info4' : cudiscount_info4,
+   'discount_info5' : cudiscount_info5,
+   'discount_info6' : cudiscount_info6,
+   'coupon_of_discounts' : cucoupon_of_discounts,
+   'label_other_bank' : culabel_other_bank,
+   'label_choose' : culabel_choose,
+   "payment_method" : cupayment_method,
+   "credit_card_number" : cucredit_card_number,
+   "expiration_month" : cuexpiration_month,
+   "expiration_year" : cuexpiration_year,
+   "year" : cuyear,
+   "month" : cumonth,
+   "card_holder_name" : cucard_holder_name,
+   "security_code" : cusecurity_code,
+   "document_type" : cudocument_type,
+   "document_number" : cudocument_number,
+   "issuer" : cuissuer,
+   "installments" : cuinstallments,
+   "your_card" : cuyour_card,
+   "other_cards" : cuother_cards,
+   "other_card" : cuother_card,
+   "ended_in" : cuended_in,
+   "btn_pay" : cubtn_pay
+   }
+%} 
+
+{% 
+   set error = {
+   "205" : cue205,
+   "E301" : cueE301,
+   "208" : cue208,
+   "209" : cue209,
+   "325" : cue325,
+   "326" : cue326,
+   "221" : cue221,
+   "316" : cue316,
+   "224" : cue224,
+   "E302" : cueE302,
+   "E203" : cueE203,
+   "212" : cue212,
+   "322" : cue322,
+   "214" : cue214,
+   "324" : cue324,
+   "213" : cue213,
+   "323" : cue323,
+   "220" : cue220,
+   }
+%} 
+
+{% 
+  set coupon_error = {"EMPTY" : cueEMPTY}
+%} 
+
+{% 
+  set form_labels = {"form":form, "error":error, "coupon_error":coupon_error}
+%}
+
+
+  <form method="post" id="mercadopago-formulario" name="mercadopago-formulario" action="{{ actionForm }}">
+
+    <div class="mp-box-inputs mp-line" id="mercadopago-form-coupon">
+      <label for="couponCodeLabel">{{ form_labels.form.coupon_of_discounts }}</label>
+      <div class="mp-box-inputs mp-col-65">
+        <input type="text" id="couponCode" name="mercadopago_custom[coupon_code]" autocomplete="off" maxlength="24" />
+      </div>
+
+      <div class="mp-box-inputs mp-col-10">
+        <div id="mp-separete-date"></div>
+      </div>
+
+      <div class="mp-box-inputs mp-col-25">
+        <input type="button" class="button" id="applyCoupon" value="{{ form_labels.form.apply }}" >
+      </div>
+
+      <div class="mp-box-inputs mp-col-100">
+        <span class="mp-discount" id="mpCouponApplyed" ></span>
+        <span class="mp-error" id="mpCouponError" ></span>
+      </div>
+    </div>
+
+    <div id="mercadopago-form-customer-and-card">
+
+      <div class="mp-box-inputs mp-line">
+        <label for="paymentMethodIdSelector">{{ form_labels.form.payment_method }} <em>*</em></label>
+
+        <select id="paymentMethodSelector" name="mercadopago_custom[paymentMethodSelector]" data-checkout='cardId'>
+          <optgroup label="{{ form_labels.form.your_card }}" id="payment-methods-for-customer-and-cards">
+            {% for card in cards %}
+            <option value="{{ card.id }}"
+              first_six_digits="{{ card.first_six_digits }}"
+              last_four_digits="{{ card.last_four_digits }}"
+              security_code_length="{{ card.security_code.length }}"
+              type_checkout="customer_and_card"
+              payment_method_id="{{ card.payment_method.id }}"
+              >
+              {{ card.payment_method.name }} {{ form_labels.form.ended_in }} {{ card.last_four_digits }}
+            </option>
+            {% endfor %}
+          </optgroup>
+
+          <optgroup label="{{ form_labels.form.other_cards }}" id="payment-methods-list-other-cards">
+            <option value="-1">{{ form_labels.form.other_card }}</option>
+          </optgroup>
+
+        </select>
+      </div>
+
+      <div class="mp-box-inputs mp-line" id="mp-securityCode-customer-and-card">
+        <div class="mp-box-inputs mp-col-45">
+          <label for="customer-and-card-securityCode">{{ form_labels.form.security_code }} <em>*</em></label>
+          <input type="text" id="customer-and-card-securityCode" data-checkout="securityCode" autocomplete="off" maxlength="4"/>
+
+          <span class="mp-error" id="mp-error-224" data-main="#customer-and-card-securityCode"> {{ form_labels.error.224 }} </span>
+          <span class="mp-error" id="mp-error-E302" data-main="#customer-and-card-securityCode"> {{ form_labels.error.E302 }} </span>
+          <span class="mp-error" id="mp-error-E203" data-main="#customer-and-card-securityCode"> {{ form_labels.error.E203 }} </span>
+        </div>
+      </div>
+
+    </div> 
+
+    <div id="mercadopago-form">
+      <div class="mp-box-inputs mp-col-100">
+        <label for="cardNumber">{{ form_labels.form.credit_card_number }} <em>*</em></label>
+        <input type="text" id="cardNumber" data-checkout="cardNumber" autocomplete="off"/>
+        <span class="mp-error" id="mp-error-205" data-main="#cardNumber"> {{ form_labels.error.205 }} </span>
+        <span class="mp-error" id="mp-error-E301" data-main="#cardNumber"> {{ form_labels.error.E301 }} </span>
+      </div>
+
+      <div class="mp-box-inputs mp-line">
+        <div class="mp-box-inputs mp-col-45">
+          <label for="cardExpirationMonth">{{ form_labels.form.expiration_month }} <em>*</em></label>
+          <select id="cardExpirationMonth" data-checkout="cardExpirationMonth" name="mercadopago_custom[cardExpirationMonth]">
+            <option value="-1"> {{ form_labels.form.month }} </option>
+             {% set x=1 %}{% for x in x..12 %}
+              <option value="{{ x }}"> {{ x }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mp-box-inputs mp-col-10">
+          <div id="mp-separete-date">
+            /
+          </div>
+        </div>
+
+        <div class="mp-box-inputs mp-col-45">
+          <label for="cardExpirationYear">{{ form_labels.form.expiration_year }} <em>*</em></label>
+          <select  id="cardExpirationYear" data-checkout="cardExpirationYear" name="mercadopago_custom[cardExpirationYear]">
+            <option value="-1"> {{ form_labels.form.year }} </option>
+            {% set x=date("Y") %}{% for x in x..10 %}
+              <option value="{{ x }}"> {{ x }} </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <span class="mp-error" id="mp-error-208" data-main="#cardExpirationMonth"> {{ form_labels.error.208 }} </span>
+        <span class="mp-error" id="mp-error-209" data-main="#cardExpirationYear"> </span>
+        <span class="mp-error" id="mp-error-325" data-main="#cardExpirationMonth"> {{ form_labels.error.325 }} </span>
+        <span class="mp-error" id="mp-error-326" data-main="#cardExpirationYear"> </span>
+
+      </div>
+
+      <div class="mp-box-inputs mp-col-100">
+        <label for="cardholderName">{{ form_labels.form.card_holder_name }} <em>*</em></label>
+        <input type="text" id="cardholderName" name="mercadopago_custom[cardholderName]" data-checkout="cardholderName" autocomplete="off"/>
+
+        <span class="mp-error" id="mp-error-221" data-main="#cardholderName"> {{ form_labels.error.221 }} </span>
+        <span class="mp-error" id="mp-error-316" data-main="#cardholderName"> {{ form_labels.error.316 }} </span>
+      </div>
+
+      <div class="mp-box-inputs mp-line">
+        <div class="mp-box-inputs mp-col-45">
+          <label for="securityCode">{{ form_labels.form.security_code }} <em>*</em></label>
+          <input type="text" id="securityCode" data-checkout="securityCode" autocomplete="off" maxlength="4"/>
+
+          <span class="mp-error" id="mp-error-224" data-main="#securityCode"> {{ form_labels.error.224 }} </span>
+          <span class="mp-error" id="mp-error-E302" data-main="#securityCode"> {{ form_labels.error.E302 }} </span>
+        </div>
+      </div>
+
+      <div class="mp-box-inputs mp-col-100 mp-doc">
+        <div class="mp-box-inputs mp-col-35 mp-docType">
+          <label for="docType">{{ form_labels.form.document_type }} <em>*</em></label>
+          <select id="docType" data-checkout="docType" name="mercadopago_custom[docType]"></select>
+
+          <span class="mp-error" id="mp-error-212" data-main="#docType"> {{ form_labels.error.212 }} </span>
+          <span class="mp-error" id="mp-error-322" data-main="#docType"> {{ form_labels.error.322 }} </span>
+        </div>
+
+        <div class="mp-box-inputs mp-col-65 mp-docNumber">
+          <label for="docNumber">{{ form_labels.form.document_number }} <em>*</em></label>
+          <input type="text" id="docNumber" data-checkout="docNumber" name="mercadopago_custom[docNumber]" autocomplete="off"/>
+
+          <span class="mp-error" id="mp-error-214" data-main="#docNumber"> {{ form_labels.error.214 }} </span>
+          <span class="mp-error" id="mp-error-324" data-main="#docNumber"> {{ form_labels.error.324 }} </span>
+        </div>
+      </div>
+
+      <div class="mp-box-inputs mp-col-100 mp-issuer">
+        <label for="issuer">{{ form_labels.form.issuer }} <em>*</em></label>
+          <select id="issuer" data-checkout="issuer" name="mercadopago_custom[issuer]">
+            <option value="-1">{{ form_labels.form.label_choose }} ...</option>
+          </select>
+
+        <span class="mp-error" id="mp-error-2201" data-main="#issuer"> {{ form_labels.error.220 }} </span>
+      </div>
+
+    </div> 
+    
+<div id="mp-box-installments">
+       <div class="mp-box-inputs mp-col-100" id="mp-box-installments-selector">
+         <label for="installments">{{ form_labels.form.installments }} <em>*</em></label>
+         <select id="installments" data-checkout="installments" name="mercadopago_custom[installments]">
+           <option value="-1">{{ form_labels.form.label_choose }} ...</option>
+         </select>
+         <span class="mp-error" id="mp-error-2202" data-main="#issuer"> {{ form_labels.error.220 }} </span>
+       </div>
+ 
+       <div class="mp-box-inputs mp-col-30" id="mp-box-input-tax-cft">
+         <div id="mp-tax-cft-text"></div>
+       </div>
+ 
+       <div class="mp-box-inputs mp-col-100" id="mp-box-input-tax-tea">
+          <div id="mp-tax-tea-text"></div>
+      </div>
+    </div>
+    <div class="mp-box-inputs mp-line">
+      <div class="mp-box-inputs mp-col-50">
+        <input type="submit" id="btnSubmit" name="btnSubmit" value={{ form_labels.form.btn_pay }} >
+      </div>
+      
+      <div class="mp-box-inputs mp-col-25">
+        <div id="mp-box-loading">
+        </div>
+      </div>
+    </div>
+    <div class="mp-box-inputs mp-col-100" id="mercadopago-utilities">
+      <input type="text" id="site_id"  name="mercadopago_custom[site_id]"/>
+      <input type="text" id="amount" value="{{ 2|round }}" name="mercadopago_custom[amount]"/>
+      <input type="hidden" id="campaign_id" name="mercadopago_custom[campaign_id]"/>
+      <input type="hidden" id="campaign" name="mercadopago_custom[campaign]"/>
+      <input type="hidden" id="discount" name="mercadopago_custom[discount]"/>
+      <input type="text" id="paymentMethodId" name="mercadopago_custom[paymentMethodId]"/>
+      <input type="text" id="token" name="mercadopago_custom[token]"/>
+      <input type="text" id="cardTruncated" name="mercadopago_custom[cardTruncated]"/>
+      <input type="text" id="CustomerAndCard" name="mercadopago_custom[CustomerAndCard]"/>
+    </div>
+  </form>
+</div>

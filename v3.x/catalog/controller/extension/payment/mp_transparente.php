@@ -20,7 +20,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 	function get_instance_mp() {
 		if ($this->mp == null) {
-			$access_token = $this->config->get('mp_transparente_access_token');
+			$access_token = $this->config->get('payment_mp_transparente_access_token');
 			$this->mp = new MP($access_token);
 		}
 		return $this->mp;
@@ -32,17 +32,17 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$data['button_confirm'] = $this->language->get('button_confirm');
 		$data['button_back'] = $this->language->get('button_back');
 		$data['terms'] = '';
-		$data['public_key'] = $this->config->get('mp_transparente_public_key');
-		$data['site_id'] = $this->config->get('mp_transparente_country');
+		$data['public_key'] = $this->config->get('payment_mp_transparente_public_key');
+		$data['site_id'] = $this->config->get('payment_mp_transparente_country');
 
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		$transaction_amount = floatval($order_info['total']) * floatval($order_info['currency_value']);
 		$data['amount'] = $transaction_amount;
 		$data['actionForm'] = $order_info['store_url'] . 'index.php?route=extension/payment/mp_transparente/payment';
-		$data['mp_transparente_coupon'] = $this->config->get('mp_transparente_coupon');
+		$data['payment_mp_transparente_coupon'] = $this->config->get('payment_mp_transparente_coupon');
 
-		if ($this->config->get('mp_transparente_coupon')) {
+		if ($this->config->get('payment_mp_transparente_coupon')) {
 			$data['mercadopago_coupon'] = $this->language->get('mercadopago_coupon');
 			$data['cupom_obrigatorio'] = $this->language->get('cupom_obrigatorio');
 			$data['campanha_nao_encontrado'] = $this->language->get('campanha_nao_encontrado');
@@ -63,8 +63,8 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		}
 
-		if ($this->config->get('mp_transparente_country')) {
-			$data['action'] = $this->config->get('mp_transparente_country');
+		if ($this->config->get('payment_mp_transparente_country')) {
+			$data['action'] = $this->config->get('payment_mp_transparente_country');
 		}
 
 		$this->load->model('checkout/order');
@@ -81,12 +81,12 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			$data[$label] = $this->language->get($label);
 		}
 
-		if ($this->config->get('mp_transparente_coupon')) {
+		if ($this->config->get('payment_mp_transparente_coupon')) {
 			$data['mercadopago_coupon'] = $this->language->get('mercadopago_coupon');
 		}
 
 		$data['server'] = $_SERVER;
-		$data['debug'] = $this->config->get('mp_transparente_debug');
+		$data['debug'] = $this->config->get('payment_mp_transparente_debug');
 		$data['cards'] = $this->getCards();
 		$data['user_logged'] = $this->customer->isLogged();
 		$view = floatval(VERSION) < 2.2 ? 'default/template/payment/' : 'extension/payment/';
@@ -172,7 +172,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		}
 
 		$total_price = round($order_info['total'] * $order_info['currency_value'], 2);
-		if($this->config->get('mp_transparente_country') == 'MCO'){
+		if($this->config->get('payment_mp_transparente_country') == 'MCO'){
 			$total_price = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
 		}
 
@@ -205,13 +205,13 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 				"quantity" => intval($product['quantity']),
 				"unit_price" => $product_price, //decimal
 				"picture_url" => HTTP_SERVER . 'image/' . $product['image'],
-				"category_id" => $this->config->get('mp_transparente_category_id'),
+				"category_id" => $this->config->get('payment_mp_transparente_category_id'),
 				);
 		}
 
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 		if (!$is_test_user) {
-			$sponsor_id = $this->get_instance_mp_util()->sponsors[$this->config->get('mp_transparente_country')];		
+			$sponsor_id = $this->get_instance_mp_util()->sponsors[$this->config->get('payment_mp_transparente_country')];		
 			$payment["sponsor_id"] = $sponsor_id;
 		} 
 
@@ -246,11 +246,11 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		$this->get_instance_mp()->setEmailAdmin($this->config->get('config_email'));
 
-		$this->get_instance_mp()->setCountryInitial($this->get_instance_mp_util()->initials[$this->config->get('mp_transparente_country')]);
+		$this->get_instance_mp()->setCountryInitial($this->get_instance_mp_util()->initials[$this->config->get('payment_mp_transparente_country')]);
 		$payment = $this->get_instance_mp()->create_payment($payment);
 
 		if ($payment["status"] == 200 || $payment["status"] == 201) {
-			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' .
+			$this->model_checkout_order->addOrderHistory($order_info['order_id'], $this->config->get('payment_mp_transparente_order_status_id_pending'), date('d/m/Y h:i') . ' - ' .
 			$payment_method);
 		
 			$this->updateOrder($payment['response']['id']);
@@ -341,7 +341,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 	}
 
 	private function createCard($payment) {
-		$country = $this->config->get('mp_transparente_country');
+		$country = $this->config->get('payment_mp_transparente_country');
 		if ($country != "MPE") {
 			$id = $this->getCustomerId();
 
@@ -383,7 +383,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		$query = $this->db->query("SELECT code FROM " . DB_PREFIX . "extension WHERE type = 'payment'");
 
         $resultModules = array();
-		$token = $this->_getClientId($this->config->get('mp_transparente_access_token'));
+		$token = $this->_getClientId($this->config->get('payment_mp_transparente_access_token'));
 		$customerEmail = $this->customer->getEmail();
 		$userLogged = $this->customer->isLogged() ? 1 : 0;
 
