@@ -525,10 +525,12 @@
         </div>
 
         <div class="mp-box-inputs mp-col-45">
-          <label for="cardExpirationYear">{{ form_labels.form.expiration_year }} <em>*</em></label>
+          <label for="cardExpirationYear">{{ form_labels['form']['expiration_year'] }} <em>*</em></label>
           <select  id="cardExpirationYear" data-checkout="cardExpirationYear" name="mercadopago_custom[cardExpirationYear]">
-            <option value="-1"> {{ form_labels.form.year }} </option>
-            {% set x=date("Y") %}{% for x in x..10 %}
+            <option value="-1"> {{ form_labels['form']['year'] }} </option>
+            {% set x = "now"|date('Y') + 15 %}
+            {% set y = "now"|date('Y') %}
+            {% for x in y..x %}
               <option value="{{ x }}"> {{ x }} </option>
             {% endfor %}
           </select>
