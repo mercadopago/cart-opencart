@@ -3,7 +3,7 @@
 class MPOpencartUtil {
 
 	private $plataformVersion = "2.3";
-	private $moduleVersion = "3.1";
+	private $moduleVersion = "3.2";
 
 	public $sponsors = array(
 		'MLB' => 204931135,
