@@ -361,7 +361,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 	private function updateOrder($payment_id) {
 		$payment = $this->get_instance_mp()->getPayment($payment_id);
-
+		$payment["pay_type_mp"] = "transparente";
 		$this->load->model('checkout/order');
 		$this->get_instance_mp_util()->updateOrder($payment, $this->model_checkout_order, $this->config, $this->db);
 
