@@ -2,8 +2,8 @@
 
 class MPOpencartUtil {
 
-	private $plataformVersion = "2.3";
-	private $moduleVersion = "3.2";
+	private $plataformVersion = "3.0";
+	private $moduleVersion = "4.0";
 
 	public $sponsors = array(
 		'MLB' => 204931135,
@@ -80,7 +80,7 @@ class MPOpencartUtil {
 			}
 
 			if ($actualize) {
-				$model->addOrderHistory($payment['response']['external_reference'], $config->get('mp_'.$payment['pay_type_mp'].'_order_status_id_'. 
+				$model->addOrderHistory($payment['response']['external_reference'], $config->get('payment_mp_'.$payment['pay_type_mp'].'_order_status_id_'. 
 					$result_order_status), date('d/m/Y h:i') . ' - ' . $payment['response']['payment_method_id'] . ' - ' . $payment['response']['transaction_details']['net_received_amount'] . ' - Payment ID:' . $payment['response']['id']);
 			}
 
@@ -191,5 +191,4 @@ class MPOpencartUtil {
 		$methods = $mp->get( $uri, null, false );
 		return $methods['response'];
 	}
-
 }

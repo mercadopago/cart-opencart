@@ -1,6 +1,5 @@
-[![Maintainability](https://api.codeclimate.com/v1/badges/ac9dc76d0b9240138f54/maintainability)](https://codeclimate.com/github/mercadopago/cart-opencart/maintainability)
+# OpenCart - Mercado Pago Module (v1.4.9, 1.5.x, 2.x - 2.2, 2.3, 3.x)
 
-# OpenCart - Mercado Pago Module (v1.4.9, 1.5.x, 2.x - 2.2, 2.3)
 
 * [Features](#features)
 * [Available Versions](#versions)
@@ -90,13 +89,18 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
     </tr>
     <tr>
       <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v2.x%20-%202.2">v2.x - v2.2</a></td>
-      <td>Stable (Current Version)</td>
+      <td>Deprecated (Old Version)</td>
       <td>OpenCart v2.x - v2.2</td>
     </tr>
     <tr>
       <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v2.3">v2.3</a></td>
       <td>Stable (Current Version)</td>
       <td>OpenCart v2.3</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v3.x">v3.x</a></td>
+      <td>Stable (Current Version)</td>
+      <td>OpenCart v3.x</td>
     </tr>
   </tbody>
 </table>
@@ -109,6 +113,7 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
     * OpenCart 1.5.x
     * OpenCart 2.x - 2.2
     * OpenCart 2.3
+    * OpenCart 3.x
 
 2. Copy the folders **admin**, **catalog** and **image** to your OpenCart ROOT installation. Make sure to keep the OpenCart folders structure intact.
 

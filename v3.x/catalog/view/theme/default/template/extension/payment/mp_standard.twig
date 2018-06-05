@@ -1,0 +1,101 @@
+<style>
+	.mp-standard-banner {
+		width: 320px;
+		display: inline;
+		margin-top: 10px;
+		margin-left: 50px;
+		margin-bottom: 10px;
+	}
+	.mp-form {
+		border: 1px solid #d6d4d4;
+		border-radius: 4px;
+		padding: 10px;
+		width: 570px;
+		background: white;
+		margin-bottom: 20px;
+	}
+	.hover:hover {
+		background: 60% no-repeat whitesmoke;
+	}
+	.payment-label {
+		font: bolder 20px/24px "Open Sans", sans-serif;
+		color: #333333;
+		margin-left: 28px;
+	}
+	.standard {
+		font: 600 13px/15px "Open Sans", sans-serif;
+		margin-left: 174px;
+		display: block;
+	}
+</style>
+
+{% if error %}
+	<div class="warning">
+		{% if debug %}
+			{{ "<strong>Mercado Pago failed to connect, and debug mode is on. Check the errors below and, for security reasons, turn it off after problem is solved:</strong><br/>" }}
+		{{ "<pre>" }}
+			{{ error }}
+			{{ "</pre><br/>" }}
+		{% else %}
+			{{ "<strong>Sorry, Mercado Pago failed to connect.<br/>If you are the store admin, turn on debug mode to get more details about the reasons of this error.</strong><br/>" }}
+		{% endif %}
+	</div>
+{% else %}
+	{% if type_checkout == "Redirect" %}
+		<div class="row"><div class="col-xs-12 col-md-6">
+			<a href="{{ redirect_link }}" id="id-standard" mp-mode="redirect" name="MP-Checkout">
+				<div class="mp-form hover"><div class="row"><div class="col">
+					<img style="margin-left: 20px;" src="admin/view/image/payment/mp_standard_banner.png" id="id-standard-logo">
+					<img src="admin/view/image/payment/{{ action }}/banner_all_methods.png" class="mp-standard-banner" />
+					<span class="payment-label standard">{{ "Pay with Mercado Pago, up to 24x installments." }}</span>
+				</div></div></div>
+			</a>
+		</div></div>
+	{% elseif type_checkout == "Iframe" %}
+		<iframe src="{{ redirect_link }}" name="MP-Checkout" width="740" height="600" frameborder="0"></iframe>
+		<script type="text/javascript">
+			(function(){function $MPBR_load(){console.log('iframe checkout');window.$MPBR_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;
+			s.src = ("https:"==document.location.protocol?"https://www.mercadopago.com/org-img/jsapi/mptools/buttons/":"http://mp-tools.mlstatic.com/buttons/")+"render.js";
+			var x = document.getElementsByTagName("script")[0];x.parentNode.insertBefore(s, x);window.$MPBR_loaded = true;})();}
+			window.$MPBR_loaded !== true ? (window.attachEvent ? window.attachEvent("onload", $MPBR_load) : window.addEventListener("load", $MPBR_load, false)) : null;})();
+		</script>
+	{# TODO: check why lightbox ins't been displayed
+	{% elseif type_checkout == "Lightbox" %}
+		<div class="pull-right">
+			{{ "<style type='text/css'>#MP-Checkout-dialog #MP-Checkout-IFrame { bottom: -28px !important; height: 590px !important; }</style>" }}
+			{{ "<script type='text/javascript' src='https://secure.mlstatic.com/mptools/render.js'></script>" }}
+			{{ "<script type='text/javascript'>" }}
+			{{ "(function() { $MPC.openCheckout({ url: '{{ redirect_link }}', mode: 'modal' }); })();" }}
+			{{ "</script>" }}
+			{{ "<img src='admin/view/image/payment/{{ action }}/banner_all_methods.png' class='mp-standard-banner' />" }}
+			{{ "<p></p>" }}
+			{{ "<p>Thank you for your order. Please, proceed with your payment clicking in the bellow button.</p>" }}
+			{{ "<a id='submit-payment' href='{{ redirect_link }}' name='MP-Checkout' class='button alt' mp-mode='modal'>Pay with Mercado Pago</a>" }}
+		</div>
+	#}
+	{% else %}
+		<div class="row"><div class="col-xs-12 col-md-6">
+			<a href="{{ redirect_link }}" id="id-standard" mp-mode="redirect" name="MP-Checkout">
+				<div class="mp-form hover"><div class="row"><div class="col">
+					<img style="margin-left: 20px;" src="admin/view/image/payment/mp_standard_banner.png" id="id-standard-logo">
+					<img src="admin/view/image/payment/{{ action }}/banner_all_methods.png" class="mp-standard-banner" />
+					<span class="payment-label standard">{{ "Pay with Mercado Pago, up to 24x installments." }}</span>
+				</div></div></div>
+			</a>
+		</div></div>
+	{% endif %}
+{% endif %}
+
+<script type="text/javascript">
+	$.getScript("https://secure.mlstatic.com/modules/javascript/analytics.js", function(){
+		ModuleAnalytics.setToken("{{ analytics['token'] }}");
+		ModuleAnalytics.setPlatform("{{ analytics['platform'] }}");
+		ModuleAnalytics.setPlatformVersion("{{ analytics['platformVersion'] }}");
+		ModuleAnalytics.setModuleVersion("{{ analytics['moduleVersion'] }}");
+		ModuleAnalytics.setPayerEmail("{{ analytics['payerEmail'] }}");
+		ModuleAnalytics.setUserLogged(parseInt("{{ analytics['userLogged'] }}"));
+		ModuleAnalytics.setInstalledModules("{{ analytics['installedModules'] }}");
+		ModuleAnalytics.setAdditionalInfo("{{ analytics['additionalInfo'] }}");
+		ModuleAnalytics.post();
+	});
+</script>
