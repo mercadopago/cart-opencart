@@ -240,7 +240,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 	}
 
 	public function notifications() {
-		if (isset($this->request->get['topic'])) {
+		if (isset($this->request->get['topic']) && $this->request->get['topic'] == 'payment') {
 			$this->request->get['collection_id'] = $this->request->get['id'];
 			$this->updateOrder();
 			echo json_encode(200);
