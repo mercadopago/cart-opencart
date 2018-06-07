@@ -1,0 +1,6 @@
+ <div class="form-group">
+    {% for method in methods %}
+          <div style="{{ payment_style }}" id="{{ method.name }}">
+            <img src="{{ method.secure_thumbnail }}"><br/><input name="payment_mp_ticket_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%;">
+          </div> 
+    {% endfor %}
