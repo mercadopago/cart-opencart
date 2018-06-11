@@ -45,7 +45,7 @@
           <span data-toggle="tooltip" data-trigger="click" title='{{ entry_access_token_tooltip }} '>{{ entry_access_token }}</span></label>
           <div class="col-sm-10">
            <input type="text" class="form-control" id="payment_mp_ticket_access_token" name="payment_mp_ticket_access_token" value="{{ payment_mp_ticket_access_token }}" />
-           {% if error_access_token  %}
+           {% if error_access_token is defined %}
              <div class="text-danger">{{ error_access_token }}</div>
            {% endif %}
          </div>

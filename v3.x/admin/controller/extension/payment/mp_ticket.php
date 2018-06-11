@@ -86,9 +86,9 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			'text' => $this->language->get('heading_title'),
 			'href' => $this->url->link('extension/payment/mp_ticket', 'user_token=' . $this->session->data['user_token'], true ),
 		);
-
-		$data['action'] = HTTPS_SERVER . 'index.php?route=extension/payment/mp_ticket&user_token=' . $this->session->data['user_token'];
-		$data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/extension&user_token=' . $this->session->data['user_token'];
+		
+		$data['action'] = $this->url->link( 'extension/payment/mp_ticket', 'user_token=' . $this->session->data['user_token'], true );
+		$data['cancel'] = $this->url->link( 'extension/extension', 'user_token=' . $this->session->data['user_token'], true );
 		$data['category_list'] = $this->get_instance_mp_util()->getCategoryList($this->get_instance_mp());
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -140,8 +140,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 			$this->setSettings($data);
-			$this->response->redirect(HTTPS_SERVER . 'index.php?route=extension/extension&user_token=' . $this->session->data['user_token']);
-			
+			$this->response->redirect($this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ));			
 		}
 
 		$this->response->setOutput($this->load->view('extension/payment/mp_ticket', $data));
