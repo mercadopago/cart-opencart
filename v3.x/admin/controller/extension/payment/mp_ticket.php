@@ -86,7 +86,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			'text' => $this->language->get('heading_title'),
 			'href' => $this->url->link('extension/payment/mp_ticket', 'user_token=' . $this->session->data['user_token'], true ),
 		);
-		
+
 		$data['action'] = $this->url->link( 'extension/payment/mp_ticket', 'user_token=' . $this->session->data['user_token'], true );
 		$data['cancel'] = $this->url->link( 'extension/extension', 'user_token=' . $this->session->data['user_token'], true );
 		$data['category_list'] = $this->get_instance_mp_util()->getCategoryList($this->get_instance_mp());
@@ -118,7 +118,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		if (in_array('response', $methods_api)) {
 			$response_methods = $methods_api['response'];
 			$data['payment_style'] = "float:left; margin-left:5%";
-			$data['payment_mp_ticket_methods'] = preg_split("/[\s,]+/", $this->config->get('payment_mp_ticket_methods'));
+			$data['mp_ticket_methods'] = preg_split("/[\s,]+/", $this->config->get('payment_mp_ticket_methods'));
 			foreach ($response_methods as $method) {
 				if ($method['payment_type_id'] == 'ticket') {
 					$data['methods'][] = $method;
@@ -136,11 +136,11 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 					$this->request->post['payment_mp_ticket_methods'] .= $name . ',';
 				}
 			}
-			$this->model_setting_setting->editSetting('mp_ticket', $this->request->post);
+			$this->model_setting_setting->editSetting('payment_mp_ticket', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 			$this->setSettings($data);
-			$this->response->redirect($this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ));			
+			$this->response->redirect($this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ));
 		}
 
 		$this->response->setOutput($this->load->view('extension/payment/mp_ticket', $data));
@@ -151,7 +151,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		$access_token = $this->request->get['access_token'];
 		if ($access_token != "") {
 			$this->load->model('setting/setting');
-			$this->model_setting_setting->editSetting('mp_ticket', array('payment_mp_ticket_access_token' => $access_token));
+			$this->model_setting_setting->editSetting('payment_mp_ticket', array('payment_mp_ticket_access_token' => $access_token));
 		}
 
 		$payment_methods = $this->getMethods();
@@ -168,7 +168,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 		$methods_excludes = preg_split("/[\s,]+/", $this->config->get('payment_mp_ticket_methods'));
 		foreach ($methods_excludes as $exclude) {
-			$data['payment_mp_ticket_methods'][] = $exclude;
+			$data['mp_ticket_methods'][] = $exclude;
 
 		}
 		if (isset($data['methods'])) {
