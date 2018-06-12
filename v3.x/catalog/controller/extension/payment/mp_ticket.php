@@ -182,7 +182,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 					)
 				);
 		} catch (Exception $e) {
-			error_log('deu erro: ' . $e);
+
 			echo json_encode(array("status" => $e->getCode(), "message" => $e->getMessage()));
 		}
 
@@ -191,7 +191,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	private function getCountry() {
 		$access_token = $this->config->get('payment_mp_ticket_access_token');
 		$result = $this->get_instance_mp()->get('/users/me?access_token=' . $access_token, null, true);
-		error_log(json_encode($result));
+
 		return $result['response']['site_id'];
 	}
 
