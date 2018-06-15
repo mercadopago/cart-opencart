@@ -64,6 +64,16 @@ class MP {
 		return $this->access_data['access_token'];
 	}
 
+    public function getUserInfo($id) {
+
+        $request = array(
+			"uri" =>"/users/".$id."?access_token=" . $this->get_access_token(),
+		);	
+		$response = MPRestClient::get($request);
+
+        return $response['response'];
+    }
+
 	public function getPaymentMethods($country_id) {
 
 		$request = array(

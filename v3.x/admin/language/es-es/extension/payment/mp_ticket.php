@@ -29,7 +29,7 @@ $_['entry_payments_not_accept_tooltip'] = '<b>Importante</b> Si cambia el país 
 $_['entry_status'] = 'Estado:';
 $_['entry_country'] = 'País de las ventas:';
 $_['entry_sort_order'] = 'Orden:';
-
+$_['entry_sponsor'] = 'Patrocinador ID: ';
 $_['entry_url'] = 'URL de la tienda: ';
 $_['entry_url_tooltip'] = '<span class="help"> Inserte la URL de instalación de tu tienda<br /> (Siempre escribe la URL con <b>http://</b> o <b>https://</b> )<br/><i>Ejemplo: http://www.mitienda.com/tienda/</i><br /></span>';
 $_['entry_debug'] = 'Modo Debug:';
@@ -71,6 +71,7 @@ $_['error_client_id'] = 'Lo siento, el <b>Client Id</b> es obligatorio.';
 $_['error_client_secret'] = 'Lo siento, el <b>Client Secret</b> es obligatorio.';
 $_['error_public_key'] = 'Lo siento, <b>Public Key</b> es obligatorio.';
 $_['error_access_token'] = 'Lo siento, <b>Access Token</b> es obligatorio.';
+$_['error_sponsor_span'] = 'ID del Patrocinador inválido. Este campo no es obligatorio. Si no conoce a su Patrocinador, ¡limpie este campo!';
 // installments
 $_['18'] = '18';
 $_['15'] = '15';

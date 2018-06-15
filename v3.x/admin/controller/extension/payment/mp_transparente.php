@@ -32,7 +32,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			'order_status_id_completed', 'order_status_id_pending',
 			'order_status_id_canceled', 'order_status_id_in_process',
 			'order_status_id_rejected', 'order_status_id_refunded',
-			'order_status_id_in_mediation', 'order_status_chargeback');
+			'order_status_id_in_mediation', 'order_status_chargeback', 'sponsor');
 
 		$this->load->language('extension/payment/mp_transparente');
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -56,7 +56,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			'installments', 'payments_not_accept', 'status', 'geo_zone', 'country', 'sonda_key', 'order_status',
 			'ipn_status', 'debug', 'coupon','category', 'order_status_general', 'order_status_completed', 'order_status_pending',
 			'order_status_canceled', 'order_status_in_process', 'order_status_rejected', 'order_status_refunded',
-			'order_status_in_mediation', 'order_status_chargeback');
+			'order_status_in_mediation', 'order_status_chargeback', 'sponsor');
 
 		foreach ($entries as $entry) {
 			$name = $entry_prefix . $entry;
@@ -124,7 +124,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 				$data['methods'][] = $method;
 			}
 		}
-
+	
 		$data['payment_style'] = isset($data['methods']) && count($data['methods']) > 12 ?
 		"float:left; margin-left:2%" : "float:left; margin-left:5%";
 
@@ -145,10 +145,19 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			$this->setSettings();			
 			$isPublicKeyInvalid = $this->verifyPublicKey();
 			$isAccessTokenInvalid = $this->verifyAccessToken();
+			$isSponsorInvalid = $this->verifySponsor($country_id);
 
 			if (!$this->user->hasPermission('modify', 'extension/payment/mp_transparente')) {
 				$this->_error['warning'] = $this->language->get('error_permission');
 				$statusReturn = false;
+			}
+
+			if ($isSponsorInvalid) {
+				$data['error_sponsor_spann'] = $this->language->get('error_sponsor_span');
+				$data['payment_mp_transparente_sponsor'] = null;
+				$statusReturn = false;
+			} else {
+				$data['payment_mp_transparente_sponsor'] = $this->config->get('payment_mp_transparente_sponsor');
 			}
 
 			if ($isAccessTokenInvalid) {
@@ -190,6 +199,25 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		if (isset($data['methods'])) {
 			$data['payment_style'] = count($data['methods']) > 12 ? "float:left; margin-left:7%" : "float:left; margin-left:5%";
 			$this->response->setOutput($this->load->view('extension/payment/mp_transparente_payment_methods_partial', $data));
+		}
+	}
+
+	private function verifySponsor($country_id){
+		
+		$input_sponsor = $this->request->post['payment_mp_transparente_sponsor'];
+
+		if (!empty($input_sponsor)) {
+			
+			$user_info = $this->get_instance_mp()->getUserInfo($input_sponsor);
+			 
+			 if(isset($user_info['site_id']) &&
+                $user_info['site_id'] == $country_id &&
+                $user_info['status']['site_status'] == "active") {
+				return false;
+
+			 } 
+			
+			return true;
 		}
 	}
 

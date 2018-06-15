@@ -33,7 +33,7 @@ $_['entry_country'] = 'Sales Country:';
 $_['entry_sort_order'] = 'Sort order:';
 $_['entry_coupon'] = 'Discount coupon: ';
 $_['entry_coupon_tooltip'] = '<span class="help">* This option is valid only for sites participating in coupon campaigns.</span>';
-
+$_['entry_sponsor'] = 'Sponsor ID: ';
 
 $_['entry_url'] = 'Store Url: ';
 $_['entry_url_tooltip'] = '<span class="help">Insert your store root url installation<br /> (Always write the url with <b>http://</b> or <b>https://</b> )<br/><i>IE. http://www.mystore.com/store/</i><br /></span>';
@@ -91,6 +91,7 @@ $_['error_public_key'] = '<b>Public Key</b> invalid. Select your country to vali
 	<a href="https://www.mercadopago.com/mpe/account/credentials">Peru</a>,
 	<a href="https://www.mercadopago.com/mlu/account/credentials">Uruguay</a> or
 	<a href="https://www.mercadopago.com/mlv/account/credentials">Venezuela</a>';
+$_['error_sponsor_span'] = 'Sponsor ID invalid. This field is not mandatory, if you dont know your Sponsor, please clean this field!';
 
 // installments
 $_['18'] = '18';
