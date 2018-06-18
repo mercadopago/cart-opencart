@@ -145,14 +145,14 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			$this->setSettings();			
 			$isPublicKeyInvalid = $this->verifyPublicKey();
 			$isAccessTokenInvalid = $this->verifyAccessToken();
-			$isSponsorInvalid = $this->verifySponsor($country_id);
+			$isSponsorInvalid = $this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_transparente_sponsor']);
 
 			if (!$this->user->hasPermission('modify', 'extension/payment/mp_transparente')) {
 				$this->_error['warning'] = $this->language->get('error_permission');
 				$statusReturn = false;
 			}
 
-			if ($isSponsorInvalid) {
+			if (!$isSponsorInvalid) {
 				$data['error_sponsor_spann'] = $this->language->get('error_sponsor_span');
 				$data['payment_mp_transparente_sponsor'] = null;
 				$statusReturn = false;
@@ -199,25 +199,6 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 		if (isset($data['methods'])) {
 			$data['payment_style'] = count($data['methods']) > 12 ? "float:left; margin-left:7%" : "float:left; margin-left:5%";
 			$this->response->setOutput($this->load->view('extension/payment/mp_transparente_payment_methods_partial', $data));
-		}
-	}
-
-	private function verifySponsor($country_id){
-		
-		$input_sponsor = $this->request->post['payment_mp_transparente_sponsor'];
-
-		if (!empty($input_sponsor)) {
-			
-			$user_info = $this->get_instance_mp()->getUserInfo($input_sponsor);
-			 
-			 if(isset($user_info['site_id']) &&
-                $user_info['site_id'] == $country_id &&
-                $user_info['status']['site_status'] == "active") {
-				return false;
-
-			 } 
-			
-			return true;
 		}
 	}
 

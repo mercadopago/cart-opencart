@@ -147,6 +147,21 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 	}
 
+	private function verifyAccessToken() {
+		$uri = "/users/me";
+ 		$params = array(
+ 			'access_token' => $this->request->post['payment_mp_ticket_access_token']
+ 		);
+			
+		$result = $this->get_instance_mp()->get($uri, $params, false);
+
+		if ($result != null && isset($result['status']) && $result['status'] > 202) {
+			return true;
+
+		}
+		return false;
+	}
+
 	public function getPaymentMethods() {
 		$access_token = $this->request->get['access_token'];
 		if ($access_token != "") {
@@ -194,6 +209,15 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	}
 
 	private function validate() {
+
+		if (!$this->verifyAccessToken()) {
+			$this->_error['error_access_token_span'] = $this->language->get('error_access_token');
+		} 
+
+		$country_id = $this->get_instance_mp_util()->getCountryByAccessToken($this->get_instance_mp(), $this->config->get('payment_mp_ticket_access_token'));
+
+		if($country_id != null  && !$this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_transparente_sponsor']));
+
 		if (!$this->user->hasPermission('modify', 'extension/payment/mp_ticket')) {
 			$this->_error['warning'] = $this->language->get('error_permission');
 		}

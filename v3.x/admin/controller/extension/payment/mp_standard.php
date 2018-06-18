@@ -54,10 +54,13 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 			if ( ! $this->validate_credentials() ) {
 				$valid_credentials = false;
 			}
+
+			$isSponsorInvalid = $this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_ticket_sponsor']);
+
 			$this->model_setting_setting->editSetting( 'payment_mp_standard', $this->request->post );
 			$this->session->data['success'] = $this->language->get( 'text_success' );
 			$this->set_settings();
-			if ( $has_payments_available && $valid_credentials ) {
+			if ( $has_payments_available && $valid_credentials && $isSponsorInvalid ) {
 				$this->response->redirect( $this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ) );
 			}
 		}
@@ -167,6 +170,13 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		$data['error_has_no_payments'] = $has_payments_available ? false : true;
 		$data['payment_style'] = isset( $data['methods'] ) && count( $data['methods'] ) > 12 ?
 			'float:left; margin:8px;' : 'float:left; margin:12px;';
+
+		if (!$isSponsorInvalid) {
+			$data['error_sponsor_spann'] = $this->language->get('error_sponsor_span');
+			$data['payment_mp_ticket_sponsor'] = null;
+		} else {
+			$data['payment_mp_ticket_sponsor'] = $this->config->get('payment_mp_ticket_sponsor');
+		}
 
 		$this->load->model( 'localisation/order_status' );
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
