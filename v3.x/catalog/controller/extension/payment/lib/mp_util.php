@@ -193,7 +193,7 @@ class MPOpencartUtil {
 		
 		if (!empty($input_sponsor)) {
 			
-			$user_info = $this->get_instance_mp()->getUserInfo($input_sponsor);
+			$user_info = $mp->getUserInfo($input_sponsor);
 			 
 			 if(!isset($user_info['site_id']) ||
                 $user_info['site_id'] != $country_id ||
