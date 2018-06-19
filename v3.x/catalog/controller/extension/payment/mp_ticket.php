@@ -165,9 +165,17 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			$payment_data['additional_info']['shipments']['receiver_address']['street_number'] = $order_info['street_number'];
 
 			$is_test_user = strpos($order_info['email'], '@testuser.com');
+
 			if (!$is_test_user) {
-				$payment_data["sponsor_id"] = $this->get_instance_mp_util()->sponsors[$site_id];
-			}
+
+				$sponsor_id = $this->get_instance_mp_util()->sponsors[$site_id];
+			
+				if(isset($this->config->get('payment_mp_ticket_sponsor')) && $this->config->get('payment_mp_ticket_sponsor') != "") {
+					$sponsor_id = $this->config->get('payment_mp_ticket_sponsor');
+				}
+						
+				$payment_data["sponsor_id"] = $sponsor_id;
+			} 
 
 			$payment_response = $this->get_instance_mp()->create_payment($payment_data);
 

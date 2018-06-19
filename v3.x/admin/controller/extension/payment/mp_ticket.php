@@ -56,7 +56,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			'public_key', 'access_token', 'installments', 'payments_not_accept', 'status', 'geo_zone', 'sonda_key',
 			'order_status', 'ipn_status', 'debug', 'category', 'order_status_general', 'order_status_completed',
 			'order_status_pending', 'order_status_canceled', 'order_status_in_process', 'order_status_rejected',
-			'order_status_refunded', 'order_status_in_mediation', 'order_status_chargeback');
+			'order_status_refunded', 'order_status_in_mediation', 'order_status_chargeback', 'sponsor');
 
 		foreach ($entries as $entry) {
 			$name = $entry_prefix . $entry;
@@ -216,7 +216,10 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 		$country_id = $this->get_instance_mp_util()->getCountryByAccessToken($this->get_instance_mp(), $this->config->get('payment_mp_ticket_access_token'));
 
-		if($country_id != null  && !$this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_transparente_sponsor']));
+		if($country_id != null  && !$this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_transparente_sponsor'])){
+
+			$this->_error['error_sponsor_spann'] = $this->language->get('error_sponsor');
+		}
 
 		if (!$this->user->hasPermission('modify', 'extension/payment/mp_ticket')) {
 			$this->_error['warning'] = $this->language->get('error_permission');
