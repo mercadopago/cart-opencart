@@ -170,7 +170,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 
 				$sponsor_id = $this->get_instance_mp_util()->sponsors[$site_id];
 			
-				if(isset($this->config->get('payment_mp_ticket_sponsor')) && $this->config->get('payment_mp_ticket_sponsor') != "") {
+				if(!empty($this->config->get('payment_mp_ticket_sponsor'))) {
 					$sponsor_id = $this->config->get('payment_mp_ticket_sponsor');
 				}
 						

@@ -190,7 +190,7 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 
 			$sponsor_id = $this->get_instance_mp_util()->sponsors[$this->config->get('payment_mp_standard_country')];
 		
-			if(isset($this->config->get('payment_mp_ticket_sponsor')) && $this->config->get('payment_mp_ticket_sponsor') != "") {
+			if(!empty($this->config->get('payment_mp_ticket_sponsor'))) {
 				$sponsor_id = $this->config->get('payment_mp_ticket_sponsor');
 			}
 					
