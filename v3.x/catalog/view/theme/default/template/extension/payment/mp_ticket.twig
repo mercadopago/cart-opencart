@@ -1,4 +1,4 @@
-<style type="text/css">
+<style>
   .msg_erro {
     color : red;
     display : none;
@@ -23,7 +23,6 @@
     margin: 0 auto;
     width: 720px;
   }
-
 
   .form-row{
     display: block;
@@ -114,7 +113,7 @@
 </style>
 
 <div id="mp_ticket"></div>
-<script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+<script src="./catalog/view/javascript/mp/mercadopago.js"></script>
 <input type="hidden" id="paymentType" value="ticket" />
 <input type="hidden" id="contryType" value="{{ countryType }}" />
 <div id="spinner">
@@ -240,11 +239,10 @@
       </div>
     </div>
   </div>
-  {{'<script defer type="text/javascript" src="//fgnass.github.io/spin.js/spin.min.js"></script>' }}
-  {{'<script defer src="./catalog/view/javascript/mp_ticket/mask.js"></script>' }}
-  {{'<script defer type="text/javascript" src="./admin/view/javascript/mp_ticket/spinner.min.js"></script>' }}
-  {{'<script defer src="./catalog/view/javascript/mp_ticket/mp_ticket_view.js"></script>' }}
-  {{'<script defer src="https://secure.mlstatic.com/modules/javascript/analytics.js"></script>' }}
+  {{'<script defer src="./catalog/view/javascript/mp/ticket/mask.js"></script>' }}
+  {{'<script defer type="text/javascript" src="./admin/view/javascript/mp/spinner.min.js"></script>' }}
+  {{'<script defer src="./catalog/view/javascript/mp/ticket/mp_ticket_view.js"></script>' }}
+  {{'<script defer src="./catalog/view/javascript/mp/analytics.js"></script>' }}
 </div>
 <script type="text/javascript">
 
@@ -280,7 +278,7 @@
    
  });
 
-  $.getScript("https://secure.mlstatic.com/modules/javascript/analytics.js", function(){
+  $.getScript("./catalog/view/javascript/mp/analytics.js", function(){
 
     ModuleAnalytics.setToken("{{ analytics.token}}");
     ModuleAnalytics.setPlatform("{{ analytics.platform}}");

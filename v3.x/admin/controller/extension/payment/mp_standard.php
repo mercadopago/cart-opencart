@@ -36,6 +36,10 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 
 		$valid_credentials = true;
 		$has_payments_available = true;
+		$isSponsorInvalid = true;
+		$country_id = $this->config->get( 'payment_mp_standard_country' ) != null ?
+			$this->config->get( 'payment_mp_standard_country' ) : 'MLA';
+
 		if ( ( $this->request->server['REQUEST_METHOD'] == 'POST' ) ) {
 
 			if ( $this->request->post['payment_nro_count_payment_methods'] > 0 ) {
@@ -154,8 +158,6 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 				$this->config->get( 'payment_mp_standard_order_status_id_chargeback' ) )
 		);
 
-		$country_id = $this->config->get( 'payment_mp_standard_country' ) != null ?
-			$this->config->get( 'payment_mp_standard_country' ) : 'MLA';
 		$methods_api = $this->get_instance_mp_util()->getMethods( $country_id, $this->get_instance_mp() );
 		$data['methods'] = array();
 		$data['payment_mp_standard_methods'] = ( isset( $this->request->post['payment_mp_standard_methods'] ) ) ?
