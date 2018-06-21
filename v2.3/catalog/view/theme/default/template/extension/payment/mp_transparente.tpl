@@ -299,9 +299,9 @@
     MPv1.text.remove = '<?php echo $form_labels["form"]["remove"]; ?>';
     MPv1.text.coupon_empty = '<?php echo $form_labels["form"]["coupon_empty"]; ?>';
 
-    MPv1.paths.check = "./image/mercadopago/check.png";
-    MPv1.paths.error = "./image/mercadopago/error.png";
-    MPv1.paths.loading = "./image/mercadopago/loading.gif";
+    MPv1.paths.check = "./catalog/view/image/check.png";
+    MPv1.paths.error = "./catalog/view/image/error.png";
+    MPv1.paths.loading = "./catalog/view/image/loading.gif";
 
     var mercadopago_coupon = $("#mercadopago_coupon");
     var url_site = window.location.href.split('index.php')[0];
