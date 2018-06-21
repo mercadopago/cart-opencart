@@ -126,11 +126,10 @@
       </div>
     </div>
   </div>
-  <?php echo('<script defer type="text/javascript" src="//fgnass.github.io/spin.js/spin.min.js"></script>'); ?>
+  <?php echo('<script defer type="text/javascript" src="./admin/view/javascript/mp/spinner.min.js"></script>'); ?>
   <?php echo('<script defer src="./catalog/view/javascript/mp_ticket/mask.js"></script>'); ?>
-  <?php echo('<script defer type="text/javascript" src="./admin/view/javascript/mp_ticket/spinner.min.js"></script>'); ?>
   <?php echo('<script defer src="./catalog/view/javascript/mp_ticket/mp_ticket_view.js"></script>'); ?>
-  <?php echo('<script defer src="https://secure.mlstatic.com/modules/javascript/analytics.js"></script>'); ?>
+  <?php echo('<script defer src="./catalog/view/javascript/mp/analytics.js"></script>'); ?>
 </div>
 <script type="text/javascript">
 
@@ -166,7 +165,7 @@
    
  });
 
-  $.getScript("https://secure.mlstatic.com/modules/javascript/analytics.js", function(){
+  $.getScript("./catalog/view/javascript/mp/analytics.js", function(){
 
     ModuleAnalytics.setToken("<?php echo $analytics['token'] ?>");
     ModuleAnalytics.setPlatform("<?php echo $analytics['platform'] ?>");

@@ -333,5 +333,5 @@
 </div>
 </div>
 </div>
-<script type="text/javascript" src="./view/javascript/mp_standard/mp_standard.js"></script>
-<script type="text/javascript" src="./view/javascript/mp_standard/spinner.min.js"></script>
+<script type="text/javascript" src="./view/javascript/mp/spinner.min.js"></script>
+<script type="text/javascript" src="./view/javascript/mp/standard/mp_standard.js"></script>

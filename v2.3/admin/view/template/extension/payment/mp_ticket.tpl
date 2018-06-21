@@ -248,5 +248,5 @@
 </div>
 </div>
 </div>
-<script type="text/javascript" src="./view/javascript/mp_ticket/spinner.min.js"></script>
-<script defer type="text/javascript" src="./view/javascript/mp_ticket/mp_ticket.js"></script>
+<script type="text/javascript" src="./view/javascript/mp/spinner.min.js"></script>
+<script defer type="text/javascript" src="./view/javascript/mp/ticket/mp_ticket.js"></script>

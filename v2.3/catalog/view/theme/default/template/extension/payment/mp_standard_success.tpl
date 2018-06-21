@@ -11,7 +11,7 @@
 <div class="div-ajax-carregamento-pagina"></div>
 <div>Aguarde...</div>
 
-<script type="text/javascript"  src="https://secure.mlstatic.com/modules/javascript/analytics.js">
+<script type="text/javascript"  src="./catalog/view/javascript/mp/analytics.js">
 
 </script>
 
