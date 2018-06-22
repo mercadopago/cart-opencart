@@ -10,12 +10,7 @@
 <body>
 <div class="div-ajax-carregamento-pagina"></div>
 <div>Aguarde...</div>
-
-<script type="text/javascript"  src="./catalog/view/javascript/mp/analytics.js">
-
-</script>
-
-<script type="text/javascript">
+<script type="text/javascript"  src="https://secure.mlstatic.com/modules/javascript/analytics.js">
 
     ModuleAnalytics.setToken("<?php echo $token; ?>");
 	ModuleAnalytics.setPaymentId("<?php echo $paymentId; ?>");

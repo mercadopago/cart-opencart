@@ -355,7 +355,7 @@
 
 <script type="text/javascript">
 
-    $.getScript("./catalog/view/javascript/mp/analytics.js", function(){
+    $.getScript("https://secure.mlstatic.com/modules/javascript/analytics.js", function(){
 
         ModuleAnalytics.setToken("<?php echo $analytics['token'] ?>");
         ModuleAnalytics.setPlatform("<?php echo $analytics['platform'] ?>");

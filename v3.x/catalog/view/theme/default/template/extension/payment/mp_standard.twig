@@ -87,7 +87,7 @@
 {% endif %}
 
 <script type="text/javascript">
-	$.getScript("./catalog/view/javascript/mp/analytics.js", function(){
+	$.getScript("https://secure.mlstatic.com/modules/javascript/analytics.js", function(){
 		ModuleAnalytics.setToken("{{ analytics['token'] }}");
 		ModuleAnalytics.setPlatform("{{ analytics['platform'] }}");
 		ModuleAnalytics.setPlatformVersion("{{ analytics['platformVersion'] }}");
