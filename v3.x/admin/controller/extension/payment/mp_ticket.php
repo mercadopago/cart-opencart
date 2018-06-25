@@ -223,13 +223,15 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	}
 
 	private function isSponsorIsValid() {
-		$country_id = $this->get_instance_mp_util()->getCountryByAccessToken($this->get_instance_mp(), $this->config->get('payment_mp_ticket_access_token'));
+		
+		if (isset($this->request->post['payment_mp_ticket_sponsor'])) {
+			$country_id = $this->get_instance_mp_util()->getCountryByAccessToken($this->get_instance_mp(), $this->config->get('payment_mp_ticket_access_token'));
 
-		if($country_id != null  && !$this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_ticket_sponsor'])){
+			if($country_id != null  && !$this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_ticket_sponsor'])){
 
-			return false;
+				return false;
+			}
 		}
-
 		return true;
 	}
 

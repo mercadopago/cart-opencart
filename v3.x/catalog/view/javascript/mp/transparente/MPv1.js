@@ -114,9 +114,9 @@
       remove: "Remove"
     },
     paths:{
-      loading: "images/loading.gif",
-      check: "images/check.png",
-      error: "images/error.png"
+      loading: "admin/view/image/payment/loading.gif",
+      check: "admin/view/image/payment/check.png",
+      error: "admin/view/image/payment/error.png"
     }
   }
 

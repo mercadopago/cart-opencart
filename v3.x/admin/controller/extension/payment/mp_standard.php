@@ -59,7 +59,8 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 				$valid_credentials = false;
 			}
 
-			$isSponsorInvalid = $this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_ticket_sponsor']);
+			if (isset($this->request->post['payment_mp_standard_sponsor']))
+				$isSponsorInvalid = $this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_standard_sponsor']);
 
 			$this->model_setting_setting->editSetting( 'payment_mp_standard', $this->request->post );
 			$this->session->data['success'] = $this->language->get( 'text_success' );
@@ -175,9 +176,9 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 
 		if (!$isSponsorInvalid) {
 			$data['error_sponsor_spann'] = $this->language->get('error_sponsor_span');
-			$data['payment_mp_ticket_sponsor'] = null;
+			$data['payment_mp_standard_sponsor'] = null;
 		} else {
-			$data['payment_mp_ticket_sponsor'] = $this->config->get('payment_mp_ticket_sponsor');
+			$data['payment_mp_standard_sponsor'] = $this->config->get('payment_mp_standard_sponsor');
 		}
 
 		$this->load->model( 'localisation/order_status' );
