@@ -234,7 +234,8 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 			$data['header'] = $this->load->controller('common/header');
 
 			$data['token']  = $this->config->get('mp_standard_client_id');
-			$data['paymentId']  =  $dados['collection']['payment_type'];
+			$data['paymentId']  =  $dados['response']['id'];
+			$data['paymentType']  =  $dados['response']['payment_type_id'];
 			$data['checkoutType']  = "standard";
 
 			$this->response->setOutput($this->load->view('extension/payment/mp_standard_success', $data));
@@ -252,7 +253,7 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 	private function updateOrder() {
 		$sandbox = $this->config->get('mp_standard_sandbox') == 1 ? true : null;
 		$ids = explode(',', $this->request->get['collection_id']);
-
+		$payment_return;
 		$this->get_instance_mp()->sandbox_mode($sandbox);	
 		$this->load->model('checkout/order');
 
@@ -260,7 +261,9 @@ class ControllerExtensionPaymentMPStandard extends Controller {
 			$payment = $this->get_instance_mp()->getPayment($id);
 			$payment["pay_type_mp"] = "standard";
 			$this->get_instance_mp_util()->updateOrder($payment, $this->model_checkout_order, $this->config, $this->db);	
+			$payment_return = $payment;
 		}
+		return $payment_return;
 	}
 
 	private function setPreModuleAnalytics() {

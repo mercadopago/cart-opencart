@@ -3,7 +3,7 @@
 
 <div class="form-group">
   <div class="banner">
-    <img src="./image/banners/<?php echo $action;?>/credit_card.png" />
+    <img src="./catalog/view/image/payment/<?php echo $action;?>/credit_card.png" />
   </div>
 </div>
 
@@ -261,7 +261,7 @@
     </div>
   </form>
 </div>
-<script type="text/javascript" src="./catalog/view/javascript/mp_transparente/MPv1.js" defer></script>
+<script type="text/javascript" src="./catalog/view/javascript/mp/transparente/MPv1.js" defer></script>
 
 
 <script>
@@ -299,9 +299,9 @@
     MPv1.text.remove = '<?php echo $form_labels["form"]["remove"]; ?>';
     MPv1.text.coupon_empty = '<?php echo $form_labels["form"]["coupon_empty"]; ?>';
 
-    MPv1.paths.check = "./catalog/view/image/check.png";
-    MPv1.paths.error = "./catalog/view/image/error.png";
-    MPv1.paths.loading = "./catalog/view/image/loading.gif";
+    MPv1.paths.check = "./catalog/view/image/payment/check.png";
+    MPv1.paths.error = "./catalog/view/image/payment/error.png";
+    MPv1.paths.loading = "./catalog/view/image/payment/loading.gif";
 
     var mercadopago_coupon = $("#mercadopago_coupon");
     var url_site = window.location.href.split('index.php')[0];
