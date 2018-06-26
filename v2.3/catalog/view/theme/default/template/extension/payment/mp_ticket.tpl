@@ -115,7 +115,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-12" id="div_payment_methods" style="text-align: center;">
+        <div class="col-md-12" id="div_payment_methods" style="text-align: center; margin-left: 30%;">
         </div>
         <div class="form-row">
           <div class="form-col-12">
