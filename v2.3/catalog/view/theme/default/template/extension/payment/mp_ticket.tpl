@@ -157,7 +157,7 @@
     } else {
      $("#formMLB").show();
      $("#formJuridica").hide();
-     $("#div_payment_methods").hide();
+     $("#div_payment_methods").show();
    }
 
    $("#docNumber").mask("999.999.999-99");

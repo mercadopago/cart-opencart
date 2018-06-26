@@ -120,8 +120,7 @@
   <div id="formulario">
     <div class="panel-body" id="checkout-payment">
       <div id="form-ticket">
-        <div id="formMLB">
-
+         <div id="formMLB">
           <div class="form-row">
             <div class="form-col-6">
               <input type="radio" id="fisica" title="{{ form_labels.form.docNumber }}" checked="checked" value="CPF" onclick="clickRadioType('fisica')"> Pessoa Física
@@ -228,8 +227,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-12" id="div_payment_methods" style="text-align: center;">
-        </div>
+        <div class="col-md-12" id="div_payment_methods" style="text-align: center; margin-left: 30%;"></div>
         <div class="form-row">
           <div class="form-col-12">
             <input type="hidden" id="payment_method_id" />
@@ -270,7 +268,7 @@
     } else {
      $("#formMLB").show();
      $("#formJuridica").hide();
-     $("#div_payment_methods").hide();
+     $("#div_payment_methods").show();
    }
 
    $("#docNumber").mask("999.999.999-99");

@@ -9,14 +9,11 @@
                 type: "POST",
                 url: url_backend,
                 success: function success(data){
-                   response = JSON.parse(data);
+                    response = JSON.parse(data);
                    var div = document.getElementById('div_payment_methods');
                    var i = response.methods.length;
                    var br = document.createElement('br');
-                   var label = document.createElement('label');             
 
-                   label.innerHTML = "Selecione um meio de pagamento";
-                   label.setAttribute('style','float:none; margin-left: auto; margin-right: auto; ');
                    while(i--)
                    {                    
                        var new_div = document.createElement('div');
@@ -32,27 +29,16 @@
                        new_div.appendChild(document.createElement('br'));
                        new_div.appendChild(chk);
 
-                       new_div.setAttribute('style','margin-left: 5%; display: inline-block;');
+                       new_div.setAttribute('style','float:left; margin-left: 10%;');
                        new_div.addEventListener('click', function(){
                         document.getElementById('payment_method_id').value = this.childNodes[2].value;
                         console.log('valor selecionado: ' + this.childNodes[2].value);
                     })
 
-                    div.appendChild(label);
-                    div.appendChild(br);
                     div.appendChild(new_div);
-
-                    if (country == "MLB" && i < 2) {
-                        chk.click();
-                        div.removeChild(label);
-                        div.removeChild(br);
-                        div.removeChild(new_div);
-                    }
-
-                      spinner.stop();
+                    div.appendChild(br);
+                    spinner.stop();
                    }
-               
-
            },
            error: function(data){spinner.stop(); alert('error'); console.log(data);this.disabled = false;}
        })
@@ -239,6 +225,13 @@
               retorno = false;
             }
 
+            if (Array.prototype.slice.call(document.getElementsByName('rd_payment'))
+             .filter(function(item){
+               return item.checked;
+             }).length <= 0) {
+               retorno = false;
+            }
+
           } else {
             return Array.prototype.slice.call(document.getElementsByName('rd_payment'))
              .filter(function(item){
@@ -264,6 +257,7 @@
           var country = $('#contryType').val();
           var radioDoc = $("#fisica").is(":checked");
           var typeDoc = "CPF";
+          var bolpay = $(".rd_payment").val();
 
           if (!radioDoc)
             typeDoc = "CNPJ";
