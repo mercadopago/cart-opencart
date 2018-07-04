@@ -31,7 +31,7 @@ $_['entry_payments_not_accept_tooltip'] = '<b>Important</b> If you change the Sa
 $_['entry_status'] = 'Status:';
 $_['entry_country'] = 'Sales Country:';
 $_['entry_sort_order'] = 'Sort order:';
-
+$_['entry_sponsor'] = 'Sponsor ID: ';
 $_['entry_url'] = 'Store Url: ';
 $_['entry_url_tooltip'] = '<span class="help">Insert your store root url installation<br /> (Always write the url with <b>http://</b> or <b>https://</b> )<br/><i>IE. http://www.mystore.com/store/</i><br /></span>';
 $_['entry_debug'] = 'Debug mode:';
@@ -72,7 +72,7 @@ $_['error_client_id'] = 'Sorry, your <b>Client Id</b> is mandatory.';
 $_['error_client_secret'] = 'Sorry, <b>Client Secret</b> is mandatory.';
 $_['error_public_key'] = 'Sorry, <b>Public Key</b> is mandatory.';
 $_['error_access_token'] = 'Sorry, <b>Access Token</b> is mandatory.';
-
+$_['error_sponsor_span'] = 'Sponsor ID invalid. This field is not mandatory, if you dont know your Sponsor, please clean this field!';
 // installments
 $_['18'] = '18';
 $_['15'] = '15';

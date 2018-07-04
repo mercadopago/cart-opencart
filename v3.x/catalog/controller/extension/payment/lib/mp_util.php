@@ -94,6 +94,16 @@ class MPOpencartUtil {
 		return $result['response'];
 	}
 
+	public function getCountryByAccessToken($mp, $access_token) {
+				
+		if ($access_token != null) {
+			$result = $mp->get('/users/me?access_token=' . $access_token);
+			return $result['response']['site_id'];
+		}
+
+		return null;
+	}
+
 	public function setSettings($mp, $config_email, $statusCustom = false,  $custom_cupom = false, $standard = false, $checkout_basic = false) {
 
         $request = array(
@@ -177,6 +187,21 @@ class MPOpencartUtil {
 			'id' => '1');
 
 		return $installments;
+	}
+
+	public function verifySponsorIsValid($mp, $country_id, $input_sponsor){
+		
+		if (!empty($input_sponsor)) {
+			
+			$user_info = $mp->getUserInfo($input_sponsor);
+			 
+			 if(!isset($user_info['site_id']) ||
+                $user_info['site_id'] != $country_id ||
+                $user_info['status']['site_status'] != "active") {
+				return false;
+			 }
+		}
+		return true;
 	}
 
 	public function getCategoryList($mp) {

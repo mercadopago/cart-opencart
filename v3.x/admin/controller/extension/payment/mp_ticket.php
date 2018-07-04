@@ -56,7 +56,7 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 			'public_key', 'access_token', 'installments', 'payments_not_accept', 'status', 'geo_zone', 'sonda_key',
 			'order_status', 'ipn_status', 'debug', 'category', 'order_status_general', 'order_status_completed',
 			'order_status_pending', 'order_status_canceled', 'order_status_in_process', 'order_status_rejected',
-			'order_status_refunded', 'order_status_in_mediation', 'order_status_chargeback');
+			'order_status_refunded', 'order_status_in_mediation', 'order_status_chargeback', 'sponsor');
 
 		foreach ($entries as $entry) {
 			$name = $entry_prefix . $entry;
@@ -127,24 +127,44 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 		}
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
-			$this->load->model('setting/setting');
+			
+			if ($this->isSponsorIsValid()) {
+				$this->load->model('setting/setting');
 
-			if (isset($this->request->post['payment_mp_ticket_methods'])) {
-				$names = $this->request->post['payment_mp_ticket_methods'];
-				$this->request->post['payment_mp_ticket_methods'] = '';
-				foreach ($names as $name) {
-					$this->request->post['payment_mp_ticket_methods'] .= $name . ',';
+				if (isset($this->request->post['payment_mp_ticket_methods'])) {
+					$names = $this->request->post['payment_mp_ticket_methods'];
+					$this->request->post['payment_mp_ticket_methods'] = '';
+					foreach ($names as $name) {
+						$this->request->post['payment_mp_ticket_methods'] .= $name . ',';
+					}
 				}
-			}
-			$this->model_setting_setting->editSetting('payment_mp_ticket', $this->request->post);
+				$this->model_setting_setting->editSetting('payment_mp_ticket', $this->request->post);
 
-			$this->session->data['success'] = $this->language->get('text_success');
-			$this->setSettings($data);
-			$this->response->redirect($this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ));
+				$this->session->data['success'] = $this->language->get('text_success');
+				$this->setSettings($data);
+				$this->response->redirect($this->url->link( 'marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true ));
+			} else {
+				$data['error_sponsor_spann'] = $this->language->get('error_sponsor_span');
+			}
 		}
 
 		$this->response->setOutput($this->load->view('extension/payment/mp_ticket', $data));
 
+	}
+
+	private function verifyAccessToken() {
+		$uri = "/users/me";
+ 		$params = array(
+ 			'access_token' => $this->request->post['payment_mp_ticket_access_token']
+ 		);
+			
+		$result = $this->get_instance_mp()->get($uri, $params, false);
+
+		if ($result != null && isset($result['status']) && $result['status'] > 202) {
+			return true;
+
+		}
+		return false;
 	}
 
 	public function getPaymentMethods() {
@@ -194,11 +214,25 @@ class ControllerExtensionPaymentMPTicket extends Controller {
 	}
 
 	private function validate() {
+
 		if (!$this->user->hasPermission('modify', 'extension/payment/mp_ticket')) {
 			$this->_error['warning'] = $this->language->get('error_permission');
 		}
 		return count($this->_error) < 1;
 
+	}
+
+	private function isSponsorIsValid() {
+		
+		if (isset($this->request->post['payment_mp_ticket_sponsor'])) {
+			$country_id = $this->get_instance_mp_util()->getCountryByAccessToken($this->get_instance_mp(), $this->config->get('payment_mp_ticket_access_token'));
+
+			if($country_id != null  && !$this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_ticket_sponsor'])){
+
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public function setSettings($data) {

@@ -29,7 +29,7 @@ $_['entry_payments_not_accept_tooltip'] = '<b>Importante</b> Si cambia el país 
 $_['entry_status'] = 'Estado:';
 $_['entry_country'] = 'País de las ventas:';
 $_['entry_sort_order'] = 'Orden:';
-
+$_['entry_sponsor'] = 'Patrocinador ID: ';
 $_['entry_coupon'] = 'Cupón de descuento: ';
 $_['entry_coupon_tooltip'] = '<span class="help">* Opción válida sólo para los sitios campañas de cupones participantes.</span>';
 
@@ -90,7 +90,7 @@ $_['error_public_key'] = '<b>Public Key</b> no válido. Valide sus credenciales 
 	<a href="https://www.mercadopago.com/mpe/account/credentials">Peru</a>,
 	<a href="https://www.mercadopago.com/mlu/account/credentials">Uruguay</a> o
 	<a href="https://www.mercadopago.com/mlv/account/credentials">Venezuela</a>';
-
+$_['error_sponsor_span'] = 'ID del Patrocinador inválido. Este campo no es obligatorio. Si no conoce a su Patrocinador, ¡limpie este campo!';
 // installments
 $_['18'] = '18';
 $_['15'] = '15';

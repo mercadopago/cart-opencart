@@ -61,6 +61,16 @@
               </select>
             </div>
           </div>
+          <div class="form-group"  id="div_sponsor">
+           <label class="col-sm-2 control-label" for="payment_mp_standard_sponsor">
+            <span data-toggle="tooltip" data-trigger="click" title='Sponsor ID'>{{ entry_sponsor }}</span></label>
+            <div class="col-sm-10">
+             <input type="text" class="form-control" id="payment_mp_standard_sponsor" name="payment_mp_standard_sponsor" value="{{ payment_mp_standard_sponsor }}" disabled="disabled" placeholder="Em Breve - En Breve - Coming soon" />
+             {% if error_sponsor_spann is defined %}
+               <div class="text-danger">{{ error_sponsor_spann }}</div>
+             {% endif %}
+           </div>
+        </div>
           {# Checkout type #}
           <div class="form-group required">
             <label class="col-sm-2 control-label" for="entry_type_checkout">{{ entry_type_checkout }}</label>
@@ -383,6 +393,6 @@
     </div>
   </div>
 </div>
-<script type="text/javascript" src="./view/javascript/mp_standard/mp_standard.js"></script>
-<script type="text/javascript" src="./view/javascript/mp_standard/spinner.min.js"></script>
+<script type="text/javascript" src="./view/javascript/mp/standard/mp_standard.js"></script>
+<script type="text/javascript" src="./view/javascript/mp/spinner.min.js"></script>
 {{ footer }}

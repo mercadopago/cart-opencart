@@ -32,6 +32,7 @@ $_['entry_payments_not_accept_tooltip'] = '<b>Importante</b> Caso troque o país
 $_['entry_status'] = 'Status:';
 $_['entry_country'] = 'País das vendas:';
 $_['entry_sort_order'] = 'Sort order:';
+$_['entry_sponsor'] = 'Patrocinador ID: ';
 
 $_['entry_url'] = 'URL da loja: ';
 $_['entry_url_tooltip'] = '<span class="help">Insira aqui a URL da sua loja<br /> (Sempre escreva com <b>http://</b> ou <b>https://</b> )<br/><i>Ex. http://www.minhaloja.com/loja/</i><br /></span>';
@@ -92,6 +93,7 @@ $_['error_public_key'] = '<b>Public Key</b> inválido. Valide suas credenciais s
 	<a href="https://www.mercadopago.com/mpe/account/credentials">Peru</a>,
 	<a href="https://www.mercadopago.com/mlu/account/credentials">Uruguay</a> ou
 	<a href="https://www.mercadopago.com/mlv/account/credentials">Venezuela</a>';
+$_['error_sponsor_span'] = 'ID do Patrocinador inválido. Este campo não é obrigatório, se você não conhece seu Patrocinador, limpe este campo!';
 
 // installments
 $_['18'] = '18';

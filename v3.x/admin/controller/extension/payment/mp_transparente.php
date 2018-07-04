@@ -33,6 +33,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			'order_status_id_canceled', 'order_status_id_in_process',
 			'order_status_id_rejected', 'order_status_id_refunded',
 			'order_status_id_in_mediation', 'order_status_chargeback');
+		// add sponsor
 
 		$this->load->language('extension/payment/mp_transparente');
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -57,6 +58,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			'ipn_status', 'debug', 'coupon','category', 'order_status_general', 'order_status_completed', 'order_status_pending',
 			'order_status_canceled', 'order_status_in_process', 'order_status_rejected', 'order_status_refunded',
 			'order_status_in_mediation', 'order_status_chargeback');
+		// add sponsor
 
 		foreach ($entries as $entry) {
 			$name = $entry_prefix . $entry;
@@ -124,7 +126,7 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 				$data['methods'][] = $method;
 			}
 		}
-
+	
 		$data['payment_style'] = isset($data['methods']) && count($data['methods']) > 12 ?
 		"float:left; margin-left:2%" : "float:left; margin-left:5%";
 
@@ -145,11 +147,20 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 			$this->setSettings();			
 			$isPublicKeyInvalid = $this->verifyPublicKey();
 			$isAccessTokenInvalid = $this->verifyAccessToken();
+			//$isSponsorInvalid = $this->get_instance_mp_util()->verifySponsorIsValid($this->get_instance_mp(), $country_id, $this->request->post['payment_mp_transparente_sponsor']);
 
 			if (!$this->user->hasPermission('modify', 'extension/payment/mp_transparente')) {
 				$this->_error['warning'] = $this->language->get('error_permission');
 				$statusReturn = false;
 			}
+
+			/*if (!$isSponsorInvalid) {
+				$data['error_sponsor_spann'] = $this->language->get('error_sponsor_span');
+				$data['payment_mp_transparente_sponsor'] = null;
+				$statusReturn = false;
+			} else {
+				$data['payment_mp_transparente_sponsor'] = $this->config->get('payment_mp_transparente_sponsor');
+			}*/
 
 			if ($isAccessTokenInvalid) {
 				$data['error_access_token_span'] = $this->language->get('error_access_token');

@@ -41,7 +41,7 @@ $_['entry_installments'] = 'Parcelas:';
 $_['entry_installments_tooltip'] = 'Quantidade máxima de parcelas';
 $_['entry_payments_not_accept'] = 'Excluir Pagamentos:';
 $_['entry_payments_not_accept_tooltip'] = 'Marque quais meios de pagamento você não deseja aceitar. <b>Importante:</b> Caso troque o país de venda, espere até que os novos meio de pagamento estejam carregados.';
-
+$_['entry_sponsor'] = 'Patrocinador ID: ';
 // Order statuses
 $_['entry_order_status_approved'] = 'Pgto Aprovado, Pedido fica';
 $_['entry_order_status_approved_tooltip'] = 'Escolha o status do pedido caso o pagamento seja <b>Aprovado</b>';
@@ -64,7 +64,7 @@ $_['entry_order_status_chargeback_tooltip'] = 'Escolha o status do pedido caso o
 $_['error_entry_credentials_basic'] = 'Desculpe, sua <b>Client Id</b> e <b>Client Secret</b> são obrigatórias.';
 $_['error_entry_no_payments'] = 'Desculpe, não há meios de pagamento disponíveis.';
 $_['text_success'] = 'Successo, suas modificações foram salvas!';
-
+$_['error_sponsor_span'] = 'ID do Patrocinador inválido. Este campo não é obrigatório, se você não conhece seu Patrocinador, limpe este campo!';
 // installments
 $_['18'] = '18';
 $_['15'] = '15';

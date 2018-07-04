@@ -1,6 +1,15 @@
- <div class="form-group">
+  <div class="form-group">
     {% for method in methods %}
-          <div style="{{ payment_style }}" id="{{ method.name }}">
-            <img src="{{ method.secure_thumbnail }}"><br/><input name="payment_mp_ticket_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%;">
-          </div> 
+        {% if (method['id'] != 'account_money') %} 
+           	{% if mp_ticket_methods is not null and method.id in mp_ticket_methods %}
+
+			    <div style="{{ payment_style }}" id="{{ method.name }}">
+			            <img src="{{ method.secure_thumbnail }}"><br/><input name="payment_mp_ticket_methods[]" type="checkbox" checked="yes" value="{{ method.id }}" style="margin-left:25%;">
+			    </div> 
+             {% else %} 
+        	    <div style="{{ payment_style }}" id="{{ method.name }}">
+		            <img src="{{ method.secure_thumbnail }}"><br/><input name="payment_mp_ticket_methods[]" type="checkbox" value="{{ method.id }}" style="margin-left:25%;">
+		    	</div> 
+	    	{% endif %} 
+	    {% endif %}
     {% endfor %}

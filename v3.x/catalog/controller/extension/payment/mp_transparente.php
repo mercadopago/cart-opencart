@@ -211,7 +211,13 @@ class ControllerExtensionPaymentMPTransparente extends Controller {
 
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 		if (!$is_test_user) {
-			$sponsor_id = $this->get_instance_mp_util()->sponsors[$this->config->get('payment_mp_transparente_country')];		
+
+			$sponsor_id = $this->get_instance_mp_util()->sponsors[$this->config->get('payment_mp_transparente_country')];
+		
+			if(!empty($this->config->get('payment_mp_transparente_sponsor'))) {
+				$sponsor_id = $this->config->get('payment_mp_transparente_sponsor');
+			}
+					
 			$payment["sponsor_id"] = $sponsor_id;
 		} 
 

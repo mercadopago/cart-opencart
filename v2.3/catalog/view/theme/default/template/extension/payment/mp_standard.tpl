@@ -24,7 +24,7 @@
                         <div class="mp-form hover">
                             <div class="row">
                                 <div class="col">
-                                    <img style="margin-left: 20px;" src="catalog/view/image/payment/payment_method_logo_120_31.png"
+                                    <img style="margin-left: 20px;" src="catalog/view/image/payment/mp_standard.png"
                                         id="id-standard-logo">
                                         <img src="catalog/view/image/payment/<?php echo $action ?>/banner_all_methods.png" class="mp-standard-banner" />
                                         <span class="payment-label standard">
@@ -54,7 +54,7 @@
         default:
             ?>
                 <div class="pull-right">
-                <script type="text/javascript" src="//resources.mlstatic.com/mptools/render.js"></script>
+                <script type="text/javascript" src="./catalog/view/javascript/mp/render.js"></script>
                 <a href="<?php echo $redirect_link ?>" name="MP-Checkout" class="btn btn-primary" mp-mode="modal" onreturn="execute_my_onreturn">Pagar</a>
 <!-- Pega este código antes de cerrar la etiqueta </body> -->
 </div>

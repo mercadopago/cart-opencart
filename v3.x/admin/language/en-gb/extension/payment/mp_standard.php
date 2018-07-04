@@ -41,7 +41,7 @@ $_['entry_installments'] = 'Installments:';
 $_['entry_installments_tooltip'] = 'Maximum accepted payments';
 $_['entry_payments_not_accept'] = 'Exclude Payments:';
 $_['entry_payments_not_accept_tooltip'] = 'Check the payments methods that you do not want to accept. <b>Important:</b> If you change sales country, wait until the full load of the payment methods.';
-
+$_['entry_sponsor'] = 'Sponsor ID: ';
 // Order statuses
 $_['entry_order_status_approved'] = 'Payment Approved, Order is';
 $_['entry_order_status_approved_tooltip'] = 'Select the status order case the payment was <b>Approved</b>';
@@ -64,7 +64,7 @@ $_['entry_order_status_chargeback_tooltip'] = 'Select the status order case the 
 $_['error_entry_credentials_basic'] = 'Sorry, your <b>Client Id</b> and <b>Client Secret</b> are mandatory.';
 $_['error_entry_no_payments'] = 'Sorry, there is no payment methods available.';
 $_['text_success'] = 'Success, your modifications are done!';
-
+$_['error_sponsor_span'] = 'Sponsor ID invalid. This field is not mandatory, if you dont know your Sponsor, please clean this field!';
 // installments
 $_['18'] = '18';
 $_['15'] = '15';

@@ -187,8 +187,15 @@ class ControllerExtensionPaymentMpStandard extends Controller {
 		$is_test_user = strpos($order_info['email'], '@testuser.com');
 
 		if (!$is_test_user) {
-			$pref["sponsor_id"] = $this->get_instance_mp_util()->sponsors[$this->config->get('payment_mp_standard_country')];
-		}
+
+			$sponsor_id = $this->get_instance_mp_util()->sponsors[$this->config->get('payment_mp_standard_country')];
+		
+			if(!empty($this->config->get('payment_mp_ticket_sponsor'))) {
+				$sponsor_id = $this->config->get('payment_mp_ticket_sponsor');
+			}
+					
+			$pref["sponsor_id"] = $sponsor_id;
+		} 
 
 		$preferenceResult = $this->get_instance_mp()->create_preference($pref);
 
