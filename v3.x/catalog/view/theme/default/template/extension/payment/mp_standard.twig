@@ -59,20 +59,15 @@
 			var x = document.getElementsByTagName("script")[0];x.parentNode.insertBefore(s, x);window.$MPBR_loaded = true;})();}
 			window.$MPBR_loaded !== true ? (window.attachEvent ? window.attachEvent("onload", $MPBR_load) : window.addEventListener("load", $MPBR_load, false)) : null;})();
 		</script>
-	{# TODO: check why lightbox ins't been displayed
+	
 	{% elseif type_checkout == "Lightbox" %}
-		<div class="pull-right">
-			{{ "<style type='text/css'>#MP-Checkout-dialog #MP-Checkout-IFrame { bottom: -28px !important; height: 590px !important; }</style>" }}
+		<div>
 			{{ "<script type='text/javascript' src='./catalog/view/javascript/mp/render.js'></script>" }}
 			{{ "<script type='text/javascript'>" }}
-			{{ "(function() { $MPC.openCheckout({ url: '{{ redirect_link }}', mode: 'modal' }); })();" }}
+			{{ "(function() { $MPC.openCheckout({ url: '#{ redirect_link }', mode: 'modal' }); })();" }}
 			{{ "</script>" }}
-			{{ "<img src='admin/view/image/payment/{{ action }}/banner_all_methods.png' class='mp-standard-banner' />" }}
-			{{ "<p></p>" }}
-			{{ "<p>Thank you for your order. Please, proceed with your payment clicking in the bellow button.</p>" }}
-			{{ "<a id='submit-payment' href='{{ redirect_link }}' name='MP-Checkout' class='button alt' mp-mode='modal'>Pay with Mercado Pago</a>" }}
+			{{ "<figure style='text-align:center'><img src='admin/view/image/payment/#{ action }/banner_all_methods.png' class='mp-standard-banner' /><figcaption><b><a id='submit-payment' href='#{ redirect_link }' name='MP-Checkout' mp-mode='modal'>Pague con/com  Mercado Pago</a></b></figcaption></figure>" }}
 		</div>
-	#}
 	{% else %}
 		<div class="row"><div class="col-xs-12 col-md-6">
 			<a href="{{ redirect_link }}" id="id-standard" mp-mode="redirect" name="MP-Checkout">
