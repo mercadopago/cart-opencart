@@ -389,6 +389,7 @@ class MPRestClient {
 	static $country_initial = "";
 	static $check_loop = 0;
 	const API_BASE_URL = "https://api.mercadopago.com";
+	const X_PRODUCT_ID = 'BC32CFNTRPP001U8NHP0'; //Identifier used to designate the product, device and version
 	private static function build_request($request) {
 		if (!extension_loaded("curl")) {
 			throw new MercadoPagoException("cURL extension not found. You need to enable cURL in your php.ini or another configuration you have.");
@@ -546,6 +547,12 @@ class MPRestClient {
 	}
 	public static function post($request) {
 		$request["method"] = "POST";
+	   
+	   if (! isset( $request['headers'] )) {
+	       $request['headers'] = array();
+	 	}
+	 	$request['headers']['x-product-id'] = self::X_PRODUCT_ID;
+		   
 		return self::exec($request);
 	}
 	public static function put($request) {
