@@ -30,7 +30,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		$transaction_amount = floatval($order_info['total']) * floatval($order_info['currency_value']);
 		$data['amount'] = $transaction_amount;
-		$data['actionForm'] = $order_info['store_url'] . 'index.php?route=payment/mp_transparente/payment';
+		$data['actionForm'] = '/index.php?route=payment/mp_transparente/payment';
 		$data['mp_transparente_coupon'] = $this->config->get('mp_transparente_coupon');
 
 		if ($this->config->get('mp_transparente_coupon')) {
