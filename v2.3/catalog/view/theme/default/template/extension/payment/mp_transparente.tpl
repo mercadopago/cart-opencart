@@ -122,7 +122,7 @@
       <div class="mp-box-inputs mp-line" id="mp-securityCode-customer-and-card">
         <div class="mp-box-inputs mp-col-45">
           <label for="customer-and-card-securityCode"><?php echo $form_labels['form']['security_code']; ?> <em>*</em></label>
-          <input type="text" id="customer-and-card-securityCode" data-checkout="securityCode" autocomplete="off" maxlength="4"/>
+          <input type="tel" id="customer-and-card-securityCode" data-checkout="securityCode" autocomplete="off" maxlength="4"/>
 
           <span class="mp-error" id="mp-error-224" data-main="#customer-and-card-securityCode"> <?php echo $form_labels['error']['224']; ?> </span>
           <span class="mp-error" id="mp-error-E302" data-main="#customer-and-card-securityCode"> <?php echo $form_labels['error']['E302']; ?> </span>
@@ -135,7 +135,7 @@
     <div id="mercadopago-form">
       <div class="mp-box-inputs mp-col-100">
         <label for="cardNumber"><?php echo $form_labels['form']['credit_card_number']; ?> <em>*</em></label>
-        <input type="text" id="cardNumber" data-checkout="cardNumber" autocomplete="off"/>
+        <input type="tel" id="cardNumber" data-checkout="cardNumber" autocomplete="off"/>
         <span class="mp-error" id="mp-error-205" data-main="#cardNumber"> <?php echo $form_labels['error']['205']; ?> </span>
         <span class="mp-error" id="mp-error-E301" data-main="#cardNumber"> <?php echo $form_labels['error']['E301']; ?> </span>
       </div>
@@ -185,7 +185,7 @@
       <div class="mp-box-inputs mp-line">
         <div class="mp-box-inputs mp-col-45">
           <label for="securityCode"><?php echo $form_labels['form']['security_code']; ?> <em>*</em></label>
-          <input type="text" id="securityCode" data-checkout="securityCode" autocomplete="off" maxlength="4"/>
+          <input type="tel" id="securityCode" data-checkout="securityCode" autocomplete="off" maxlength="4"/>
 
           <span class="mp-error" id="mp-error-224" data-main="#securityCode"> <?php echo $form_labels['error']['224']; ?> </span>
           <span class="mp-error" id="mp-error-E302" data-main="#securityCode"> <?php echo $form_labels['error']['E302']; ?> </span>
@@ -203,7 +203,7 @@
 
         <div class="mp-box-inputs mp-col-65 mp-docNumber">
           <label for="docNumber"><?php echo $form_labels['form']['document_number']; ?> <em>*</em></label>
-          <input type="text" id="docNumber" data-checkout="docNumber" name="mercadopago_custom[docNumber]" autocomplete="off"/>
+          <input type="tel" id="docNumber" data-checkout="docNumber" name="mercadopago_custom[docNumber]" autocomplete="off"/>
 
           <span class="mp-error" id="mp-error-214" data-main="#docNumber"> <?php echo $form_labels['error']['214']; ?> </span>
           <span class="mp-error" id="mp-error-324" data-main="#docNumber"> <?php echo $form_labels['error']['324']; ?> </span>
