@@ -1,7 +1,12 @@
 <?php
 
+include_once dirname(__FILE__) . '/../../../../../catalog/controller/extension/payment/lib/mp_util.php';
+
+$mp_util = new MPOpencartUtil();
+$moduleVersion = $mp_util->getModuleVersion();
+
 // Heading
-$_['heading_title'] = 'Mercado Pago - Básico';
+$_['heading_title'] = 'Mercado Pago - Básico' . ' (v' .$moduleVersion . ')';
 $_['text_mp_standard'] = '<a onclick="window.open(\'https://www.mercadopago.com\');" target="_blank"><img src="view/image/payment/mp_standard.png" alt="Mercado Pago" title="Mercado Pago" style="border: 1px solid #EEEEEE;" /></a> <br /><b> Checkout Básico</b>';
 
 // Other translations

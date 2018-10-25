@@ -216,4 +216,8 @@ class MPOpencartUtil {
 		$methods = $mp->get( $uri, null, false );
 		return $methods['response'];
 	}
+
+  	public function getModuleVersion(){
+    	return $this->moduleVersion;
+  	}
 }

@@ -1,6 +1,12 @@
 <?php
+
+include_once dirname(__FILE__) . '/../../../../../catalog/controller/extension/payment/lib/mp_util.php';
+
+$mp_util = new MPOpencartUtil();
+$moduleVersion = $mp_util->getModuleVersion();
+
 // Heading
-$_['heading_title'] = 'Mercado Pago - Ticket Checkout';
+$_['heading_title'] = 'Mercado Pago - Ticket Checkout' . ' (v' .$moduleVersion . ')';
 
 // Text
 $_['text_payment'] = 'Pagamento';
