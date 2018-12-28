@@ -93,12 +93,12 @@ During the sandbox mode tests, you can operate over HTTP, but for homologation y
       <td>OpenCart v2.x - v2.2</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v2.3">v2.3</a></td>
+      <td><a href="https://github.com/mercadopago/cart-opencart-2">v2.3</a></td>
       <td>Stable (Current Version)</td>
       <td>OpenCart v2.3</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/mercadopago/cart-opencart/tree/master/v3.x">v3.x</a></td>
+      <td><a href="https://github.com/mercadopago/cart-opencart-3">v3.x</a></td>
       <td>Stable (Current Version)</td>
       <td>OpenCart v3.x</td>
     </tr>
