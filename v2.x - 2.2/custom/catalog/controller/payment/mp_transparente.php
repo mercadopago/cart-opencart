@@ -218,7 +218,7 @@ class ControllerPaymentMPTransparente extends Controller {
 		$payment['additional_info']['payer']['address']['zip_code'] = $order_info['shipping_postcode'];
 
 		// Shipments Info
-		$payment['additional_info']['items'][] = $items;
+		$payment['additional_info']['items'] = $items;
 		$payment['additional_info']['shipments']['receiver_address']['zip_code'] = $order_info['shipping_postcode'];
 		$payment['additional_info']['shipments']['receiver_address']['street_name'] = $order_info['shipping_address_1'];
 		$payment['additional_info']['shipments']['receiver_address']['street_number'] = "-";
